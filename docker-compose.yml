@@ -11,8 +11,12 @@ services:
     ports:
       - 5000:5000
 
-  httpbin:
-    image: kennethreitz/httpbin
+  echo:
+    image: ealen/echo-server:0.9.2
+    expose:
+      - 6000
+    environment:
+      PORT: 6000
 
   tutorial:
     image:  ghcr.io/jensereal/otel-getting-started-tutorial:latest

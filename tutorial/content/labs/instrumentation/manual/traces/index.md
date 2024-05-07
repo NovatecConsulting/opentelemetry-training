@@ -347,17 +347,17 @@ Let's see what happens when there is a network boundary in between.
 @tracer.start_as_current_span("do_stuff")
 def do_stuff():
     time.sleep(0.1)
-    url = "http://httpbin:80/anything"
+    url = "http://echo:6000/"
     response = requests.get(url)
 
     # debug
-    print("response from httpbin:")
+    print("response from echo:")
     print(response.text)
 ```
 
-For testing purposes, the lab environment includes a `httpbin` server that echos the HTTP requests back to the client.
+For testing purposes, the lab environment includes a `echo` server that returns the HTTP requests back to the client.
 This is useful because it lets us examine what requests leaving our application look like.
-`do_stuff` uses the `requests` package to send a get request to `httpbin`.
+`do_stuff` uses the `requests` package to send a get request to `echo`.
 To examine what happens, let's add some `print` statements.
 
 ```json
@@ -365,7 +365,6 @@ To examine what happens, let's add some `print` statements.
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
-    "Host": "httpbin",
     "User-Agent": "python-requests/2.31.0"
 },
 ```
@@ -385,7 +384,7 @@ def do_stuff():
     inject(headers)
 
     time.sleep(.1)
-    url = "http://httpbin:80/anything"
+    url = "http://echo:6000/"
     response = requests.get(url, headers=headers) # <- inject trace context into headers
 ```
 
@@ -401,13 +400,12 @@ The requests `get` method has a second argument that allows us to pass in inform
     "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
-    "Host": "httpbin",
     "Traceparent": "00-b9041f02352d1558fcdd9ea3804da1f0-aa8b34aa3f883298-01",
     "User-Agent": "python-requests/2.31.0"
 },
 ```
 
-Let's re-run our previous experiment with `httpbin` and locate the output of our print statement.
+Let's re-run our previous experiment with the `echo` server and locate the output of our print statement.
 You should now see that the outgoing request contains a header called `traceparent`.
 If you have prior experience with distributed tracing, you might already know that different tracing systems use different formats (such as [b3 propagation](https://github.com/openzipkin/b3-propagation) used by Zipkin).
 

@@ -79,7 +79,7 @@ def do_stuff():
     time.sleep(0.1)
     headers = {}
     inject(headers)
-    url = "http://httpbin:80/anything"
+    url = "http://echo:6000/"
     response = requests.get(url)
     print(response.json())
     logging.info(str(response.json()))
