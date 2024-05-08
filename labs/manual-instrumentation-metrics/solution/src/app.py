@@ -46,7 +46,7 @@ def get_user():
 
 def do_stuff():
     time.sleep(0.1)
-    url = "http://httpbin:80/anything"
+    url = "http://echo:6000/"
     _response = requests.get(url)
 
 
