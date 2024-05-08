@@ -5,7 +5,7 @@ weight: 10
 ---
 
 ## How to perform the exercise
-* You need to either start the [repository](https://github.com/JenSeReal/otel-getting-started/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
+* You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
 * Directory: `labs/otel-in-action`
 * How to run the application either:
   * Run the task for the application: `Run otel-in-action docker` (runs docker compose)

@@ -17,7 +17,7 @@ The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/d
 
 ### Running the lab remotely
 
-To run the lab in a cloud-based development environment, you have two options: [GitHub Codespaces](https://codespaces.new/JenSeReal/otel-getting-started) or [Gitpod](https://gitpod.io/#https://github.com/JenSeReal/otel-getting-started).
+To run the lab in a cloud-based development environment, you have two options: [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) or [Gitpod](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training).
 To utilize either option, you'll need a personal GitHub account.
 In both cases, a VSCode Instance in your browser will be opened automatically and you are immediately ready to go.
 
