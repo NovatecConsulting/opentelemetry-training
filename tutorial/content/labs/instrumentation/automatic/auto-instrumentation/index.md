@@ -67,7 +67,7 @@ Therefore, not all languages come with support for auto-instrumentation.
 #### exercise
 
 ### How to perform the exercise
-* You need to either start the [repository](https://github.com/JenSeReal/otel-getting-started/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
+* You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
 * Initial directory: `labs/automatic-instrumentation/auto-instrumentation/initial`
 * Solution directory: `labs/automatic-instrumentation/auto-instrumentation/solution`
 * Source code: `labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot`

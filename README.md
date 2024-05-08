@@ -1,16 +1,16 @@
 # Getting Started with OpenTelemetry
 This repository offers a getting started guide for OpenTelemetry, the framework for vendor-neutral telemetry data collection.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/JenSeReal/otel-getting-started) [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/JenSeReal/otel-getting-started)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/NovatecConsulting/opentelemetry-training) [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
 
 ## How to use this repo
 This repository consists of two main parts - the tutorial and the hands-on labs. In the tutorial everything you need to know on how to use OpenTelemetry for the labs will get explained. The labs give a hands-on experience on how to use OpenTelemetry in your applications.
 
 The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers). In order to use this repo you either need to
-* Open this repository in [GitHub Codespaces](https://codespaces.new/JenSeReal/otel-getting-started) or in [Gitpod](https://gitpod.io/#https://github.com/JenSeReal/otel-getting-started)
+* Open this repository in [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) or in [Gitpod](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
 * Or install [Docker](https://docs.docker.com/engine/install/), [VS Code](https://code.visualstudio.com/download) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
-With [GitHub Codespaces](https://codespaces.new/JenSeReal/otel-getting-started) a VS Instance in your browser will be opened automatically
+With [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) a VS Instance in your browser will be opened automatically
 
 The Dev Container spec will automatically open the labs part with a fully fledged and configured IDE and expose the tutorial on a port to your local system.
 

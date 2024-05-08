@@ -1,6 +1,6 @@
 services:
   application:
-    image: ghcr.io/jensereal/otel-getting-started-application:latest
+    image: ghcr.io/NovatecConsulting/opentelemetry-training-application:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,7 +15,7 @@ services:
     image: kennethreitz/httpbin
 
   tutorial:
-    image:  ghcr.io/jensereal/otel-getting-started-tutorial:latest
+    image:  ghcr.io/NovatecConsulting/opentelemetry-training-tutorial:latest
     build:
       context: tutorial/
       dockerfile: Dockerfile

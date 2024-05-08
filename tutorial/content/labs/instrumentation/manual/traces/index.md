@@ -6,7 +6,7 @@ weight: 2
 ---
 
 ### How to perform the exercise
-* You need to either start the [repository](https://github.com/JenSeReal/otel-getting-started/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
+* You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
 * Initial directory: `labs/manual-instrumentation-traces/initial`
 * Solution directory: `labs/manual-instrumentation-traces/solution`
 * Source code: `labs/manual-instrumentation-traces/initial/src`
