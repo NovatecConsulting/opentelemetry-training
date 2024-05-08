@@ -5,23 +5,11 @@ draft: false
 weight: 2
 ---
 
-### How to perform the exercise
-This lab demonstrates how to manually add tracing instrumentation to a Python application built using the [Flask](https://flask.palletsprojects.com) web framework. The following lab you'll learn how to:
-- use the OpenTelemetry API and configure the SDK to generate spans
-- enrich spans with additional metadata for deeper insights
-- propagte trace context to ensure that spans can be connected into a trace
-
-To work on this lab, open two separate terminals:
-1. to start/stop the application's webserver
-   - navigate to the source directory via  `cd labs/manual-instrumentation-traces/initials/src`
-   - to start the webserver run: `python app.py`
-   - to terminate it hit: `CTRL + C`
-2. to send request to the HTTP endpoints of the application
-   -  for example: `curl -XGET localhost:5000; echo`
+### Introduction
 
 
+#### Overview
 {{< figure src="images/create_tracer_configure_pipeline.drawio.png" width=800 caption="Overview of OpenTelemetry's tracing signal" >}}
-
 Let's start with a quick recap of the components.
 First, there is the tracing API.
 It provides the interfaces that we use to add tracing instrumentation to our application.
@@ -29,11 +17,44 @@ Second, there is OpenTelemetry's SDK.
 It includes a `TracingProvider`, which contains the logic that implements the tracing API.
 We'll use it to create a `Tracer` and configure a tracing pipeline (within the SDK).
 The application uses the tracer to generate spans.
-The tracing pipeline consists of one (or more) [`SpanProcessor`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor) and  [SpanExporters](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-exporter), which define how spans are processed and forwarded.
-In a production scenerio, we usually export spans to a tracing backend in order to reconstruct and analyse traces via solutions such as [Jaeger](https://github.com/jaegertracing/jaeger), [Tempo](https://github.com/grafana/tempo), [Zipkin](https://github.com/openzipkin/zipkin), and more.
+The tracing pipeline consists of one (or more) [`SpanProcessor`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor) and  [`SpanExporters`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-exporter), which define how spans are processed and forwarded.
+
+#### Learning Objectives
+By the end of this lab, you will be able to:
+- use the OpenTelemetry API and configure the SDK to generate spans
+- understand the basic structure of a span
+- enrich spans with additional metadata
+- ensure trace context propagation so spans can be connected into a trace
+
+#### How to perform the exercises
+This lab excercise demonstrates how to add tracing instrumentation to a Python application.
+The purpose of the exercises is to learn about the anatomy of spans and OpenTelemetry's tracing signal.
+It does not provide a realistic deployment scenario.
+In production, we export spans to a tracing backend and analyze traces via solutions such as [Jaeger](https://github.com/jaegertracing/jaeger), [Tempo](https://github.com/grafana/tempo), [Zipkin](https://github.com/openzipkin/zipkin), and more.
+In this lab, we output spans to the local console to keep things simple.
+The environment consists of two components:
+1. a Python service
+    - uses [Flask](https://flask.palletsprojects.com) web framework
+    - listens on port 5000 and serves serveral HTTP endpoints
+    - simulates an application we want to instrument
+2. echo server
+    - listens on port 6000, receives requests and sends them back to the client
+    - called by the Python application to simulate communication with a remote service
+    - allows us to inspect outbound requests
+
+To work on this lab, **open two terminals**.
+1. to start the application and view it's output
+   - navigate to `cd labs/manual-instrumentation-traces/initial/src`
+   - to start the webserver run `python app.py`, to terminate it hit: `CTRL + C`
+2. to send request to the HTTP endpoints of the service
+   -  for example: `curl -XGET localhost:5000; echo`
+
+To keep things concise, code snippets only contain what's relevant to that step.
+If you get stuck, you can find the solution in the `labs/manual-instrumentation-traces/solution/src`
+
+---
 
 ### Configure the tracing pipeline and obtain a tracer
-
 Inside the `src` directory, create a new file `trace_utils.py`.
 We'll use it to separate tracing-related configuration from the main application.
 At the top of the file, specify the imports and create a new function `create_tracing_pipeline` as shown below:
@@ -48,8 +69,7 @@ def create_tracing_pipeline() -> BatchSpanProcessor:
     return span_processor
 ```
 
-This lab tries to teach the anatomy of a span over providing a realistic deployment scenario.
-For debugging purposes, we'll instantiate a `ConsoleSpanExporter` to write span to the local console.
+For debugging purposes, we'll instantiate a `ConsoleSpanExporter` to output spans to the local console.
 Next, we have to create a `SpanProcessor` to push generated spans to the SpanExporter.
 Here, we can choose between two categories:
 - synchronous (i.e. [SimpleSpanProcessor](https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.SimpleSpanProcessor))
@@ -60,8 +80,7 @@ Here, we can choose between two categories:
     - completed spans are maintained in a buffer, a separate thread flushes batches of spans at regular intervals
     - has performance advantages, but spans might be dropped (because the application crashes before spans are exported, spans exceed the buffer capacity)
 
-In this example, we'll use a `BatchSpanProcessor`.
-To connect both, we simply pass the exporter to the constructor.
+Create a `BatchSpanProcessor` and pass the exporter to the constructor to connect both.
 
 ```py { title="trace_utils.py" }
 # OTel API
@@ -84,7 +103,7 @@ def create_tracer(name: str, version: str) -> trace_api.Tracer:
 With a basic pipeline in place, let's focus on instrumentation.
 Import the tracing API and the TracerProvider as shown above.
 Create a new function `create_tracer` and instantiate a `TracerProvider` with the help of the SDK package.
-Next, call its `add_span_processor` method to connect it to the tracing pipeline.
+Next, call the `add_span_processor` method and connect it to the tracing pipeline.
 
 By default, calls to the OpenTelemetry API are translated into noops.
 To call the SDK instead, we must register our `TracerProvider` with the API via the `set_tracer_provider` function.
@@ -104,7 +123,7 @@ In `app.py`, import `create_tracer`, invoke it, and assign the return value to a
 
 ### Generate spans
 
-{{< figure src="images/tracer_generates_spans.drawio.png" width=650 caption="tracing signal" >}}
+{{< figure src="images/tracer_generates_spans.drawio.png" width=650 caption="Tracing signal" >}}
 
 ```py { title="app.py" }
 @app.route("/")
@@ -120,7 +139,7 @@ Some aim to be simple and non-intrusive, while others are explicit but offer gre
 For brevity, we'll stick to a decorator-based approach.
 Add the `start_as_current_span` decorator to the `index` function.
 Notice that this decorator is a convenience function that abstracts away the details of trace context management from us.
-It handles the creation of a new Span object, attaches it to the current context, and ends the span once the method returns.
+It handles the creation of a new span object, attaches it to the current context, and ends the span once the method returns.
 
 ```json
 {
@@ -145,9 +164,12 @@ It handles the creation of a new Span object, attaches it to the current context
     }
 }
 ```
-Save the file and run `python app.py` to start the web server on port 5000.
-Open a second terminal in the container.
-Curl the `/` endpoint via `curl -XGET localhost:5000; echo`.
+In your primary terminal, run `python app.py` to start the web server on port 5000.
+Switch to your second terminal and use the following command to send a request to the `/` endpoint:
+
+```bash
+curl -XGET localhost:5000; echo
+```
 This causes the tracer to generate a span object, for which the tracing pipeline writes a JSON representation to the terminal.
 Take a look at the terminal where you application is running.
 You should see an output similar to the one shown above.
@@ -160,12 +182,12 @@ A span in OpenTelemetry represents a single operation within a trace and carries
 So far, the contents of the span were automatically generated by the SDK.
 This information is enough to reason about the chain of events in a transaction and allows us to measure latency.
 However, it's important to understand that tracing is a much more potent tool.
-To extract meaningful insights into what is happening in a system, our traces need additional context.
+By enriching spans with additional context, traces can proivde meaningful insights about what is happening in a system.
 
 #### resource
 A [Resource](https://opentelemetry.io/docs/specs/otel/resource/sdk/) is a set of static attributes that help us identify the source (and location) that captured a piece of telemetry.
-Right now, the span's `resource` field only contains basic information about the SDK itself, as well as an unknown `service.name`.
-Let's fix that.
+Right now, the span's `resource` field only contains basic information about the SDK, as well as an unknown `service.name`.
+Let's look at how we can add additional me
 
 ```py { title="resource_utils.py" }
 from opentelemetry.sdk.resources import Resource
@@ -342,29 +364,33 @@ Let's see what happens when there is a network boundary in between.
 #### inject trace context into outgoing requests
 
 ```py { title="app.py" }
+import json # <-- to pretty print response
+
 @tracer.start_as_current_span("do_stuff")
 def do_stuff():
-    time.sleep(0.1)
-    url = "http://echo:6000/"
+    # ...
     response = requests.get(url)
-
+    
     # debug
-    print("response from echo:")
-    print(response.text)
+    print("Headers included in outbound request:")
+    print(json.dumps(response.json()["request"]["headers"], indent=2))
+    # ...
 ```
 
 For testing purposes, the lab environment includes a `echo` server that returns the HTTP requests back to the client.
 This is useful because it lets us examine what requests leaving our application look like.
 `do_stuff` uses the `requests` package to send a get request to `echo`.
-To examine what happens, let's add some `print` statements.
+To examine what happens, let's add some `print` statements to look at response.
 
-```json
-"headers": {
-    "Accept": "*/*",
-    "Accept-Encoding": "gzip, deflate",
-    "Connection": "keep-alive",
-    "User-Agent": "python-requests/2.31.0"
-},
+```bash
+Headers included in outbound request:
+{
+  "host": "echo:6000",
+  "user-agent": "python-requests/2.31.0",
+  "accept-encoding": "gzip, deflate",
+  "accept": "*/*",
+  "connection": "keep-alive"
+}
 ```
 
 After restarting the webserver and using curl to send a request to the `/` endpoint, you should see the output from our print statements.
@@ -380,10 +406,9 @@ from opentelemetry.propagate import inject
 def do_stuff():
     headers = {}
     inject(headers)
-
-    time.sleep(.1)
-    url = "http://echo:6000/"
+    # ...
     response = requests.get(url, headers=headers) # <- inject trace context into headers
+    # ...
 ```
 
 OpenTelemetry's data transmission system includes the concept of [propagators](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html).
@@ -391,20 +416,18 @@ Propagators serialize context, so it can traverse the network along with the req
 Let's import the [`inject`](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html#opentelemetry.propagate.inject) function from OpenTelemetry's `propagate` API.
 Create an empty dictionary and `inject` the headers from the current context into it.
 All we have to do now is to include this context in outgoing requests.
-The requests `get` method has a second argument that allows us to pass in information that will be send as request headers.
+The requests `get` method has a second argument that allows us to pass in information that will be sent as request headers.
 
-```json
-"headers": {
-    "Accept": "*/*",
-    "Accept-Encoding": "gzip, deflate",
-    "Connection": "keep-alive",
-    "Traceparent": "00-b9041f02352d1558fcdd9ea3804da1f0-aa8b34aa3f883298-01",
-    "User-Agent": "python-requests/2.31.0"
-},
+```bash
+Headers included in outbound request:
+{
+  "traceparent": "00-69956358ff13fc2254725b20ad216aa9-4e3d02041cf8e504-01",
+  # ...
+}
 ```
 
-Let's re-run our previous experiment with the `echo` server and locate the output of our print statement.
-You should now see that the outgoing request contains a header called `traceparent`.
+Re-run our previous experiment with the `echo` server and look at the output of the print statement.
+You should see that the outgoing request now contains a header called `traceparent`.
 If you have prior experience with distributed tracing, you might already know that different tracing systems use different formats (such as [b3 propagation](https://github.com/openzipkin/b3-propagation) used by Zipkin).
 
 {{< figure src="images/doordash_traceparent_header.png" width=650 caption="format used by the traceparent header [Gud21](https://doordash.engineering/2021/06/17/leveraging-opentelemetry-for-custom-context-propagation/)" >}}
@@ -425,12 +448,14 @@ curl -XGET "localhost:5000/users" --header "traceparent: 00-aaaaaaaaaaaaaaaaaaaa
 ```
 
 Let's switch hats.
-Image that our app is a service that we send a request to.
-In this scenario, the remote service must recognize that the incoming request is part of an ongoing trace.
-To simulate this, let's add the `start_as_current_span` decorator to the `/users` endpoint.
-We'll use curl shown above to construct a request with a fictional tracing header, which is then send to application.
-Let's examine the generated spans.
-The output reveals that the tracer created a span with a random `trace_id` and no `parent_id`.
+Image that our Python application is a remote service that we send a request to.
+In this scenario, the service must recognize that the incoming request is part of an ongoing trace.
+To simulate this, let's add the `start_as_current_span` decorator to the `/users` endpoint of the application.
+Use the `curl` command shown above to send a request with a fictional tracing header to the application.
+If you look at output, you will notice that the tracer generated a span with a random `trace_id` and no `parent_id`.
+But this is not the behaviour what we want!
+Recall that `start_as_current_span` instantiates spans based on the current context of the tracer.
+Apparently, the local context doesn't include information about the traceparent header in inbound requests.
 
 ```py { title="app.py" }
 from opentelemetry import context
@@ -443,16 +468,12 @@ def before_request_func():
     request.environ["previous_ctx_token"] = previous_ctx
 ```
 
-This is not what we want!
-Recall that `start_as_current_span` instantiates a span based on the current context of the tracer.
-We saw that outgoing request included tracing headers.
-Apparently, the local context lacks this information.
 Flask provides a special `before_request` decorator to execute a function before the normal request handler runs.
 Create a function `before_request_func`.
 We'll use it to create a custom context, which subsequently gets picked up by `start_as_current_span`.
 Import [`extract`](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html#opentelemetry.propagate.extract) function from `propagate`.
 Construct a new Context object by passing the request headers as an argument.
-Call [`attach`](https://opentelemetry-python.readthedocs.io/en/latest/api/context.html#opentelemetry.context.attach) to set a new active context.
+Call the [`attach`](https://opentelemetry-python.readthedocs.io/en/latest/api/context.html#opentelemetry.context.attach) function to set a new active context.
 The function returns a string token that references the context before we call attach.
 Store it on Flask's request context, so we can retrieve it later.
 
@@ -481,8 +502,8 @@ Retrieve the token from Flask's request context and pass it as an argument to [`
 ```
 
 The service should recognize the tracing header of the incoming request and create spans related to the transaction.
-Let's verify our work
-Restart the webserver and use the previous curl command to sends a request with a fictional trace context to `/users`.
+Let's verify our work.
+Restart the webserver and use the `curl` command to send a request with a fictional trace context to `/users`.
 Take a look at the span generated by the application.
 Finally!
 The context propagation is working as expected!
