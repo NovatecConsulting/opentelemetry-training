@@ -1,0 +1,13 @@
+theme = "hugo-theme-relearn-main"
+
+[params]
+themeVariant = "relearn-light"
+disableLandingPageButton = true
+alwaysopen = "true"
+showVisitedLinks = true
+disableInlineCopyToClipBoard = true
+
+
+# For search functionality
+[outputs]
+home = ["HTML", "RSS", "SEARCH", "SEARCHPAGE"]

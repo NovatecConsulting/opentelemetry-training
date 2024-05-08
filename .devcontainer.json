@@ -1,0 +1,75 @@
+{
+	"name": "otel-getting-started",
+	"workspaceFolder": "/workspace",
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+	"containerEnv": {
+		"SHELL": "/bin/bash"
+	},
+	"service": "application",
+	"shutdownAction": "stopCompose",
+	"forwardPorts": [
+		5000,
+		1313,
+		"application:5000",
+		"tutorial:80"
+	],
+	"portsAttributes": {
+		"5000": {
+			"label": "Manual instrumentation application"
+		},
+		"1313": {
+			"label": "Tutorial"
+		},
+		"application:5000": {
+			"label": "Manual instrumentation application"
+		},
+		"tutorial:80": {
+			"label": "Tutorial"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"[python]": {
+					"editor.formatOnSave": true
+				},
+				"[dockercompose][yaml]": {
+					"editor.defaultFormatter": "redhat.vscode-yaml",
+					"editor.formatOnPaste": true,
+					"editor.formatOnSave": true,
+					"editor.insertSpaces": true,
+					"editor.tabSize": 2
+				},
+				"[adoc][markdown]": {
+					"editor.defaultFormatter": "vscode.markdown-language-features",
+					"editor.formatOnPaste": true,
+					"editor.formatOnSave": true,
+					"editor.insertSpaces": true,
+					"editor.tabSize": 2
+				},
+				"[dockerfile]": {
+					"editor.quickSuggestions": {
+						"strings": true
+					},
+					"editor.defaultFormatter": "ms-azuretools.vscode-docker"
+				},
+				"python.analysis.typeCheckingMode": "strict",
+				"python.analysis.autoImportCompletions": true
+			},
+			"extensions": [
+				"ms-python.vscode-pylance",
+				"charliermarsh.ruff",
+				"ms-python.isort",
+				"ms-python.python",
+				"njpwerner.autodocstring",
+				"KevinRose.vsc-python-indent",
+				"ms-python.black-formatter",
+				"usernamehw.errorlens",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+}

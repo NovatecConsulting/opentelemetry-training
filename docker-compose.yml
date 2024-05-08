@@ -1,0 +1,27 @@
+services:
+  application:
+    image: ghcr.io/jensereal/otel-getting-started-application:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    tty: true
+    volumes:
+      - ./:/workspace
+    ports:
+      - 5000:5000
+
+  httpbin:
+    image: kennethreitz/httpbin
+
+  tutorial:
+    image:  ghcr.io/jensereal/otel-getting-started-tutorial:latest
+    build:
+      context: tutorial/
+      dockerfile: Dockerfile
+      target: rt-dev
+    tty: true
+    volumes:
+      - ./tutorial:/workspace
+    ports:
+      - 1313:80

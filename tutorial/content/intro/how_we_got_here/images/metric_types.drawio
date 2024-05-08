@@ -1,0 +1,57 @@
+<mxfile host="app.diagrams.net" modified="2024-02-15T10:12:45.284Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:122.0) Gecko/20100101 Firefox/122.0" etag="yJSPdHUOzPOVzVcvDIt_" version="23.1.2" type="device">
+  <diagram name="Page-1" id="NU3mjk5Rwtwez3uwKDT1">
+    <mxGraphModel dx="1124" dy="551" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-1" value="&lt;div&gt;Gauge&lt;/div&gt;" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#000000;shadow=0;dashed=0;shape=mxgraph.ios7.icons.gauge;" vertex="1" parent="1">
+          <mxGeometry x="420" y="360" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-2" value="&lt;div&gt;Counter&lt;/div&gt;" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Counter.svg;strokeColor=default;" vertex="1" parent="1">
+          <mxGeometry x="310" y="360" width="49.23" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-3" value="&lt;div&gt;Histogram&lt;/div&gt;" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/statistics-128.png;clipPath=inset(18.75% 17.19% 20.31% 17.19%);strokeColor=#0078D4;" vertex="1" parent="1">
+          <mxGeometry x="520" y="359.38" width="43.08" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-5" value="Summary" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/48-bubbles/48/12.File-128.png;clipPath=inset(0.78% 14.84% 1.56% 13.28%);" vertex="1" parent="1">
+          <mxGeometry x="620" y="361.5" width="28.34" height="38.5" as="geometry" />
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pIBIKIqTMaU0QX5qjvwC-6" target="pIBIKIqTMaU0QX5qjvwC-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="495" y="310" />
+              <mxPoint x="334" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pIBIKIqTMaU0QX5qjvwC-6" target="pIBIKIqTMaU0QX5qjvwC-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="495" y="310" />
+              <mxPoint x="440" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pIBIKIqTMaU0QX5qjvwC-6" target="pIBIKIqTMaU0QX5qjvwC-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="495" y="310" />
+              <mxPoint x="542" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pIBIKIqTMaU0QX5qjvwC-6" target="pIBIKIqTMaU0QX5qjvwC-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="495" y="310" />
+              <mxPoint x="634" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIBIKIqTMaU0QX5qjvwC-6" value="Types of metrics" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="200" width="350" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

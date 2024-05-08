@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-04-12T14:56:45.425Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0" version="24.2.3" etag="3CuWidYDESuTxrRTtG_e" type="google">
+  <diagram name="Page-1" id="9lPekiGwrbzbDxMADqTK">
+    <mxGraphModel dx="1344" dy="2308" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="&amp;nbsp;OpenTelemetry Specification (language-agnostic)" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;sketch=1;curveFitting=1;jiggle=2;verticalAlign=top;align=left;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="450" y="-370" width="1080" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="&amp;nbsp;data" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;verticalAlign=top;fontStyle=1;align=left;fontSize=15;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="-80" width="1040" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="&amp;nbsp;terminology" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;verticalAlign=top;fontStyle=1;align=left;fontSize=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="-320" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="&amp;nbsp;signal" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;verticalAlign=top;fontStyle=1;align=left;fontSize=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="-240" width="1040" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="tracing signal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;verticalAlign=top;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="600" y="-320" width="245" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="metric signal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;verticalAlign=top;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="865" y="-320" width="250" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="log signal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;verticalAlign=top;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="1135" y="-320" width="255" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="..." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;verticalAlign=top;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1410" y="-320" width="100" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="OTLP" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="637.5" y="-50" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="API Specification" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="640" y="-210" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="SDK Specification" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="640" y="-150" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="semantic conventions" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="640" y="5" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="OTLP" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="903.75" y="-50" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="API Specification" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="906.25" y="-210" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="SDK Specification" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="906.25" y="-150" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="semantic conventions" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="906.25" y="5" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="OTLP" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1176.25" y="-50" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="API Specification" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1178.75" y="-210" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="SDK Specification" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1178.75" y="-150" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="semantic conventions" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1178.75" y="5" width="170" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

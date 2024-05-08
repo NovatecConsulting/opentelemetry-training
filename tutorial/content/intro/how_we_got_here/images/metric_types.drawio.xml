@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-04-12T13:44:39.723Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:124.0) Gecko/20100101 Firefox/124.0" version="24.1.0" etag="ERGgdwfWwn9U2GWz_5rp" type="device">
+  <diagram name="Page-1" id="smW0PAjTnqLw3b3bpwx7">
+    <mxGraphModel dx="834" dy="750" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="&lt;div&gt;Gauge&lt;/div&gt;" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#000000;shadow=0;dashed=0;shape=mxgraph.ios7.icons.gauge;" vertex="1" parent="1">
+          <mxGeometry x="420" y="360" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="&lt;div&gt;Counter&lt;/div&gt;" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Counter.svg;strokeColor=default;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="310" y="360" width="49.23" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="&lt;div&gt;Histogram&lt;/div&gt;" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/statistics-128.png;clipPath=inset(18.75% 17.19% 20.31% 17.19%);strokeColor=#0078D4;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="359.38" width="43.08" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="Summary" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/48-bubbles/48/12.File-128.png;clipPath=inset(0.78% 14.84% 1.56% 13.28%);shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="620" y="361.5" width="28.34" height="38.5" as="geometry" />
+        </mxCell>
+        <mxCell id="6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;sketch=1;curveFitting=1;jiggle=2;elbow=vertical;exitX=0.5;exitY=1;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" source="10" target="3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;shadow=0;sketch=1;curveFitting=1;jiggle=2;curved=1;" edge="1" source="10" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;shadow=0;sketch=1;curveFitting=1;jiggle=2;elbow=vertical;exitX=0.5;exitY=1;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" source="10" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;shadow=0;sketch=1;curveFitting=1;jiggle=2;elbow=vertical;exitX=0.5;exitY=1;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" source="10" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="Types of metrics" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="310" y="230" width="350" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
