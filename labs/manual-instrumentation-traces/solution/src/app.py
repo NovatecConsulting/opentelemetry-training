@@ -46,7 +46,7 @@ def do_stuff():
     inject(headers)
 
     time.sleep(.1)
-    url = "http://httpbin:80/anything"
+    url = "http://echo:6000/"
     _response = requests.get(url, headers=headers)
 
 @app.route('/')
