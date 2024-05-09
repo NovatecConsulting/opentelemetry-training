@@ -23,6 +23,7 @@ def do_stuff():
     time.sleep(0.1)
     url = "http://echo:6000/"
     response = requests.get(url)
+    return response
 
 
 @app.route("/")

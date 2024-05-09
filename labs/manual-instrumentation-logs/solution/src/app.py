@@ -34,6 +34,7 @@ def do_stuff():
     url = "http://echo:6000/"
     response = requests.get(url)
     logging.info(response.json())
+    return response
 
 
 @app.route("/")

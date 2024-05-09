@@ -107,7 +107,8 @@ def get_user():
 def do_stuff():
     time.sleep(0.1)
     url = "http://echo:6000/"
-    _response = requests.get(url)
+    response = requests.get(url)
+    return response
 
 
 @app.route("/")

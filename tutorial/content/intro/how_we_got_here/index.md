@@ -20,7 +20,7 @@ Second, there are *software abstractions* that make up the structure of the dist
 This includes elements such as load balancers, services, pods, containers and more.
 Lastly, there are physical machines that provide computational *resources* (e.g. RAM, CPU, disk space, network) to carry out work.
 
-{{< figure src="images/workload_resource_analysis_gregg.png" width=400 caption="workload and resource analysis [[Gregg16]](https://www.brendangregg.com/Slides/ACMApplicative2016_SystemMethodology/#18)" >}}
+{{< figure src="images/workload_resource_analysis.drawio.png" width=400 caption="workload and resource analysis based on [[Gregg16]](https://www.brendangregg.com/Slides/ACMApplicative2016_SystemMethodology/#18)" >}}
 <!-- 
 developers need highly detailed telemetry that they can use to pinpoint specific problems in code. Operators need broad, aggregated information from across hundreds or thousands of servers and nodes so that they can spot trends and respond quickly to outliers. Security teams need to analyze many millions of events across endpoints to discover potential intrusions; 
 -->
@@ -88,9 +88,10 @@ Instead, we perform extensive filtering to locate log events of interest.
 To understand the larger context, we must identify other related events. 
 This often results in lots of manual labour (e.g. comparing timestamps) or requires extensive domain knowledge about the applications.
 Recognizing this problem, Google developed [Dapper](https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf), which popularized the concept of distributed tracing.
-On a fundamental level, tracing is logging on steroids.
-The underlying idea is to add transactional context to logs.
-By indexing this based on this information, it is possible to infer causality and reconstruct the journey of requests in the system.
+In essence, tracing is an specialized form of logging.
+First, we add transactional context to logs.
+Then, an engine extracts this contextual information, analyzes it to infer causality between events, and stores it in a indexed manner.
+Thereby, we are able to reconstruct the journey of requests in the system.
 
 #### three pillars of observability
 On the surface, logs, metrics, and traces share many similarities in their lifecycle and components.
