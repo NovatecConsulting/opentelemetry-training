@@ -83,6 +83,7 @@ def do_stuff():
     response = requests.get(url)
     print(response.json())
     logging.info(str(response.json()))
+    return response
 
 @tracer.start_as_current_span("index")
 @app.route("/")
