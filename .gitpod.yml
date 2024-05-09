@@ -1,6 +1,6 @@
 # Image of workspace. Learn more: https://www.gitpod.io/docs/configure/workspaces/workspace-image
 image: maeddes/gitpod:full
-# workspaceLocation: '/workspace/otel-getting-started'
+workspaceLocation: '/workspace/otel-getting-started'
 
 tasks:
   - name: Add Python Otel libs
