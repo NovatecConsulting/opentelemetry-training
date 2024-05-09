@@ -5,92 +5,52 @@ draft: false
 weight: 3
 ---
 
-### Metrics in OpenTelemetry
+### Introduction
 
-A `MetricReader` in OpenTelemetry is an interface that defines how to read metrics from the SDK. It is responsible for collecting metrics data from the SDK and exporting it to a backend system for storage and analysis. There are different types of `MetricReader` implementations, such as `PeriodicExportingMetricReader`, which collects metrics at regular intervals and exports them to a backend.
 
-The metric data model in OpenTelemetry defines the structure of the data that is collected and exported by the SDK. It includes information about the resource, instrumentation library, and the actual metrics data. Here's an example of what the metric data model might look like in JSON format:
+#### Overview
+{{< figure src="images/create_meter_configure_pipeline.drawio.png" width=850 caption="metric signal" >}}
 
-```json
-{
-    "resource_metrics": [
-        {
-            "resource": {
-                "attributes": {
-                    "telemetry.sdk.language": "python",
-                    "telemetry.sdk.name": "opentelemetry",
-                    "telemetry.sdk.version": "1.24.0",
-                    "host.name": "ebdcf73e98c0",
-                    "service.name": "app.py",
-                    "service.version": "0.1"
-                },
-                "schema_url": ""
-            },
-            "scope_metrics": [
-                {
-                    "scope": {
-                        "name": "app.py",
-                        "version": "0.1",
-                        "schema_url": ""
-                    },
-                    "metrics": [
-                        {
-                            "name": "process.memory.usage",
-                            "description": "total amount of memory used",
-                            "unit": "By",
-                            "data": {
-                                "data_points": [
-                                    {
-                                        "attributes": {},
-                                        "start_time_unix_nano": 1713351214657218027,
-                                        "time_unix_nano": 1713351214657419373,
-                                        "value": 673140736
-                                    }
-                                ],
-                                "aggregation_temporality": 2,
-                                "is_monotonic": false
-                            }
-                        }
-                    ],
-                    "schema_url": ""
-                }
-            ],
-            "schema_url": ""
-        }
-    ]
-}
+Before diving head first into the lab exercises, let's start with a brief overview of OpenTelemetry's metrics signal.
+As usual, OpenTelemetry separates the API and the SDK.
+The metrics API provides the interfaces that we use to instrument our application.
+OpenTelemetry's SDK ships with a official `MeterProvider` that implements the logic of the metrics signal.
+To generate metrics, we first obtain a `Meter` which is used to create different types of instruments that report measurements.
+After producing data, we must define a strategy for how metrics are sent downstream.
+A `MetricReader` collects the measurements of associated instruments.
+The paired `MetricExporter` is responsible for getting the data to the destination.
 
-```
+#### Learning Objectives
+By the end of this lab, you will be able to:
+- use the OpenTelemetry API and configure the SDK to generate metrics
+- understand the basic structure and dimensions of a metric
+- create and record meassurements with the help of different types of instruments
+- customize metrics are collected by the SDK
 
-### How to perform the exercise
-* You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
-* Initial directory: `labs/manual-instrumentation-metrics/initial`
-* Solution directory: `labs/manual-instrumentation-metrics/solution`
-* Source code: `labs/manual-instrumentation-metrics/initial/src`
-* How to run the application either:
-  * Run the task for the application: `Run manual-instrumentation-metrics initial application` (runs the Python application)
-  * Run the application with Terminal commands `python3 src/app.py` (runs the Python application)
+#### How to perform the exercises
+This lab excercise demonstrates how to collect metrics from a Python application.
+The purpose of the exercises is to learn about OpenTelemetry's metrics signal.
+It does not provide a realistic deployment scenario.
+In production, we typically collect, store and query metrics in a dedicated backend such as [Prometheus](https://github.com/prometheus/prometheus).
+Prometheus uses a [pull-based](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#pull-metric-exporter) approach.
+Metrics are exposed as an HTTP endpoint and Prometheus server discovers and scrapes these target at regular intervals.
+In this lab, we output metrics to the local console to keep things simple.
+The environment consists of a Python service that we want to instrument.
+It is built with the [Flask](https://flask.palletsprojects.com) web framework, listens on port 5000 and serves serveral HTTP endpoints.
+
+To work on this lab, **open two terminals**.
+1. to start the application and view it's output
+   - navigate to `cd labs/manual-instrumentation-metrics/initial/src`
+   - to start the webserver run `python app.py`, to terminate it hit: `CTRL + C`
+2. to send request to the HTTP endpoints of the service
+   -  for example: `curl -XGET localhost:5000; echo`
+
+To keep things concise, code snippets only contain what's relevant to that step.
+If you get stuck, you can find the solution in the `labs/manual-instrumentation-metrics/solution`
 
 ---
 
-### Let's start
-
-Regardless of your setup, open two separate terminals with a shell in the container.
-We'll use one to start the application's web server and the other to send requests to the service endpoints.
-This lab demonstrates how to add traces to a Python application. The service is built using the [Flask](https://flask.palletsprojects.com) web framework.
-We chose Python because its simple syntax keeps code snippets concise and readable.
-```sh
-opentelemetry-api==1.24.0
-opentelemetry-sdk==1.24.0
-opentelemetry-semantic-conventions==0.42b0
-```
-
-Run `pip freeze | grep opentelemetry`.
-The output reveals that OpenTelemetry's API and SDK packages have already been installed in your Python environment.
-
 ### configure metrics pipeline and obtain a meter
-{{< figure src="images/create_meter_configure_pipeline.drawio.png" width=700 caption="metric signal" >}}
-
 ```py { title="metric_utils.py" }
 # OTel SDK
 from opentelemetry.sdk.metrics.export import (
@@ -156,9 +116,6 @@ Finally, open `app.py` and import `create_meter`.
 Invoke the function and assign the return value to a global variable `meter`.
 
 ### create instruments to record measurements
-
-{{< figure src="images/meter.drawio_instruments.svg" width=700 caption="overview of metric signal" >}}
-
 As you have noticed, thus far, everything was fairly similar to the tracing lab.
 However, in contrast to tracers, we do not use meters directly to generate metrics.
 Instead, meters produce (and are associated with) a set of [`instruments`](https://opentelemetry-python.readthedocs.io/en/latest/api/metrics.html#opentelemetry.metrics.Instrument).
