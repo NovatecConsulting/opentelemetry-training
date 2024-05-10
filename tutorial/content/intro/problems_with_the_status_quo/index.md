@@ -65,7 +65,7 @@ While this approach provides greater flexibility, it also has its fair share of 
 For example, whenever there is a new version of software, users have to notice and update their adapters.
 Moreover, the indirection also increases the overhead, as we have to convert between different telemetry formats.
 
-#### combining telemetry generation with results in vendor lock-in
+#### combining telemetry generation with analysis leads to vendor lock-in
 <!--
 
 - vertical integration means that instrumentation, protocols, and interchange formats are tied to a specific solution.
