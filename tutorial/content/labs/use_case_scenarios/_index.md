@@ -5,11 +5,13 @@ weight: 10
 ---
 
 ## How to perform the exercise
-* You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
-* Directory: `labs/otel-in-action`
-* How to run the application either:
+* You need to either 
+  * start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod
+  * clone the repository with git and run it locally with dev containers or docker compose
+* Navigate to the directory: `labs/otel-in-action`
+* To run the application either:
   * Run the task for the application: `Run otel-in-action docker` (runs docker compose)
-  * Run the application with Terminal commands `docker compose up` (runs docker compose)
+  * Run the application with Terminal commands `docker compose up`
 
 ## Intro
 
@@ -104,8 +106,7 @@ Via those ports it is possible to access the various exposed UIs.
 
 If you run your application with a local container daemon, simply access them via `localhost`. If you are using a cloud-based setup like Codespaces or Gitpod , please see the section "How to use this lab".
 
-Especially the section about ports and hostnames is relevant here.
-[Test](/labs/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab)
+Especially the [section](/labs/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab) about ports and hostnames is relevant here.
 
 Open the `PORTS` tab on the bottom of your IDE and locate the URLs for the web UIs of the Python and Java frontends
 
@@ -182,17 +183,17 @@ In the top left corner, there is a drop-down list called "Services". If you expa
 
 {{< figure src="images/jaeger_services_selection.png" width=300 caption="Jaeger services selection" >}}
 
-It will show the various services that are currently running in the sample application. Pick the "todobackend-springboot" one and it will navigate to a page where the recently collected traces are listed.
+It will show the various services that are currently running in the sample application. Select `todobackend-springboot` click on `Find Traces`.
+You should now see a page where recently collected traces are listed.
 
 {{< figure src="images/jaeger_traces_recent.png" width=700 caption="Jaeger recent traces" >}}
 
-The diagram on top displays a distribution of collected traces over the last few minutes, indicating the amount of invocations with the size of the dot as well as duration on the y-axis.
-
-As the timestamps and duration times vary, your screen will look certainly look a bit different from the results being displayed in the screenshots here.
+The diagram on top displays a distribution of collected traces over the last few minutes.
+The size of the dot indicates the amount of invocations, the x-axis reflects the timestamp and the y-axis states the measured duration. 
 
 You can alter the query parameters on the "Search" panel on the left, but since data collection has just started, only the short-term results are most likely meaningful.
 
-On the list of traces, identify one that is called `todoui-flask: /add`
+In the list of traces, identify one that is called `todoui-flask: /add`
 
 {{< figure src="images/jaeger_trace_selection.png" width=700 caption="Individual trace" >}}
 
@@ -334,13 +335,13 @@ Of course this also makes a lot of sense to compare multiple traces of exactly t
 
 # Metrics
 
-Next to tracing OpenTelemetry also provides the ability to export metrics information to various third-party applications. For this scenario we used the popular option Prometheus [Prometheus](https://prometheus.io).
+Next to tracing OpenTelemetry also provides the ability to export metrics information to various third-party applications. For this scenario we used the popular option [Prometheus](https://prometheus.io).
 
-The OpenTelemetry collector is configured to export the metrics to the Prometheus exporter. Prometheus is an open-source monitoring technology that stores metrics in a time-series database. Prometheus works in a way that it does not receive the metrics from a certain source, but scrapes the metrics from predefined sources that collect them.
+The OpenTelemetry Collector is configured to export the metrics to the Prometheus exporter. Prometheus is an open-source monitoring solution that stores metrics in a time-series database. It follows a pull-based approach, which means that Prometheus scrapes the metrics from its targets.
 
-In our case, Prometheus is configured to talk to the collector and scrape the metrics from there.
+In our case, Prometheus is configured to scrape metrics from an endpoint exposed by the OpenTelemetry Collector.
 
-A very common way to visualize Prometheus is via dashboards inside Grafana. However, Prometheus also has a built-in expression browser, which will do fine for this use case.
+A very common way to visualize Prometheus is via dashboards inside Grafana. However, Prometheus also has a built-in frontend, which will do fine for this use case.
 
 You can access the web UI at the following [link](http://localhost:9090).
 
