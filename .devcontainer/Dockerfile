@@ -24,7 +24,7 @@ RUN apk add --update --no-cache \
     py3-psutil \
     py3-requests
 
-RUN rm /usr/lib/python3.11/EXTERNALLY-MANAGED
+RUN rm /usr/lib/python*/EXTERNALLY-MANAGED
 
 RUN pip install \
     flask \
@@ -32,7 +32,7 @@ RUN pip install \
     opentelemetry-api \
     opentelemetry-sdk \
     opentelemetry-exporter-prometheus \
-    opentelemetry-exporter-otlp \
+    # opentelemetry-exporter-otlp \
     opentelemetry-instrumentation-flask
 
 WORKDIR /workspace

@@ -2,7 +2,7 @@ services:
   application:
     image: ghcr.io/novatecconsulting/opentelemetry-training-application:latest
     build:
-      context: .
+      context: ../.
       dockerfile: Dockerfile
     privileged: true
     tty: true

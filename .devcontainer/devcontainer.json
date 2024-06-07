@@ -1,32 +1,34 @@
 {
 	"name": "otel-getting-started",
-	"workspaceFolder": "/workspace",
-	"dockerComposeFile": [
-		"docker-compose.yml"
+	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": [
+		"--privileged"
 	],
+	"overrideCommand": false,
 	"containerEnv": {
 		"SHELL": "/bin/bash"
 	},
-	"service": "application",
-	"shutdownAction": "stopCompose",
 	"forwardPorts": [
 		5000,
-		1313,
-		"application:5000",
-		"tutorial:80"
+		8080,
+		8090,
+		16686
 	],
 	"portsAttributes": {
 		"5000": {
 			"label": "Manual instrumentation application"
 		},
-		"1313": {
-			"label": "Tutorial"
+		"8080": {
+			"label": "Spring Boot application"
 		},
-		"application:5000": {
-			"label": "Manual instrumentation application"
+		"8090": {
+			"label": "Spring Boot Thymeleaf"
 		},
-		"tutorial:80": {
-			"label": "Tutorial"
+		"16686": {
+			"label": "Jaeger UI"
 		}
 	},
 	"customizations": {
