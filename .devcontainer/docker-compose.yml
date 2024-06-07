@@ -21,7 +21,7 @@ services:
   tutorial:
     image: ghcr.io/novatecconsulting/opentelemetry-training-tutorial:latest
     build:
-      context: tutorial/
+      context: ../tutorial/
       dockerfile: Dockerfile
       target: rt-dev
     tty: true

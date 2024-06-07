@@ -15,10 +15,10 @@ jobs:
         include:
           - dockerfile: Dockerfile
             image: ghcr.io/${{ github.repository }}-application
-            context: .
-          - dockerfile: tutorial/Dockerfile
+            context: ../.
+          - dockerfile: ../tutorial/Dockerfile
             image: ghcr.io/${{ github.repository }}-tutorial
-            context: tutorial
+            context: ../tutorial
     permissions:
       contents: read
       packages: write
