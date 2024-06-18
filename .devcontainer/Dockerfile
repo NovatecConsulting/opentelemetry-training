@@ -16,7 +16,9 @@ RUN apt-get update \
     python3-pip \
     python3-setuptools \
     python3-wheel \
-    python3-psutil
+    python3-psutil && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN pip install \
     flask \
