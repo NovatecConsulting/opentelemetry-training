@@ -2,12 +2,12 @@ services:
   application:
     image: ghcr.io/novatecconsulting/opentelemetry-training-application:latest
     build:
-      context: ../.
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
     privileged: true
     tty: true
     volumes:
-      - ./:/workspace
+      - ../:/workspace
     ports:
       - 5000:5000
 

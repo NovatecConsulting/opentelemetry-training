@@ -1,20 +1,23 @@
 {
 	"name": "otel-getting-started",
 	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
-	"image": "ghcr.io/novatecconsulting/opentelemetry-training-application:latest",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "../."
+	},
 	"runArgs": [
 		"--privileged"
 	],
 	"overrideCommand": false,
-	"containerEnv": {
-		"SHELL": "/bin/bash"
-	},
 	"forwardPorts": [
 		5000,
 		8080,
 		8090,
 		16686
 	],
+	"containerEnv": {
+		"SHELL": "/bin/bash"
+	},
 	"portsAttributes": {
 		"5000": {
 			"label": "Manual instrumentation application"

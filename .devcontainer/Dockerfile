@@ -1,38 +1,31 @@
-FROM docker:26-dind as base
+FROM dcagatay/ubuntu-dind:22.04 as base
 
+ARG DEBIAN_FRONTEND=noninteractive
 ENV PIP_ROOT_USER_ACTION=ignore
 
-RUN apk update --no-cache
-RUN apk upgrade --no-cache
-
-RUN apk add --update --no-cache \
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
     sudo \
     bash \
     curl \
-    gcc \
-    g++ \
-    python3-dev \
-    musl-dev \
-    linux-headers \
-    openjdk21-jdk \
+    build-essential \
     gradle \
     maven \
     python3 \
-    py3-pip \
-    py3-setuptools \
-    py3-wheel \
-    py3-psutil \
-    py3-requests
-
-RUN rm /usr/lib/python*/EXTERNALLY-MANAGED
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    python3-psutil
 
 RUN pip install \
     flask \
     Faker \
+    requests \
     opentelemetry-api \
     opentelemetry-sdk \
     opentelemetry-exporter-prometheus \
-    # opentelemetry-exporter-otlp \
+    opentelemetry-exporter-otlp \
     opentelemetry-instrumentation-flask
 
 WORKDIR /workspace
