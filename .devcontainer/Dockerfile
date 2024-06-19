@@ -12,13 +12,12 @@ RUN apt-get update \
     gradle \
     maven \
     python3 \
+    python-is-python3 \
     python3-dev \
     python3-pip \
     python3-setuptools \
     python3-wheel \
-    python3-psutil && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    python3-psutil
 
 RUN pip install \
     flask \

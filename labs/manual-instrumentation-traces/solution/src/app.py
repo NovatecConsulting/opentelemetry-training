@@ -1,7 +1,7 @@
 # pyright: reportMissingTypeStubs=false, reportUnknownParameterType=false, reportMissingParameterType=false, reportUnknownArgumentType=false
 
-import time
 import json
+import time
 
 import requests
 from client import ChaosClient, FakerClient
@@ -47,15 +47,15 @@ def do_stuff():
     inject(headers)
 
     time.sleep(.1)
-    url = "http://echo:6000/"
+    url = "http://localhost:6000/"
     response = requests.get(url, headers=headers)
-    
+
     # debug
     print("Headers included in outbound request:")
     print(json.dumps(response.json()["request"]["headers"], indent=2))
-    
+
     return response
-    
+
 @app.route('/')
 @tracer.start_as_current_span("index")
 def index():

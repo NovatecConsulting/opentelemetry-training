@@ -21,7 +21,7 @@ def get_user():
 
 def do_stuff():
     time.sleep(0.1)
-    url = "http://echo:6000/"
+    url = "http://localhost:6000/"
     response = requests.get(url)
     return response
 
