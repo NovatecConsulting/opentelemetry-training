@@ -3,6 +3,10 @@ This repository offers a getting started guide for OpenTelemetry, the framework 
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/NovatecConsulting/opentelemetry-training) [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
 
+## Link to exercises
+
+You can find the exercises/tutorial here: https://github.com/NovatecConsulting/opentelemetry-training
+
 ## How to use this repo
 This repository consists of two main parts - the tutorial and the hands-on labs. In the tutorial everything you need to know on how to use OpenTelemetry for the labs will get explained. The labs give a hands-on experience on how to use OpenTelemetry in your applications.
 
