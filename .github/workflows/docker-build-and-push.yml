@@ -15,7 +15,7 @@ jobs:
         include:
           - dockerfile: .devcontainer/Dockerfile
             image: ghcr.io/${{ github.repository }}-application
-            context: .
+            context: .devcontainer/
           - dockerfile: tutorial/Dockerfile
             image: ghcr.io/${{ github.repository }}-tutorial
             context: tutorial
