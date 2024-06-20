@@ -11,7 +11,7 @@ weight: 1
 * Source code: `labs/collector/initial/src`
 * How to run the application either:
   * Run the task for the application: `Run collector initial application` (runs the Python application) and `Run collector initial` (runs the OpenTelemetry Collector in a Docker Container)
-  * Run the application with Terminal commands `python3 src/app.py` (runs the Python application) and `docker compose up -d` (runs the OpenTelemetry Collector and the echo server in a Docker Containers)
+  * Run the application with Terminal commands `python3 src/app.py` (runs the Python application) and `docker compose up -d` (runs the OpenTelemetry Collector and the echo server in Docker Containers)
 
 ### Why do we need Collectors?
 
