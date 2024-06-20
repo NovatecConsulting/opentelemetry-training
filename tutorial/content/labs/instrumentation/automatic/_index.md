@@ -2,7 +2,7 @@
 title = "auto-instrumentation"
 menuTitle = "automatic"
 draft = false
-weight = 2
+weight = 1
 +++
 
 As illustrated by the previous labs, manual instrumentation of an application using the API and SDK can be a labor-intensive process.

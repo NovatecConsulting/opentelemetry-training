@@ -41,6 +41,7 @@ The environment consists of two components:
     - listens on port 6000, receives requests and sends them back to the client
     - called by the Python application to simulate communication with a remote service
     - allows us to inspect outbound requests
+    - Start with `docker compose up -d`
 
 To work on this lab, **open two terminals**.
 1. to start the application and view it's output
@@ -370,7 +371,7 @@ import json # <-- to pretty print response
 def do_stuff():
     # ...
     response = requests.get(url)
-    
+
     # debug
     print("Headers included in outbound request:")
     print(json.dumps(response.json()["request"]["headers"], indent=2))
