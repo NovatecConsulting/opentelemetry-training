@@ -99,10 +99,6 @@ services:
  #      - "--query.base-path=/jaeger/ui"
     ports:
       - "16686:16686"
-    deploy:
-      resources:
-        limits:
-          memory: 400M
     restart: unless-stopped
     environment:
       - METRICS_STORAGE_TYPE=prometheus
@@ -121,50 +117,50 @@ services:
     depends_on:
       - jaeger
 
-  # Prometheus
-  prometheus:
-    image: ${PROMETHEUS_IMAGE}
-    networks:
-      - todonet
-    command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/
-      - --enable-feature=exemplar-storage
-      - --enable-feature=otlp-write-receiver
-    volumes:
-      - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    ports:
-      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+#   # Prometheus
+#   prometheus:
+#     image: ${PROMETHEUS_IMAGE}
+#     networks:
+#       - todonet
+#     command:
+#       - --web.console.templates=/etc/prometheus/consoles
+#       - --web.console.libraries=/etc/prometheus/console_libraries
+#       - --storage.tsdb.retention.time=1h
+#       - --config.file=/etc/prometheus/prometheus-config.yaml
+#       - --storage.tsdb.path=/prometheus
+#       - --web.enable-lifecycle
+#       - --web.route-prefix=/
+#       - --enable-feature=exemplar-storage
+#       - --enable-feature=otlp-write-receiver
+#     volumes:
+#       - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+#     deploy:
+#       resources:
+#         limits:
+#           memory: 300M
+#     restart: unless-stopped
+#     ports:
+#       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
 
 
 networks:
   todonet:
 
-  # opensearch:
-  #   image: ${OPENSEARCH_IMAGE}
-  #   container_name: opensearch
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 1G
-  #   restart: unless-stopped
-  #   environment:
-  #     - cluster.name=demo-cluster
-  #     - node.name=demo-node
-  #     - bootstrap.memory_lock=true
-  #     - discovery.type=single-node
-  #     - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
-  #     - DISABLE_INSTALL_DEMO_CONFIG=true
-  #     - DISABLE_SECURITY_PLUGIN=true
-  #   ports:
-  #     - "9200:9200"
+#   # opensearch:
+#   #   image: ${OPENSEARCH_IMAGE}
+#   #   container_name: opensearch
+#   #   deploy:
+#   #     resources:
+#   #       limits:
+#   #         memory: 1G
+#   #   restart: unless-stopped
+#   #   environment:
+#   #     - cluster.name=demo-cluster
+#   #     - node.name=demo-node
+#   #     - bootstrap.memory_lock=true
+#   #     - discovery.type=single-node
+#   #     - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
+#   #     - DISABLE_INSTALL_DEMO_CONFIG=true
+#   #     - DISABLE_SECURITY_PLUGIN=true
+#   #   ports:
+#   #     - "9200:9200"

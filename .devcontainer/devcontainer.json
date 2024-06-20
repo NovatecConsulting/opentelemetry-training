@@ -5,7 +5,6 @@
 	"runArgs": [
 		"--privileged"
 	],
-	"overrideCommand": false,
 	"forwardPorts": [
 		5000,
 		8080,
