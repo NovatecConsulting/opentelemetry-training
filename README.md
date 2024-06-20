@@ -5,7 +5,7 @@ This repository offers a getting started guide for OpenTelemetry, the framework 
 
 ## Link to exercises
 
-You can find the exercises/tutorial here: https://github.com/NovatecConsulting/opentelemetry-training
+You can find the exercises/tutorial here: https://novatecconsulting.github.io/opentelemetry-training/
 
 ## How to use this repo
 This repository consists of two main parts - the tutorial and the hands-on labs. In the tutorial everything you need to know on how to use OpenTelemetry for the labs will get explained. The labs give a hands-on experience on how to use OpenTelemetry in your applications.
