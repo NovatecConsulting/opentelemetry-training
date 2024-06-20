@@ -1,15 +1,17 @@
 {
 	"name": "otel-getting-started",
 	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
-	"image": "ghcr.io/novatecconsulting/opentelemetry-training-application:latest",
+	"image": "jensereal/opentelemetry-training-application:latest",
 	"overrideCommand": false,
 	"runArgs": [
 		"--privileged"
 	],
 	"forwardPorts": [
 		5000,
+		5001,
 		8080,
 		8090,
+		9090,
 		16686
 	],
 	"containerEnv": {
@@ -19,11 +21,17 @@
 		"5000": {
 			"label": "Manual instrumentation application"
 		},
+		"5001": {
+			"label": "Auto instrumentation application"
+		},
 		"8080": {
 			"label": "Spring Boot application"
 		},
 		"8090": {
 			"label": "Spring Boot Thymeleaf"
+		},
+		"9090": {
+			"label": "Prometheus UI"
 		},
 		"16686": {
 			"label": "Jaeger UI"
