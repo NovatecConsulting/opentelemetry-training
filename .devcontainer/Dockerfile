@@ -19,7 +19,7 @@ RUN set -eux; \
 COPY --from=docker:26-dind /usr/local/bin /usr/local/bin
 COPY --from=docker:26-dind /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
-COPY entrypoint.sh /usr/local/bin/
+COPY entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN update-alternatives --set iptables /usr/sbin/iptables-legacy
