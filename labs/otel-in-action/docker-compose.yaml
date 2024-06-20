@@ -117,30 +117,30 @@ services:
     depends_on:
       - jaeger
 
-#   # Prometheus
-#   prometheus:
-#     image: ${PROMETHEUS_IMAGE}
-#     networks:
-#       - todonet
-#     command:
-#       - --web.console.templates=/etc/prometheus/consoles
-#       - --web.console.libraries=/etc/prometheus/console_libraries
-#       - --storage.tsdb.retention.time=1h
-#       - --config.file=/etc/prometheus/prometheus-config.yaml
-#       - --storage.tsdb.path=/prometheus
-#       - --web.enable-lifecycle
-#       - --web.route-prefix=/
-#       - --enable-feature=exemplar-storage
-#       - --enable-feature=otlp-write-receiver
-#     volumes:
-#       - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
-#     deploy:
-#       resources:
-#         limits:
-#           memory: 300M
-#     restart: unless-stopped
-#     ports:
-#       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+  # Prometheus
+  prometheus:
+    image: ${PROMETHEUS_IMAGE}
+    networks:
+      - todonet
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+      - --enable-feature=exemplar-storage
+      - --enable-feature=otlp-write-receiver
+    volumes:
+      - ./prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
 
 
 networks:
