@@ -1,7 +1,7 @@
 ---
 title: "auto-instrumentation"
 draft: false
-weight: 3
+weight: 2
 ---
 
 Instrumentation libraries simplify the experience of adopting OpenTelemetry by injecting instrumentation into popular third-party libraries and frameworks.
@@ -110,7 +110,7 @@ This will take the control over your terminal. The output should look like:
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.2)
 
-2024-04-17T06:43:10.236+02:00  INFO 73702 --- [springboot-backend ] [           main] i.n.todobackend.TodobackendApplication   : Starting TodobackendApplication v0.0.1-SNAPSHOT using Java 21.0.1 with PID 
+2024-04-17T06:43:10.236+02:00  INFO 73702 --- [springboot-backend ] [           main] i.n.todobackend.TodobackendApplication   : Starting TodobackendApplication v0.0.1-SNAPSHOT using Java 21.0.1 with PID
 ```
 
 Stop it again using `Ctrl`+`C`
@@ -189,7 +189,7 @@ This one is coming from the JDBC library for OpenTelemetry where you can see the
 
 Congratulations. At this point you have successfully configured your Java app with OpenTelemetry!
 
-Please let the application run within this terminal window and open another terminal. 
+Please let the application run within this terminal window and open another terminal.
 In the new terminal execute a request against the application using:
 
 ```sh

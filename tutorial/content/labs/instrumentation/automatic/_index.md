@@ -5,7 +5,7 @@ draft = false
 weight = 1
 +++
 
-As illustrated by the previous labs, manual instrumentation of an application using the API and SDK can be a labor-intensive process.
+Manual instrumentation of an application using the API and SDK can be a labor-intensive process.
 The effort and time required to re-instrument a code base are often deterrents to getting started.
 While one factor is the financial cost, the prospect of extensive code modifications and having to learn another telemetry framework is often overwhelming to developers.
 Moreover, choosing what and knowing how to instrument is often anything but trivial and can take considerable experience.
