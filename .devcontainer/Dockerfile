@@ -1,44 +1,34 @@
 FROM debian:bookworm-slim as dind
 
 ARG DEBIAN_FRONTEND=noninteractive
+ENV PIP_ROOT_USER_ACTION=ignore
 
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
     sudo \
-    python3 \
     ca-certificates \
     iptables \
     net-tools \
     openssl \
     pigz \
     xz-utils \
-    ; \
-    rm -rf /var/lib/apt/lists/*
+    procps \
+    supervisor
 
 COPY --from=docker:26-dind /usr/local/bin /usr/local/bin
 COPY --from=docker:26-dind /usr/local/libexec/docker/cli-plugins /usr/local/libexec/docker/cli-plugins
 
-COPY entrypoint.sh start-docker.sh /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/start-docker.sh \
-	/usr/local/bin/entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN update-alternatives --set iptables /usr/sbin/iptables-legacy
 RUN update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
 VOLUME /var/lib/docker
 
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["bash"]
-
-FROM dind as base
-
-ARG DEBIAN_FRONTEND=noninteractive
-ENV PIP_ROOT_USER_ACTION=ignore
-
-RUN apt-get update \
-    && apt-get install --yes --no-install-recommends \
+RUN apt-get update; \
+    apt-get install --yes --no-install-recommends \
     sudo \
     bash \
     curl \
@@ -51,7 +41,9 @@ RUN apt-get update \
     python3-pip \
     python3-setuptools \
     python3-wheel \
-    python3-psutil
+    python3-psutil; \
+    apt clean; \
+    rm -rf /var/lib/apt/lists/*
 
 RUN rm -rf /usr/lib/python3*/EXTERNALLY-MANAGED
 
@@ -68,3 +60,5 @@ RUN pip install \
 WORKDIR /workspace
 
 EXPOSE 5000
+
+ENTRYPOINT [ "entrypoint.sh" ]
