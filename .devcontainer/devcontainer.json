@@ -1,6 +1,6 @@
 {
 	"name": "otel-getting-started",
-	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
+	"workspaceFolder": "/workspaces/opentelemetry-training",
 	"image": "jensereal/opentelemetry-training-application:latest",
 	"overrideCommand": false,
 	"runArgs": [
