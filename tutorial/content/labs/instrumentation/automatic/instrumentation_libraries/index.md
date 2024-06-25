@@ -18,7 +18,45 @@ The OpenTelemetry has a [registry](https://opentelemetry.io/ecosystem/registry/)
 
 While instrumentation libraries offer a valuable solution for enhancing observability in third-party libraries or frameworks that lack native OpenTelemetry support, they also present certain challenges. These include the necessity to manage additional dependencies, which adds complexity to the codebase and requires careful consideration of maintenance overhead. Additionally, as instrumentation libraries are still relatively new compared to native integrations, they may face limitations such as less community support, fewer resources, and a higher risk of encountering issues due to their nascent nature.
 
-### example
+
+
+### example - Java instrumentation annotations
+
+A simple case that shows the need for such an additional library is the Java `zero-code` instrumentation as shown in the previous exercise.
+
+OpenTelemetry's Java agent covered a generic set of set of [instrumentation libraries](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation)
+
+This makes it very helpful to get started with as no modification or rebuild of the application is necessary.
+
+However, sometimes we want to observe aspects of our application that don't naturally align with these standard instrumentation points.
+Developers often encapsulate related logic in dedicated functions to improve code maintainability and organization.
+The OpenTelemetry agent may lack awareness of these custom functions.
+It has no way of knowing whether they are important and what telemetry data to capture from them.
+
+To apply a more granular configuration to the already existing agent you can use the `opentelemetry-instrumentation-annotations` library. 
+
+Unlike the agent this library needs to be added to the application source code. To be precise to the build dependencies of the application in the first place. As the sample application uses Maven as build tool, we need to locate the `pom.xml`in the root folder of the application.
+
+If you edit it, you will see there is a section containing dependencies:
+
+```xml
+<dependencies>
+...
+</dependencies>
+```
+
+add the following dependency to it and make sure to align with the already existing ones. (the order of dependencies in the file does not matter)
+
+```xml
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-instrumentation-annotations</artifactId>
+			<version>1.29.0</version>
+		</dependency>
+```
+
+
+
 We want to follow the previous software stack and use Python flask to show how instrumentation libraries are used. To find an appropriate library we search the registry and find the `opentelemetry-flask-instrumentation` library. We can install the library using `pip` with the command `pip install opentelemetry-flask-instrumentation`. This package provides the necessary hooks to automatically instrument your Flask application with OpenTelemetry. Next, you need to configure OpenTelemetry to use the appropriate exporters and processors. This usually involves setting up an exporter to send telemetry data to a backend service like Jaeger, Zipkin, or another OpenTelemetry-compatible service, or in this case the OpenTelemetry collector. With the library installed and OpenTelemetry configured, you can now instrument your Flask application. This involves initializing the OpenTelemetry Flask instrumentation at the start of your application and ensuring that it wraps your Flask app instance. Finally, run your Flask application as you normally would. The instrumentation will automatically capture telemetry data from incoming requests, outgoing responses, and any exceptions that occur.
 
 When using the `opentelemetry-flask-instrumentation` library with a Python Flask application, a span is automatically created for each incoming HTTP request. The span represents the execution of a single operation within the context of a trace, such as handling an HTTP request. To instrument Flask we need to wrap the flask application inside the `FlaskInstrumentor` which is provided by the pip package.

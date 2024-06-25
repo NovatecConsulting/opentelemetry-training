@@ -1,5 +1,5 @@
 ---
-title: "auto-instrumentation"
+title: "Zero-code instrumentation"
 draft: false
 weight: 2
 ---
@@ -10,13 +10,19 @@ Since instrumentation libraries are developed and maintained by members of the O
 - don't have to wait for native instrumentation
 - don't put burden on the back of the library or framework maintainer
 
-A common way to take advantage of instrumentation libraries is in combination with OpenTelemetry's auto-instrumentation.
+A common way to take advantage of instrumentation libraries is in combination with OpenTelemetry's automatic instrumentation or also often referred to as 'zero-code' instrumentation.
+
 In contrast to the API and SDK, auto-instrumentation allows us to dynamically inject observability into the application without having to make changes to the source code.
 
 Generally speaking, auto-instrumentation is implemented by some kind of agent or runner.
 In this lab, we'll use a Java application to understand what this could look like.
 
-### byte code manipulation via Java agent
+### Background informatio - byte code manipulation via Java agent
+
+Before going into the steps to apply the zero-code version of the OpenTelemetry Java agent to our sample application, we have a short look on how this concept works under the hood in general.
+
+The following snippet of Java code shows how an instrumentation can be passed to a given Java application.
+
 ```java
 public class MyAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
@@ -60,11 +66,10 @@ This jar includes instrumentation libraries for various frameworks and third-par
 These components leverage the mentioned mechanisms to adapt the byte code of Java classes at runtime.
 Additionally, the OpenTelemetryInstaller configures emitters based on configuration options provided at invocation time (e.g., via the -D flag or Java properties file) to produce and deliver telemetry without any additional work on part of the user.
 
-This section should highlight that auto-instrumentation is built on mechanisms specific to the given programming language.
-Other languages may lack similar native capabilities.
+This section should highlight that auto-instrumentation is built on mechanisms specific to the given programming language. Other languages may lack similar native capabilities.
 Therefore, not all languages come with support for auto-instrumentation.
 
-#### exercise
+## exercise
 
 ### How to perform the exercise
 * You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
@@ -86,13 +91,13 @@ cd labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-sprin
 
 This is the same Java project as used for the backend component in the `OpenTelemetry in Action`chapter.
 
-Build the project using maven:
+Build the Java project using maven:
 
 ```sh
 mvn clean package
 ```
 
-This will take a few seconds to complete. It will create an executable `jar` file which you can run.
+This will take a few seconds to complete. It will create an executable `jar` file in the `target` subdirectoy which you can run.
 Run it with the following command:
 
 ```sh
@@ -155,6 +160,8 @@ The default configuration will make the agent look for a collector, which is cur
 
 So we need to overwrite the default settings. The most important one is to tell the agent to not look for a collector,
 but export all the collected information to the console.
+
+TODO: IMAGE OTEL to Console
 
 To achieve this, set the following environment variables:
 

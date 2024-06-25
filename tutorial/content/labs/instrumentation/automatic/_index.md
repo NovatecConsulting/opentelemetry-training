@@ -1,5 +1,5 @@
 +++
-title = "auto-instrumentation"
+title = "automatic instrumentation"
 menuTitle = "automatic"
 draft = false
 weight = 1
