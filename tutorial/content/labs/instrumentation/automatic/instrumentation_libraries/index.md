@@ -130,7 +130,7 @@ You will see the two following methods:
 	}
 ```
 
-The `addTodo` method is the entry point when the REST call arrives at the application. We can see that in the Jaeger trace:
+The `addTodo` method is the entry point when the REST call arrives at the application. We can see that in the Jaeger trace. This is visible in the entry span called `POST/todos/{todo}`:
 
 screenshot
 
@@ -154,7 +154,7 @@ As a next step we need to annotate the method. Locate the `someInternalMethod` a
 
 ```java
 	@WithSpan
-	String someInternalMethod(@SpanAttribute String todo){
+	String someInternalMethod(String todo){
 ```
 
 Save the file and rebuild the jar file on command line.
@@ -184,7 +184,87 @@ curl -X DELETE localhost:8080/todos/TEST
 
 Access the Jaeger UI again and find the latest traces.
 
+Observe the `POST` call once more.
 
+You will now see that between the entry span `POST/todos/{todo}` and the third span `todoRepository.save` there is one called `todoRepository.someInternalMethod`. This is due to the annotation we did.
+
+If you expand the line of trace in the Jaeger UI you will get `Tags` and `Process` details. Expand all of it.
+
+Among other details you will be able to see the details of the method and name of the used library.
+
+```
+code.function - someInternalMethod
+code.namespace - io.novatec.todobackend.TodobackendApplication
+
+otel.library.name - io.opentelemetry.opentelemetry-instrumentation-annotations-1.16
+otel.library.version - 2.5.0-alpha
+```
+
+Let's take this one step further. The library does not only allow to annotate methods and hence observe their specific span details, it also let's you observe the contents of variable parameters.
+
+In order to achieve this it is required to modify the `TodobackendApplication.java` again.
+
+Navigate to the method signature of the `someInternalMethod` method. This time you need to add the `@SpanAttribute` annotation right in front of the `String todo` parameter like shown here:
+
+```java
+	@WithSpan
+	String someInternalMethod(@SpanAttribute String todo){
+```
+
+That's it. Now save, build and run it again.
+
+```sh
+mvn package
+```
+
+```sh
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+```
+
+After it has come up, generate some more load:
+
+```sh
+curl -X POST localhost:8080/todos/TEST
+curl localhost:8080/todos/
+curl -X DELETE localhost:8080/todos/TEST
+```
+
+Access the Jaeger UI again and find the latest traces.
+Expand it like you did before and focus on the Tags part in the trace.
+
+As the latest entry you should now see
+
+```
+todo - TEST
+```
+
+Screenshot
+
+This means you can now also see the specific parameter which has been passed and relate it to a slow a performing call in case it happens.
+
+An alternative approach to use the annotations library is by configuring it through environment variables.
+
+There are two environment variables you can use to configure the annotations library.
+
+`OTEL_INSTRUMENTATION_METHODS_INCLUDE` and `OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS`
+
+As the name already implies they configure methods to be included as spans or excluded from instrumentation (e.g. if you want to surpress an existing `@WithSpan` implementation after code is already compiled)
+
+In our example the corresponding environment setting to include the `someInternalMethod` to the spans without using the `@WithSpan` annotation in code would be:
+
+```
+export OTEL_INSTRUMENTATION_METHODS_INCLUDE=io.novatec.todobackend.TodobackendApplication[someInternalMethod]
+```
+
+In case the `@WithSpan` annotation was already present in the compiled jar and you want to exclude it without rebuild you have to set:
+
+```
+export OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS=io.novatec.todobackend.TodobackendApplication[someInternalMethod]
+```
+
+Both environment variables only correspond with the `@WithSpan` annotation. There is no possibility (yet) to configure span attributes through environment setting. This only works on code level.
+
+The part of the Java library exercise completes with this step.
 
 ---
 
