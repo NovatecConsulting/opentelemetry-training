@@ -51,11 +51,142 @@ add the following dependency to it and make sure to align with the already exist
 		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>
 			<artifactId>opentelemetry-instrumentation-annotations</artifactId>
-			<version>1.29.0</version>
+			<version>2.4.0</version>
 		</dependency>
 ```
 
+and save the file.
 
+Now re-run the build command 
+
+```sh
+mvn clean package
+```
+
+This change will not have any effect yet on how the application will be monitored, but it will allow us to apply more granular configuration.
+
+Let's repeat some steps from the `zero-code` exercise. In case the docker container is still running, let it run. Otherise start using the command:
+
+```sh
+docker run -d --name jaeger \
+  -e COLLECTOR_OTLP_ENABLED=true \
+  -p 16686:16686 \
+  -p 14268:14268 \
+  -p 4317:4317 \
+  -p 4318:4318 \
+  jaegertracing/all-in-one
+```
+
+Download the agent jar file, if it is not there yet.
+
+```sh
+wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+```
+
+And make sure the environment variables are set appropriately:
+
+```sh
+export OTEL_TRACES_EXPORTER=otlp
+export OTEL_METRICS_EXPORTER=none
+export OTEL_LOGS_EXPORTER=none
+```
+
+Now run the newly build jar including the agent:
+
+```sh
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+```
+
+```sh
+curl -X POST localhost:8080/todos/NEW
+```
+
+Open the Jaeger Web UI and search for the last trace we just generated. It will look like this:
+
+TODO Screenshot
+
+Now open the Java source file under `todobackend-springboot/src/main/java/io/novatec/todobackend/TodobackendApplication.java` directly here in the editor.
+
+You will see the two following methods:
+
+```java
+	@PostMapping("/todos/{todo}")
+	String addTodo(@PathVariable String todo){
+
+		this.someInternalMethod(todo);
+		//todoRepository.save(new Todo(todo));
+		logger.info("POST /todos/ "+todo.toString());
+
+		return todo;
+
+	}
+
+	String someInternalMethod(String todo){
+
+		todoRepository.save(new Todo(todo));
+    ...
+		return todo;
+
+	}
+```
+
+The `addTodo` method is the entry point when the REST call arrives at the application. We can see that in the Jaeger trace:
+
+screenshot
+
+With the invocation of `todoRepository.save(new Todo(todo));` the new item will be persisted in the database.
+This is also visible in the Jaeger trace.
+
+What we cannot see however is the method in between `someInternalMethod`. This one is invoked by `addTodo` and invokes `todoRepository.save` but it is not being displayed in the trace.
+
+In order to change this we need to add an annotation to this method in the code.
+
+Within the source code of the Java class `TodobackendApplication.java` add the following import statements to the top.
+
+```java
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+```
+
+This enables functionality in the code that we provided through adding the new maven dependency.
+
+As a next step we need to annotate the method. Locate the `someInternalMethod` and place the `@WithSpan` annotation just above as shown in the following code snippet.
+
+```java
+	@WithSpan
+	String someInternalMethod(@SpanAttribute String todo){
+```
+
+Save the file and rebuild the jar file on command line.
+
+(You need to switch back to the `todobackend-springboot` directory, where the `pom.xml` file is located.)
+
+```sh
+mvn package
+```
+
+In case the previous Java process is still running, stop it.
+(Select the terminal window where it runs and press `Ctrl+C`. However do not stop the Jaeger docker container, we still need it.)
+
+Run the newly build jar file:
+
+```sh
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+```
+
+After it has come up, generate some more load:
+
+```sh
+curl -X POST localhost:8080/todos/TEST
+curl localhost:8080/todos/
+curl -X DELETE localhost:8080/todos/TEST
+```
+
+Access the Jaeger UI again and find the latest traces.
+
+
+
+---
 
 We want to follow the previous software stack and use Python flask to show how instrumentation libraries are used. To find an appropriate library we search the registry and find the `opentelemetry-flask-instrumentation` library. We can install the library using `pip` with the command `pip install opentelemetry-flask-instrumentation`. This package provides the necessary hooks to automatically instrument your Flask application with OpenTelemetry. Next, you need to configure OpenTelemetry to use the appropriate exporters and processors. This usually involves setting up an exporter to send telemetry data to a backend service like Jaeger, Zipkin, or another OpenTelemetry-compatible service, or in this case the OpenTelemetry collector. With the library installed and OpenTelemetry configured, you can now instrument your Flask application. This involves initializing the OpenTelemetry Flask instrumentation at the start of your application and ensuring that it wraps your Flask app instance. Finally, run your Flask application as you normally would. The instrumentation will automatically capture telemetry data from incoming requests, outgoing responses, and any exceptions that occur.
 
