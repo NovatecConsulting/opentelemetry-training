@@ -332,6 +332,28 @@ You can observe the different behaviour in the Jaeger console.
 If you are familiar with Java you can of course also look at the code in the folder: `src/main/java/io/novatec/todobackend`
 Open the TodobackendApplication.java with your VS built-in explorer.
 
+### instrumentation of the Python component
+
+pip install opentelemetry-distro opentelemetry-exporter-otlp
+opentelemetry-bootstrap --action=install
+
+export OTEL_LOGS_EXPORTER="none"
+export OTEL_METRICS_EXPORTER="none"
+export OTEL_TRACES_EXPORTER="otlp"
+export OTEL_EXPORTER_OTLP_ENDPOINT="localhost:4317"
+export OTEL_SERVICE_NAME=todoui-flask
+export OTEL_EXPORTER_OTLP_INSECURE=true
+
+opentelemetry-instrument python app.py
+
+ * Serving Flask app 'app'
+ * Debug mode: off
+INFO:werkzeug:_internal:WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.17.0.2:5000
+INFO:werkzeug:_internal:Press CTRL+C to quit
+
 
 ### limitations of auto-instrumentation
 
