@@ -16,7 +16,7 @@
 	],
 	"containerEnv": {
 		"SHELL": "/bin/bash",
-		"WORKSPACE": $ref: '#/workspaceFolder'
+		"WORKSPACE": "/workspaces/opentelemetry-training/labs"
 	},
 	"portsAttributes": {
 		"5000": {
