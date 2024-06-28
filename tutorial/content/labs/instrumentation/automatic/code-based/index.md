@@ -1,5 +1,5 @@
 ---
-title: "instrumentation libraries"
+title: "code-based instrumentation"
 draft: false
 weight: 3
 ---
