@@ -72,10 +72,11 @@ Therefore, not all languages come with support for auto-instrumentation.
 ## exercise
 
 ### How to perform the exercise
-* You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
-* Initial directory: `labs/automatic-instrumentation/auto-instrumentation/initial`
-* Solution directory: `labs/automatic-instrumentation/auto-instrumentation/solution`
-* Source code: `labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot`
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* Initial directory: `labs/automatic-instrumentation/initial`
+* Solution directory: `labs/automatic-instrumentation/solution`
+* Java source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
+* Python source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
 
 Make sure the docker compose environment from Otel in Action chapter is stopped.
 Otherwise you will run into port conflicts.
@@ -85,13 +86,13 @@ please switch to this directory and call `docker compose down` to stop it.
 
 ### instrumentation of the Java (Spring Boot) component
 
-Change back to the `labs` directory within your git project root and then into the `auto-instrumentation/initial/todobackend-springboot` path, e.g.
+Change to the directory within to `labs/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
 
 ```sh
 cd labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot
 ```
 
-This is the same Java project as used for the backend component in the `OpenTelemetry in Action`chapter.
+This is the same Java application as used for the backend component in the `OpenTelemetry in Action`chapter.
 
 Build the Java project using maven:
 
@@ -333,7 +334,7 @@ Open the TodobackendApplication.java with your VS built-in explorer.
 Now that we have successfully auto-instrumented the Java part of the application, let's focus how to achieve similar results with the Python part. Leave the docker container and the Java part from the previous step up und running, we still need it now.
 
 
-Open a new terminal window/tab and within this one switch to the directory where the Python code is located. (`labs/automatic-instrumentation/auto-instrumentation/initial/todoui-flask`)
+Open a new terminal window/tab and within this one switch to the directory where the Python code is located. (`labs/automatic-instrumentation/initial/todoui-flask`)
 
 
 Let's run the application in non-instrumented mode and validate everything works as expected.
