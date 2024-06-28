@@ -4,6 +4,7 @@ import logging
 import requests
 import os
 
+# Import the trace API
 from opentelemetry import trace
 
 # Acquire a tracer
