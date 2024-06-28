@@ -1,7 +1,7 @@
 {
 	"name": "otel-getting-started",
 	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
-	"image": "maeddes/otel-devcontainer:maven-jdk-21",
+	"image": "ghcr.io/novatecconsulting/opentelemetry-training-application:matthias-auto-instrumentation",
 	"overrideCommand": false,
 	"runArgs": [
 		"--privileged"
