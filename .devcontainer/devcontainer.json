@@ -16,7 +16,7 @@
 	],
 	"containerEnv": {
 		"SHELL": "/bin/bash",
-		"WORKSPACE": "${workspaceFolder}"
+		"WORKSPACE": $ref: '#/workspaceFolder'
 	},
 	"portsAttributes": {
 		"5000": {
