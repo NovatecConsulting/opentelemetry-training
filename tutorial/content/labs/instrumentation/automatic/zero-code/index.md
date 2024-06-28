@@ -83,6 +83,8 @@ Otherwise you will run into port conflicts.
 You can run `docker compose ls` to verify. If it shows a process running in the `otel-in-action` directory,
 please switch to this directory and call `docker compose down` to stop it.
 
+### instrumentation of the Java (Spring Boot) component
+
 Change back to the `labs` directory within your git project root and then into the `auto-instrumentation/initial/todobackend-springboot` path, e.g.
 
 ```sh
@@ -315,16 +317,10 @@ e.g. the `POST /todos/` or GET /todos/` one.
 You will get a breakdown of the spans which you saw before in the console output. Jaeger has them neatly arranged,
 so you can expand and basically walk through the call stack.
 
-If you want to simulate a slow or a breaking call, you can execute:
+If you want to simulate a slow you can execute:
 
 ```sh
 curl -X POST localhost:8080/todos/slow
-```
-
-and accordingly:
-
-```sh
-curl -X POST localhost:8080/todos/fail
 ```
 
 You can observe the different behaviour in the Jaeger console.
@@ -332,20 +328,66 @@ You can observe the different behaviour in the Jaeger console.
 If you are familiar with Java you can of course also look at the code in the folder: `src/main/java/io/novatec/todobackend`
 Open the TodobackendApplication.java with your VS built-in explorer.
 
-### instrumentation of the Python component
+### instrumentation of the Python (Flask) component
 
+Now that we have successfully auto-instrumented the Java part of the application, let's focus how to achieve similar results with the Python part. Leave the docker container and the Java part from the previous step up und running, we still need it now.
+
+
+Open a new terminal window/tab and within this one switch to the directory where the Python code is located. (`labs/automatic-instrumentation/auto-instrumentation/initial/todoui-flask`)
+
+
+Let's run the application in non-instrumented mode and validate everything works as expected.
+
+Simply run:
+```sh
+python app.py
+```
+
+You should now be able to access the frontend in the browser (`http://localhost:5000`). Try to add and remove a few todos and see, if the behaviour is consistent with the exercises from the `OpenTelemetry in Action` chapter. Also access the Jaeger UI (`http://localhost:16686`) and see, if you can observe traces. If one of the web pages is not accessible or shows errors, make sure the docker container and Java component from the previous exercise `instrumentation of the Java (Spring Boot) component` are up and running.
+
+Once the correct behaviour is validated stop the Python app again using `Ctrl+C` in the terminal window where it has been executed.
+
+We're all set to start with the auto-instrumentation. In the Python case we don't download an agent library, but need to make sure some OpenTelemetry packages for Python are installed.
+
+Execute:
+```
 pip install opentelemetry-distro opentelemetry-exporter-otlp
-opentelemetry-bootstrap --action=install
+```
 
+Wait for the command to finish. All necessary dependencies are now in place.
+
+Now run the following command to enable the auto-instrumented invocation of Python apps.
+
+```
+opentelemetry-bootstrap --action=install
+```
+
+As a final step we need to set some environment variables - almost identical to the Java part.
+They will configure the behaviour of the instrumented app and make it send only trace metrics to the OpenTelemetry collector.
+
+Execute the whole block in one step:
+
+```
 export OTEL_LOGS_EXPORTER="none"
 export OTEL_METRICS_EXPORTER="none"
 export OTEL_TRACES_EXPORTER="otlp"
 export OTEL_EXPORTER_OTLP_ENDPOINT="localhost:4317"
 export OTEL_SERVICE_NAME=todoui-flask
 export OTEL_EXPORTER_OTLP_INSECURE=true
+```
 
+Instead of running the application using the standard `python` or `flask` command we now place a new script in front of it.
+This script is called `opentelemetry-instrument` and is a result of the just executed `opentelemetry-bootstrap --action=install` call.
+
+Execute the call like this:
+
+```sh
 opentelemetry-instrument python app.py
+```
 
+The output will look execatly like the non-instrumented application.
+
+```
  * Serving Flask app 'app'
  * Debug mode: off
 INFO:werkzeug:_internal:WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
@@ -353,9 +395,12 @@ INFO:werkzeug:_internal:WARNING: This is a development server. Do not use it in 
  * Running on http://127.0.0.1:5000
  * Running on http://172.17.0.2:5000
 INFO:werkzeug:_internal:Press CTRL+C to quit
+```
+
+Now access the both Web UIs again - the Python frontend 
 
 
-### limitations of auto-instrumentation
+### Recap: Benefits and limitations of auto-instrumentation
 
 A major advantage of dynamically attaching instrumentation at runtime is that we don't have to make modifications to the application's source code.
 Auto-instrumentation provides a great starting point when trying to instrument an existing application.
