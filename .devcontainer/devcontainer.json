@@ -1,7 +1,7 @@
 {
 	"name": "otel-getting-started",
 	"workspaceFolder": "/workspaces/opentelemetry-training",
-	"image": "jensereal/opentelemetry-training-application:latest",
+	"image": "maeddes/otel-devcontainer:maven-jdk-21",
 	"overrideCommand": false,
 	"runArgs": [
 		"--privileged"
