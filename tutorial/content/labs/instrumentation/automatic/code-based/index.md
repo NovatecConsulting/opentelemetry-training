@@ -18,11 +18,16 @@ The OpenTelemetry has a [registry](https://opentelemetry.io/ecosystem/registry/)
 
 While instrumentation libraries offer a valuable solution for enhancing observability in third-party libraries or frameworks that lack native OpenTelemetry support, they also present certain challenges. These include the necessity to manage additional dependencies, which adds complexity to the codebase and requires careful consideration of maintenance overhead. Additionally, as instrumentation libraries are still relatively new compared to native integrations, they may face limitations such as less community support, fewer resources, and a higher risk of encountering issues due to their nascent nature.
 
+### How to perform the exercise steps
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* Initial directory: `labs/automatic-instrumentation/initial`
+* Solution directory: `labs/automatic-instrumentation/solution`
+* Java source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
+* Python source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
 
+### exercise - Java instrumentation annotations
 
-### example - Java instrumentation annotations
-
-A simple case that shows the need for such an additional library is the Java `zero-code` instrumentation as shown in the previous exercise.
+A simple case that shows the need for an additional library is the Java `zero-code` instrumentation as shown in the according previous exercise.
 
 OpenTelemetry's Java agent covered a generic set of set of [instrumentation libraries](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation)
 
@@ -37,7 +42,16 @@ To apply a more granular configuration to the already existing agent you can use
 
 Unlike the agent this library needs to be added to the application source code. To be precise to the build dependencies of the application in the first place. As the sample application uses Maven as build tool, we need to locate the `pom.xml`in the root folder of the application.
 
-If you edit it, you will see there is a section containing dependencies:
+Change to the directory within to `labs/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
+
+```sh
+cd labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot
+```
+
+Once you open it up in the editor it, you will see there is a section containing dependencies.
+If you prefer you can do this via command-line, but we recommend to use the editor within VS Code.
+
+Locate the `dependencies` section within the `pom.xml` file:
 
 ```xml
 <dependencies>
@@ -45,7 +59,7 @@ If you edit it, you will see there is a section containing dependencies:
 </dependencies>
 ```
 
-add the following dependency to it and make sure to align with the already existing ones. (the order of dependencies in the file does not matter)
+Add the following dependency to it and make sure to align/indent with the already existing ones. (the order of dependencies in the file does not matter)
 
 ```xml
 		<dependency>
@@ -268,6 +282,132 @@ The part of the Java library exercise completes with this step.
 
 ---
 
+### exercise - Python mixed automatic and manual instrumentation 
+
+Change to the directory within to `labs/automatic-instrumentation/initial/todoui-flask` path, if you are in the project root directory it is:
+
+```sh
+cd labs/automatic-instrumentation/auto-instrumentation/initial/todoui-flask
+```
+
+Similar to the exercise case in the Java example before, also in a Python there can be the requirement to get more observability information than the plain automatic instrumentation might reveal.
+This example will show a mixed mode auf automatic and manual instrumentation to achieve this behaviour and will already give a lookout to what will be covered in the dedicated `manual instrumentation` chapter.
+
+In this case we will custom instrument the already existing auto instrumentation and add a way to access the processed todo item on the frontend side of the application
+
+Open the `app.py` Python source code in your editor.
+
+Locate the 2 import statements on top:
+
+```
+import logging
+import requests
+import os
+```
+
+Add the following statement right underneath to import the trace API from OpenTelemetry:
+
+```python
+# Import the trace API
+from opentelemetry import trace
+```
+
+Directly after that add a statement to acquire a tracer
+
+
+```python
+# Acquire a tracer
+tracer = trace.get_tracer("todo.tracer")
+```
+
+The way we call it here does not matter. The name `todo.tracer` will later appear as such in the trace metadata.
+
+So the resulting code after the edit should look like:
+
+```python
+import logging
+import requests
+import os
+
+# Import the trace API
+from opentelemetry import trace
+
+# Acquire a tracer
+tracer = trace.get_tracer("todo.tracer")
+
+app = Flask(__name__)
+logging.getLogger(__name__)
+logging.basicConfig(format='%(levelname)s:%(name)s:%(module)s:%(message)s', level=logging.INFO)
+```
+
+As a next step we will add a custom span to the trace which contains the information we want to have.
+
+Locate the `add` function in the code, which starts like this:
+
+```python
+@app.route('/add', methods=['POST'])
+def add():
+```
+
+The central code block of this function receives the todo from the web UI and sends it to the backend.
+The code is supposed to look like this:
+
+```python
+    if request.method == 'POST':
+        new_todo = request.form['todo']
+        logging.info("POST  %s/todos/%s",app.config['BACKEND_URL'],new_todo)
+        response = requests.post(app.config['BACKEND_URL']+new_todo)
+    return redirect(url_for('index'))
+```
+
+Replace it entirely with the following code block. (You can also edit manually, but replacing will avoid typos.)
+
+```python
+    if request.method == 'POST':
+        with tracer.start_as_current_span("add") as span:
+            new_todo = request.form['todo']
+            span.set_attribute("todo.value",new_todo)
+            logging.info("POST  %s/todos/%s",app.config['BACKEND_URL'],new_todo)
+            response = requests.post(app.config['BACKEND_URL']+new_todo)
+    return redirect(url_for('index'))
+```
+
+As you can observe 2 lines of code have been added.
+
+The following line
+```python
+        with tracer.start_as_current_span("add") as span:
+```
+will create a new span and the line
+```python
+            span.set_attribute("todo.value",new_todo)
+```
+will add the currently processed `todo` item as attribute to it.
+
+This is all we need to do for now. Before you run it make sure all the environment variables are still set.
+If you have switched the terminal session they might now be active any more.
+
+Execute:
+```
+export OTEL_LOGS_EXPORTER="none"
+export OTEL_METRICS_EXPORTER="none"
+export OTEL_TRACES_EXPORTER="otlp"
+export OTEL_EXPORTER_OTLP_ENDPOINT="localhost:4317"
+export OTEL_SERVICE_NAME=todoui-flask
+export OTEL_EXPORTER_OTLP_INSECURE=true
+```
+
+After that you are good to go and run the autoinstrumented app again:
+
+```sh
+opentelemetry-instrument python app.py
+```
+
+Now access the both Web UIs again - the Python frontend. Add and remove some todos and observe the behaviour in Jaeger.
+
+You will see now that
+
+<!-- 
 We want to follow the previous software stack and use Python flask to show how instrumentation libraries are used. To find an appropriate library we search the registry and find the `opentelemetry-flask-instrumentation` library. We can install the library using `pip` with the command `pip install opentelemetry-flask-instrumentation`. This package provides the necessary hooks to automatically instrument your Flask application with OpenTelemetry. Next, you need to configure OpenTelemetry to use the appropriate exporters and processors. This usually involves setting up an exporter to send telemetry data to a backend service like Jaeger, Zipkin, or another OpenTelemetry-compatible service, or in this case the OpenTelemetry collector. With the library installed and OpenTelemetry configured, you can now instrument your Flask application. This involves initializing the OpenTelemetry Flask instrumentation at the start of your application and ensuring that it wraps your Flask app instance. Finally, run your Flask application as you normally would. The instrumentation will automatically capture telemetry data from incoming requests, outgoing responses, and any exceptions that occur.
 
 When using the `opentelemetry-flask-instrumentation` library with a Python Flask application, a span is automatically created for each incoming HTTP request. The span represents the execution of a single operation within the context of a trace, such as handling an HTTP request. To instrument Flask we need to wrap the flask application inside the `FlaskInstrumentor` which is provided by the pip package.
@@ -425,7 +565,7 @@ When deciding what to instrument, public APIs are good candidates for tracing. S
 
 If OpenTelemetry doesn't support tracing your network client, you can use logs with verbosity or span events, which can be correlated to parent API calls. Context propagation is crucial in both inbound and outbound calls. When receiving upstream calls, context should be extracted from the incoming request/message using the Propagator API. Conversely, when making an outbound call, a new span should be created to trace the outgoing call, and the context should be injected into the message using the Propagator API. Events (or logs) and traces complement each other in providing observability. Events are better suited for verbose data and should always be attached to the span instance created by your instrumentation. Lastly, it's important to add your instrumentation library to the OpenTelemetry registry for easy discovery by users. It's also recommended testing your instrumentation with other telemetry to see how they interact.
 
-<!-- {{< quizdown >}}
+ {{< quizdown >}}
 
 ### The primary purpose of developing an instrumentation library for OpenTelemetry is to provide a way to automatically instrument applications.
   - [ ] True
@@ -457,4 +597,6 @@ If OpenTelemetry doesn't support tracing your network client, you can use logs w
 - **Instrumentation Libraries**: They are tools to add OpenTelemetry support to libraries without native support.
 - **Example with Flask**: A Python Flask app can be instrumented using `opentelemetry-flask-instrumentation`.
 - **Developing Libraries**: It's important to follow OpenTelemetry conventions and focus on user-facing operations.
-- **Instrumentation Decisions**: Decide based on the complexity and necessity, considering logs or span events for unsupported clients. -->
+- **Instrumentation Decisions**: Decide based on the complexity and necessity, considering logs or span events for unsupported clients. 
+
+-->

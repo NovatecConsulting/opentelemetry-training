@@ -398,7 +398,7 @@ INFO:werkzeug:_internal:WARNING: This is a development server. Do not use it in 
 INFO:werkzeug:_internal:Press CTRL+C to quit
 ```
 
-Now access the both Web UIs again - the Python frontend 
+Now access the both Web UIs again - the Python frontend. Add and remove some todos and observe the behaviour in Jaeger.
 
 
 ### Recap: Benefits and limitations of auto-instrumentation
