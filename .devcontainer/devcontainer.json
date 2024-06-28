@@ -1,6 +1,6 @@
 {
 	"name": "otel-getting-started",
-	"workspaceFolder": "/workspaces/opentelemetry-training",
+	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
 	"image": "maeddes/otel-devcontainer:maven-jdk-21",
 	"overrideCommand": false,
 	"runArgs": [
@@ -15,7 +15,8 @@
 		16686
 	],
 	"containerEnv": {
-		"SHELL": "/bin/bash"
+		"SHELL": "/bin/bash",
+		"WORKSPACE": "${workspaceFolder}"
 	},
 	"portsAttributes": {
 		"5000": {
