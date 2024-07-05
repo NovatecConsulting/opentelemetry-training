@@ -87,10 +87,10 @@ please switch to this directory and call `docker compose down` to stop it.
 
 ### instrumentation of the Java (Spring Boot) component
 
-Change to the directory within to `automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
+Change to the directory `automatic-instrumentation/initial/todobackend-springboot` path. If you are in the project root directory it is:
 
 ```sh
-cd $WORKSPACE
+cd $EXERCISES
 cd automatic-instrumentation/initial/todobackend-springboot
 ```
 
@@ -172,13 +172,9 @@ To achieve this, set the following environment variables:
 
 ```sh
 export OTEL_TRACES_EXPORTER=console
-```
 
-```sh
 export OTEL_METRICS_EXPORTER=none
-```
 
-```sh
 export OTEL_LOGS_EXPORTER=none
 ```
 
@@ -257,7 +253,7 @@ docker run -d --name jaeger \
   -p 14268:14268 \
   -p 4317:4317 \
   -p 4318:4318 \
-  jaegertracing/all-in-one
+  jaegertracing/all-in-one:1.57
 ```
 
 This will put the process into the background. Make sure it is up and running using
