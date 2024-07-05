@@ -77,9 +77,9 @@ Therefore, not all languages come with support for auto-instrumentation.
 * Initial directory: `automatic-instrumentation/initial`
 * Solution directory: `automatic-instrumentation/solution`
 * Java source code: `automatic-instrumentation/initial/todobackend-springboot`
-* Python source code: `automatic-instrumentation/initial/todobackend-springboot`
+* Python source code: `automatic-instrumentation/initial/todoui-flask`
 
-Make sure the docker compose environment from Otel in Action chapter is stopped.
+Make sure the docker compose environment from `Otel in Action` chapter is stopped.
 Otherwise you will run into port conflicts.
 
 You can run `docker compose ls` to verify. If it shows a process running in the `otel-in-action` directory,
@@ -334,6 +334,11 @@ Now that we have successfully auto-instrumented the Java part of the application
 
 Open a new terminal window/tab and within this one switch to the directory where the Python code is located. (`automatic-instrumentation/initial/todoui-flask`)
 
+```sh
+cd $EXERCISES
+cd automatic-instrumentation/initial/todoui-flask
+```
+
 
 Let's run the application in non-instrumented mode and validate everything works as expected.
 
@@ -349,7 +354,7 @@ Once the correct behaviour is validated stop the Python app again using `Ctrl+C`
 We're all set to start with the auto-instrumentation. In the Python case we don't download an agent library, but need to make sure some OpenTelemetry packages for Python are installed.
 
 Execute:
-```
+```sh
 pip install opentelemetry-distro opentelemetry-exporter-otlp
 ```
 
@@ -357,7 +362,7 @@ Wait for the command to finish. All necessary dependencies are now in place.
 
 Now run the following command to enable the auto-instrumented invocation of Python apps.
 
-```
+```sh
 opentelemetry-bootstrap --action=install
 ```
 
@@ -366,7 +371,7 @@ They will configure the behaviour of the instrumented app and make it send only 
 
 Execute the whole block in one step:
 
-```
+```sh
 export OTEL_LOGS_EXPORTER="none"
 export OTEL_METRICS_EXPORTER="none"
 export OTEL_TRACES_EXPORTER="otlp"

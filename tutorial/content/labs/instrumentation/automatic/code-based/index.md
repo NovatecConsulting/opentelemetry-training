@@ -18,12 +18,14 @@ The OpenTelemetry has a [registry](https://opentelemetry.io/ecosystem/registry/)
 
 While instrumentation libraries offer a valuable solution for enhancing observability in third-party libraries or frameworks that lack native OpenTelemetry support, they also present certain challenges. These include the necessity to manage additional dependencies, which adds complexity to the codebase and requires careful consideration of maintenance overhead. Additionally, as instrumentation libraries are still relatively new compared to native integrations, they may face limitations such as less community support, fewer resources, and a higher risk of encountering issues due to their nascent nature.
 
-### How to perform the exercise steps
+### How to perform the exercise
+
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
-* Initial directory: `exercises/automatic-instrumentation/initial`
-* Solution directory: `exercises/automatic-instrumentation/solution`
-* Java source code: `exercises/automatic-instrumentation/initial/todobackend-springboot`
-* Python source code: `exercises/automatic-instrumentation/initial/todobackend-springboot`
+* All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
+* Initial directory: `automatic-instrumentation/initial`
+* Solution directory: `automatic-instrumentation/solution`
+* Java source code: `automatic-instrumentation/initial/todobackend-springboot`
+* Python source code: `automatic-instrumentation/initial/todoui-flask`
 
 ### exercise - Java instrumentation annotations
 
