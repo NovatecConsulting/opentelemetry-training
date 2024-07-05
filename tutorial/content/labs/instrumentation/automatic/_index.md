@@ -1,6 +1,6 @@
 +++
 title = "automatic instrumentation"
-menuTitle = "automatic"
+linkTitle = "automatic"
 draft = false
 weight = 1
 +++

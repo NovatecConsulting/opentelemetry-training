@@ -1,6 +1,6 @@
 +++
 title = "manual instrumentation"
-menuTitle = "manual"
+linkTitle = "manual"
 draft = false
 weight = 2
 +++
