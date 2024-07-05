@@ -73,10 +73,11 @@ Therefore, not all languages come with support for auto-instrumentation.
 
 ### How to perform the exercise
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
-* Initial directory: `labs/automatic-instrumentation/initial`
-* Solution directory: `labs/automatic-instrumentation/solution`
-* Java source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
-* Python source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
+* All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
+* Initial directory: `automatic-instrumentation/initial`
+* Solution directory: `automatic-instrumentation/solution`
+* Java source code: `automatic-instrumentation/initial/todobackend-springboot`
+* Python source code: `automatic-instrumentation/initial/todobackend-springboot`
 
 Make sure the docker compose environment from Otel in Action chapter is stopped.
 Otherwise you will run into port conflicts.
@@ -86,10 +87,11 @@ please switch to this directory and call `docker compose down` to stop it.
 
 ### instrumentation of the Java (Spring Boot) component
 
-Change to the directory within to `labs/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
+Change to the directory within to `automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
 
 ```sh
-cd labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot
+cd $WORKSPACE
+cd automatic-instrumentation/initial/todobackend-springboot
 ```
 
 This is the same Java application as used for the backend component in the `OpenTelemetry in Action`chapter.
@@ -304,13 +306,13 @@ Now point your browser to `http://localhost:16686/`.
 If you run your application with a local container daemon, `localhost` in your browser will work. If you are using a cloud-based setup like Codespaces or Gitpod , please see the section "How to use this lab".
 
 Especially the section about ports and hostnames is relevant here.
-[Link](/labs/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab)
+[Link](/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab)
 
 The Jaeger UI will come up. Click the button `Find traces`.
 
 Please refer to the chapter "OpenTelemetry in Action" for steps how to navigate within
 
-[Using Jaeger UI](/labs/use_case_scenarios/#using-jaeger-ui)
+[Using Jaeger UI](/use_case_scenarios/#using-jaeger-ui)
 
 Click on a trace in the list that shows a certain number of spans,
 e.g. the `POST /todos/` or GET /todos/` one.
@@ -334,7 +336,7 @@ Open the TodobackendApplication.java with your VS built-in explorer.
 Now that we have successfully auto-instrumented the Java part of the application, let's focus how to achieve similar results with the Python part. Leave the docker container and the Java part from the previous step up und running, we still need it now.
 
 
-Open a new terminal window/tab and within this one switch to the directory where the Python code is located. (`labs/automatic-instrumentation/initial/todoui-flask`)
+Open a new terminal window/tab and within this one switch to the directory where the Python code is located. (`automatic-instrumentation/initial/todoui-flask`)
 
 
 Let's run the application in non-instrumented mode and validate everything works as expected.

@@ -6,16 +6,16 @@ weight: 1
 
 ### How to perform the exercise
 * You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
-* Initial directory: `labs/collector/initial`
-* Solution directory: `labs/collector/solution`
-* Source code: `labs/collector/initial/src`
+* Initial directory: `exercises/collector/initial`
+* Solution directory: `exercises/collector/solution`
+* Source code: `exercises/collector/initial/src`
 * How to run the application either:
   * Run the task for the application: `Run collector initial application` (runs the Python application) and `Run collector initial` (runs the OpenTelemetry Collector in a Docker Container)
   * Run the application with Terminal commands `python3 src/app.py` (runs the Python application) and `docker compose up -d` (runs the OpenTelemetry Collector and the echo server in Docker Containers)
 
 ### Why do we need Collectors?
 
-Over the previous labs, we have seen how OpenTelemetry's SDK implements the instrumentation which produces the telemetry data.
+Over the previous exercises, we have seen how OpenTelemetry's SDK implements the instrumentation which produces the telemetry data.
 We also configured a basic pipeline to export the generated telemetry directly from the SDK.
 The *Collector* is a key component of OpenTelemetry to manage how telemetry is processed and forwarded.
 At this point you might ask yourself: How are these capabilities different from the SDK?
@@ -132,8 +132,8 @@ Besides that, we also mount a YAML file within the Collector's container.
 It contains the configuration of Collector's components and pipelines.
 
 Before we can receive telemetry, we must first ensure that the SDK of instrumented services send their telemetry to the collector.
-For this lab we will reuse the code written in the previous labs. In the previous labs the data was sent to either the console or directly to a Prometheus instance.
-This needs to be changed now. Open the `src` directory in `collector/initial`. You'll see that we took the liberty to copy the solution code of the previous labs into here.
+For this lab we will reuse the code written in the previous exercises. In the previous exercises the data was sent to either the console or directly to a Prometheus instance.
+This needs to be changed now. Open the `src` directory in `collector/initial`. You'll see that we took the liberty to copy the solution code of the previous exercises into here.
 When opening `logging_utils.py`, `metric_utils.py` or `tracing_utils.py` you will see that the exporters are set to `Console[TelemetryName]Exporter`. As we learned earlier this will send to telemetry data directly to `stdout`. Since we want to export the data to the Collector, we need to send the data via the OTLP protocol. To use the OTLP exporter we need a new Python package called `opentelemetry-exporter-otlp`. To install the package simply run
 
 ```bash { title="Install opentelemetry-exporter-otlp using pip" }
@@ -147,7 +147,7 @@ logger_provider.add_log_record_processor(SimpleLogRecordProcessor(exporter=OTLPL
 ```
 
 Save your changes.
-If you want to change the tracing and metric labs you can do so. Just as with the logs you just need to exchange the `ConsoleMetricExporter` with `OTLPMetricExporter` and `ConsoleTraceExporter` with `OTLPTraceExporter`.
+If you want to change the tracing and metric exercises you can do so. Just as with the logs you just need to exchange the `ConsoleMetricExporter` with `OTLPMetricExporter` and `ConsoleTraceExporter` with `OTLPTraceExporter`.
 
 To receive the sent telemetry data we need to tell the OpenTelemetry Collector that data is comping via the OTLP protocol. To do so open the `otel-collector-config.yml` in `collector/initial` and start editing it.
 We'll sketch out a basic Collector pipeline that connects telemetry sources with their destinations.

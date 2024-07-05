@@ -7,9 +7,9 @@ weight: 4
 ### How to perform the exercise
 
 * You need to either start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod or clone the repository with git and run it locally with dev containers or docker compose
-* Initial directory: `labs/manual-instrumentation-logs/initial`
-* Solution directory: `labs/manual-instrumentation-logs/solution`
-* Source code: `labs/manual-instrumentation-logs/initial/src`
+* Initial directory: `exercises/manual-instrumentation-logs/initial`
+* Solution directory: `exercises/manual-instrumentation-logs/solution`
+* Source code: `exercises/manual-instrumentation-logs/initial/src`
 * How to run the application either:
   * Run the task for the application: `Run manual-instrumentation-logs initial application` (runs the Python application)
   * Run the application with Terminal commands `python3 src/app.py` (runs the Python application)

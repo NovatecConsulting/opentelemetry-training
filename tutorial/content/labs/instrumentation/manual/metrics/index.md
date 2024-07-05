@@ -43,14 +43,14 @@ It is built with the [Flask](https://flask.palletsprojects.com) web framework, l
 To work on this lab, **open two terminals**.
 
 1. to start the application and view it's output
-   - navigate to `cd labs/manual-instrumentation-metrics/initial/src`
+   - navigate to `cd exercises/manual-instrumentation-metrics/initial/src`
    - to start the webserver run `python app.py`, to terminate it hit: `CTRL + C`
 2. Start the echo server `docker compose up -d`
 3. to send request to the HTTP endpoints of the service
    - for example: `curl -XGET localhost:5000; echo`
 
 To keep things concise, code snippets only contain what's relevant to that step.
-If you get stuck, you can find the solution in the `labs/manual-instrumentation-metrics/solution`
+If you get stuck, you can find the solution in the `exercises/manual-instrumentation-metrics/solution`
 
 ---
 

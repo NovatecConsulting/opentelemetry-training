@@ -45,13 +45,13 @@ The environment consists of two components:
 
 To work on this lab, **open two terminals**.
 1. to start the application and view it's output
-   - navigate to `cd labs/manual-instrumentation-traces/initial/src`
+   - navigate to `cd exercises/manual-instrumentation-traces/initial/src`
    - to start the webserver run `python app.py`, to terminate it hit: `CTRL + C`
 2. to send request to the HTTP endpoints of the service
    -  for example: `curl -XGET localhost:5000; echo`
 
 To keep things concise, code snippets only contain what's relevant to that step.
-If you get stuck, you can find the solution in the `labs/manual-instrumentation-traces/solution/src`
+If you get stuck, you can find the solution in the `exercises/manual-instrumentation-traces/solution/src`
 
 ---
 

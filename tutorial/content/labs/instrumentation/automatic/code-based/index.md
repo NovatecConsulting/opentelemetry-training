@@ -20,10 +20,10 @@ While instrumentation libraries offer a valuable solution for enhancing observab
 
 ### How to perform the exercise steps
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
-* Initial directory: `labs/automatic-instrumentation/initial`
-* Solution directory: `labs/automatic-instrumentation/solution`
-* Java source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
-* Python source code: `labs/automatic-instrumentation/initial/todobackend-springboot`
+* Initial directory: `exercises/automatic-instrumentation/initial`
+* Solution directory: `exercises/automatic-instrumentation/solution`
+* Java source code: `exercises/automatic-instrumentation/initial/todobackend-springboot`
+* Python source code: `exercises/automatic-instrumentation/initial/todobackend-springboot`
 
 ### exercise - Java instrumentation annotations
 
@@ -42,10 +42,10 @@ To apply a more granular configuration to the already existing agent you can use
 
 Unlike the agent this library needs to be added to the application source code. To be precise to the build dependencies of the application in the first place. As the sample application uses Maven as build tool, we need to locate the `pom.xml`in the root folder of the application.
 
-Change to the directory within to `labs/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
+Change to the directory within to `exercises/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
 
 ```sh
-cd labs/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot
+cd exercises/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot
 ```
 
 Once you open it up in the editor it, you will see there is a section containing dependencies.
@@ -284,10 +284,10 @@ The part of the Java library exercise completes with this step.
 
 ### exercise - Python mixed automatic and manual instrumentation 
 
-Change to the directory within to `labs/automatic-instrumentation/initial/todoui-flask` path, if you are in the project root directory it is:
+Change to the directory within to `exercises/automatic-instrumentation/initial/todoui-flask` path, if you are in the project root directory it is:
 
 ```sh
-cd labs/automatic-instrumentation/auto-instrumentation/initial/todoui-flask
+cd exercises/automatic-instrumentation/auto-instrumentation/initial/todoui-flask
 ```
 
 Similar to the exercise case in the Java example before, also in a Python there can be the requirement to get more observability information than the plain automatic instrumentation might reveal.
