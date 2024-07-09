@@ -17,7 +17,7 @@ In contrast to the API and SDK, auto-instrumentation allows us to dynamically in
 Generally speaking, auto-instrumentation is implemented by some kind of agent or runner.
 In this lab, we'll use a Java application to understand what this could look like.
 
-### Background informatio - byte code manipulation via Java agent
+### Background information - byte code manipulation via Java agent
 
 Before going into the steps to apply the zero-code version of the OpenTelemetry Java agent to our sample application, we have a short look on how this concept works under the hood in general.
 

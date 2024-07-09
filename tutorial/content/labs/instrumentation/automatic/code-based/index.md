@@ -29,20 +29,21 @@ While instrumentation libraries offer a valuable solution for enhancing observab
 
 ### exercise - Java instrumentation annotations
 
-A simple case that shows the need for an additional library is the Java `zero-code` instrumentation as shown in the according previous exercise.
-
-OpenTelemetry's Java agent covered a generic set of set of [instrumentation libraries](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation)
+The previous exercise using Java `zero-code` instrumentation can illustrate the need for additional libraries.
+Using OpenTelemetry's Java agent - as we did - covered a generic set of set of [instrumentation libraries](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation) and we did not have to worry about selecting any of them individually.
 
 This makes it very helpful to get started with as no modification or rebuild of the application is necessary.
 
-However, sometimes we want to observe aspects of our application that don't naturally align with these standard instrumentation points.
+Sometimes however we want to observe aspects of our application that don't naturally align with these standard instrumentation points.
 Developers often encapsulate related logic in dedicated functions to improve code maintainability and organization.
 The OpenTelemetry agent may lack awareness of these custom functions.
 It has no way of knowing whether they are important and what telemetry data to capture from them.
 
 To apply a more granular configuration to the already existing agent you can use the `opentelemetry-instrumentation-annotations` library. 
 
-Unlike the agent this library needs to be added to the application source code. To be precise to the build dependencies of the application in the first place. As the sample application uses Maven as build tool, we need to locate the `pom.xml`in the root folder of the application.
+If the Java part of the application is still running from this exercise, stop it using `Ctrl+C` in the corresponding terminal window.
+
+This library needs to be added to the application source code. To be precise to the build dependencies of the application in the first place. As the sample application uses Maven as build tool, we need to locate the `pom.xml`in the root folder of the application.
 
 Change to the directory within to `exercises/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
 
