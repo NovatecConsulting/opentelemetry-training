@@ -48,7 +48,8 @@ This library needs to be added to the application source code. To be precise to 
 Change to the directory within to `exercises/automatic-instrumentation/initial/todobackend-springboot` path, if you are in the project root directory it is:
 
 ```sh
-cd exercises/automatic-instrumentation/auto-instrumentation/initial/todobackend-springboot
+cd $EXERCISES
+cd automatic-instrumentation/initial/todobackend-springboot
 ```
 
 Once you open it up in the editor it, you will see there is a section containing dependencies.
