@@ -296,7 +296,8 @@ The part of the Java library exercise completes with this step.
 Change to the directory within to `exercises/automatic-instrumentation/initial/todoui-flask` path, if you are in the project root directory it is:
 
 ```sh
-cd exercises/automatic-instrumentation/auto-instrumentation/initial/todoui-flask
+cd $EXERCISES
+cd automatic-instrumentation/initial/todoui-flask
 ```
 
 Similar to the exercise case in the Java example before, also in a Python there can be the requirement to get more observability information than the plain automatic instrumentation might reveal.
