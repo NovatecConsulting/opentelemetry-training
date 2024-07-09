@@ -261,12 +261,13 @@ Screenshot
 
 This means you can now also see the specific parameter which has been passed and relate it to a slow a performing call in case it happens.
 
-
+Leave the Java application running, you will need it for the Python part as well.
 
 ### Alternative approach 
 
-An alternative approach to use the annotations library is by configuring it through environment variables.
+These are no exercise steps, this is just supporting information.
 
+An alternative approach to use the annotations library is by configuring it through environment variables.
 There are two environment variables you can use to configure the annotations library.
 
 `OTEL_INSTRUMENTATION_METHODS_INCLUDE` and `OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS`
@@ -303,7 +304,7 @@ cd automatic-instrumentation/initial/todoui-flask
 Similar to the exercise case in the Java example before, also in a Python there can be the requirement to get more observability information than the plain automatic instrumentation might reveal.
 This example will show a mixed mode auf automatic and manual instrumentation to achieve this behaviour and will already give a lookout to what will be covered in the dedicated `manual instrumentation` chapter.
 
-In this case we will custom instrument the already existing auto instrumentation and add a way to access the processed todo item on the frontend side of the application
+In this case we will custom instrument the already existing auto instrumentation and add a way to access the processed todo item on the frontend side of the application.
 
 Open the `app.py` Python source code in your editor.
 
@@ -398,7 +399,8 @@ This is all we need to do for now. Before you run it make sure all the environme
 If you have switched the terminal session they might now be active any more.
 
 Execute:
-```
+
+```sh
 export OTEL_LOGS_EXPORTER="none"
 export OTEL_METRICS_EXPORTER="none"
 export OTEL_TRACES_EXPORTER="otlp"
@@ -413,9 +415,29 @@ After that you are good to go and run the autoinstrumented app again:
 opentelemetry-instrument python app.py
 ```
 
-Now access the both Web UIs again - the Python frontend. Add and remove some todos and observe the behaviour in Jaeger.
+Now access the both Web UIs again - the Python frontend and Jaeger. Add and remove some todos and observe the behaviour in Jaeger.
 
-You will see now that
+If you analyse an individual trace of `todoui-flask` with a `POST` operation, you will see an additional span in the trace.
+
+This part will show up as 2nd in the list an is called `todoui-flask add`.
+
+Screenshot
+
+Once you expand the details of this trace you will also see the value of the passed variable. Under the section of tags you see the `todo.value`.
+
+Screenshot
+
+### Summary - What you have learned.
+
+The first part of instrumenation of polyglot applications completes with this step.
+
+You have seen and applied zero-code, automatic instrumentation for both Java and Python application components. The advantage here is obvious - there is no need to understand and modify source code. The limitation is also obvious - you are limited to what the default configuration will set. It is not possible to instrument custom methods or functions and trace internal variables.
+
+To overcome these limitations you have seen two different approaches. Adding custom libraries to the source code and implementing annotations in the code or using a mixed mode of automatic and manual instrumentation.
+
+It becomes clear that the more granular details you want to get out of your application the more you have to put instrumentation code into it.
+
+The following chapter `manual instrumentatoin` will do this in full depth.
 
 <!-- 
 We want to follow the previous software stack and use Python flask to show how instrumentation libraries are used. To find an appropriate library we search the registry and find the `opentelemetry-flask-instrumentation` library. We can install the library using `pip` with the command `pip install opentelemetry-flask-instrumentation`. This package provides the necessary hooks to automatically instrument your Flask application with OpenTelemetry. Next, you need to configure OpenTelemetry to use the appropriate exporters and processors. This usually involves setting up an exporter to send telemetry data to a backend service like Jaeger, Zipkin, or another OpenTelemetry-compatible service, or in this case the OpenTelemetry collector. With the library installed and OpenTelemetry configured, you can now instrument your Flask application. This involves initializing the OpenTelemetry Flask instrumentation at the start of your application and ensuring that it wraps your Flask app instance. Finally, run your Flask application as you normally would. The instrumentation will automatically capture telemetry data from incoming requests, outgoing responses, and any exceptions that occur.

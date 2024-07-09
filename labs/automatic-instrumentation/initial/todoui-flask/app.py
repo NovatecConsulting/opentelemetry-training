@@ -4,6 +4,12 @@ import logging
 import requests
 import os
 
+# Import the trace API
+from opentelemetry import trace
+
+# Acquire a tracer
+tracer = trace.get_tracer("todo.tracer")
+
 app = Flask(__name__)
 logging.getLogger(__name__)
 logging.basicConfig(format='%(levelname)s:%(name)s:%(module)s:%(message)s', level=logging.INFO)
@@ -32,9 +38,11 @@ def index():
 def add():
 
     if request.method == 'POST':
-        new_todo = request.form['todo']
-        logging.info("POST  %s/todos/%s",app.config['BACKEND_URL'],new_todo)
-        response = requests.post(app.config['BACKEND_URL']+new_todo)
+        with tracer.start_as_current_span("add") as span:
+            new_todo = request.form['todo']
+            span.set_attribute("todo.value",new_todo)
+            logging.info("POST  %s/todos/%s",app.config['BACKEND_URL'],new_todo)
+            response = requests.post(app.config['BACKEND_URL']+new_todo)
     return redirect(url_for('index'))
 
 @app.route('/delete', methods=['POST'])
