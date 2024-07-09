@@ -223,7 +223,7 @@ otel.library.version - 2.5.0-alpha
 
 Let's take this one step further. The library does not only allow to annotate methods and hence observe their specific span details, it also let's you observe the contents of variable parameters.
 
-In order to achieve this it is required to modify the `TodobackendApplication.java` again.
+In order to achieve this it is required to modify the `TodobackendApplication.java` again. So stop the Java process again with `Ctrl+C` and open the source code file in the editor.
 
 Navigate to the method signature of the `someInternalMethod` method. This time you need to add the `@SpanAttribute` annotation right in front of the `String todo` parameter like shown here:
 
@@ -235,7 +235,7 @@ Navigate to the method signature of the `someInternalMethod` method. This time y
 That's it. Now save, build and run it again.
 
 ```sh
-mvn package
+mvn clean package
 ```
 
 ```sh
@@ -245,9 +245,7 @@ java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAP
 After it has come up, generate some more load:
 
 ```sh
-curl -X POST localhost:8080/todos/TEST
-curl localhost:8080/todos/
-curl -X DELETE localhost:8080/todos/TEST
+curl -X POST localhost:8080/todos/SMILE
 ```
 
 Access the Jaeger UI again and find the latest traces.
@@ -256,12 +254,16 @@ Expand it like you did before and focus on the Tags part in the trace.
 As the latest entry you should now see
 
 ```
-todo - TEST
+todo - SMILE
 ```
 
 Screenshot
 
 This means you can now also see the specific parameter which has been passed and relate it to a slow a performing call in case it happens.
+
+
+
+### Alternative approach 
 
 An alternative approach to use the annotations library is by configuring it through environment variables.
 
