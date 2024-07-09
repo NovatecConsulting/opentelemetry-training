@@ -115,6 +115,9 @@ Now run the newly build jar including the agent:
 java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
 ```
 
+Let this process run in it's terminal window and switch to a new one.
+Within that new window execute:
+
 ```sh
 curl -X POST localhost:8080/todos/NEW
 ```
@@ -175,16 +178,16 @@ As a next step we need to annotate the method. Locate the `someInternalMethod` a
 	String someInternalMethod(String todo){
 ```
 
-Save the file and rebuild the jar file on command line.
+The file will be automatically saved by VSCode.
 
-(You need to switch back to the `todobackend-springboot` directory, where the `pom.xml` file is located.)
+Select the terminal window where the Java process runs and press `Ctrl+C`. However do not stop the Jaeger docker container, we still need it.
+(This should put you back into the `todobackend-springboot` directory, where the `pom.xml` file is located. If not change the directory as before.)
+
+Rebuild the Java application with the new code.
 
 ```sh
-mvn package
+mvn clean package
 ```
-
-In case the previous Java process is still running, stop it.
-(Select the terminal window where it runs and press `Ctrl+C`. However do not stop the Jaeger docker container, we still need it.)
 
 Run the newly build jar file:
 
@@ -192,7 +195,7 @@ Run the newly build jar file:
 java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
 ```
 
-After it has come up, generate some more load:
+After it has come up, switch to another terminal window and generate some more load as you did before:
 
 ```sh
 curl -X POST localhost:8080/todos/TEST
