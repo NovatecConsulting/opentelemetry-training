@@ -8,7 +8,7 @@ weight: 10
 * You need to either 
   * start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod
   * clone the repository with git and run it locally with dev containers or docker compose
-* Navigate to the directory: `labs/otel-in-action`
+* Navigate to the directory: `exercises/otel-in-action`
 * To run the application either:
   * Run the task for the application: `Run otel-in-action docker` (runs docker compose)
   * Run the application with Terminal commands `docker compose up`
@@ -49,7 +49,7 @@ The entire stack of components is modeled in containers and can be run using a d
 To access the demo environment, switch to the directory for this exercise:
 
 ```sh { title="terminal" }
-cd labs/otel-in-action
+cd exercises/otel-in-action
 ```
 
 Then execute the docker-compose file to build and bring up the containers.
@@ -106,7 +106,7 @@ Via those ports it is possible to access the various exposed UIs.
 
 If you run your application with a local container daemon, simply access them via `localhost`. If you are using a cloud-based setup like Codespaces or Gitpod , please see the section "How to use this lab".
 
-Especially the [section](/labs/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab) about ports and hostnames is relevant here.
+Especially the [section](/exercises/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab) about ports and hostnames is relevant here.
 
 Open the `PORTS` tab on the bottom of your IDE and locate the URLs for the web UIs of the Python and Java frontends
 

@@ -6,9 +6,9 @@ weight = 1
 
 ## How to use this lab
 The lab is housed in a single Git repository, which contains everything needed to run it across various environments. 
-Within this repository, you'll find two main sections: the tutorial and the hands-on labs.
+Within this repository, you'll find two main sections: the tutorial and the hands-on exercises.
 The tutorial is a static website that explains key concepts and guides you through the practical exercises.
-The hands-on labs provide interactive experiences to help you grasp how to integrate OpenTelemetry into your applications. 
+The hands-on exercises provide interactive experiences to help you grasp how to integrate OpenTelemetry into your applications. 
 It's worth noting that these exercises focus on teaching concepts rather than replicating real-world deployment scenarios.
 
 {{< figure src="images/lab_tutorial_setup.png" width=700 caption="Lab Architecture" >}}

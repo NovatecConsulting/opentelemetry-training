@@ -21,6 +21,6 @@ By setting a unique correlation ID for each telemetry item and propagating it ac
 OpenTelemetry's trace ID can also be leveraged for correlation, ensuring that telemetry data from the same request or transaction is associated with the same trace. 
 Correlation engines can further enhance this process by matching data based on correlation IDs, trace IDs, or other attributes like timestamps, allowing for efficient aggregation and analysis. 
 Correlated telemetry data provides valuable insights for troubleshooting, performance monitoring, optimization, and gaining a holistic understanding of your system's behavior. 
-In the labs' chapter you will see how correlated data looks like. 
+In the exercises' chapter you will see how correlated data looks like. 
 Traditionally this had to be done by hand or just by timestamps which was a tedious task.
 -->

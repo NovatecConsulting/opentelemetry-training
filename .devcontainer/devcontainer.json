@@ -1,7 +1,7 @@
 {
 	"name": "otel-getting-started",
-	"workspaceFolder": "/workspaces/opentelemetry-training/labs",
-	"image": "jensereal/opentelemetry-training-application:latest",
+	"workspaceFolder": "/workspaces/opentelemetry-training/exercises",
+	"image": "ghcr.io/novatecconsulting/opentelemetry-training-application:matthias-auto-instrumentation",
 	"overrideCommand": false,
 	"runArgs": [
 		"--privileged"
@@ -15,7 +15,8 @@
 		16686
 	],
 	"containerEnv": {
-		"SHELL": "/bin/bash"
+		"SHELL": "/bin/bash",
+		"EXERCISES": "/workspaces/opentelemetry-training/exercises"
 	},
 	"portsAttributes": {
 		"5000": {
