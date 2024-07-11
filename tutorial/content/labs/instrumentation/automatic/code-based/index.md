@@ -5,7 +5,7 @@ weight: 3
 ---
 
 
-### background
+### Background
 <!-- Instrumentation Library -->
 The long-term vision of OpenTelemetry is that third-party libraries or frameworks ship with native OpenTelemetry instrumentation, providing out-of-the-box observability.
 However, as of now, some projects do not yet have native support for the (partially still evolving) OpenTelemetry APIs.
@@ -27,7 +27,7 @@ While instrumentation libraries offer a valuable solution for enhancing observab
 * Java source code: `automatic-instrumentation/initial/todobackend-springboot`
 * Python source code: `automatic-instrumentation/initial/todoui-flask`
 
-### exercise - Java instrumentation annotations
+### Exercise - Java instrumentation annotations
 
 The previous exercise using Java `zero-code` instrumentation can illustrate the need for additional libraries.
 Using OpenTelemetry's Java agent - as we did - covered a generic set of set of [instrumentation libraries](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation) and we did not have to worry about selecting any of them individually.

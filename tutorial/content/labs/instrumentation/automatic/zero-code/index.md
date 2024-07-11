@@ -69,7 +69,7 @@ Additionally, the OpenTelemetryInstaller configures emitters based on configurat
 This section should highlight that auto-instrumentation is built on mechanisms specific to the given programming language. Other languages may lack similar native capabilities.
 Therefore, not all languages come with support for auto-instrumentation.
 
-## exercise
+## Exercise
 
 ### How to perform the exercise
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
@@ -85,7 +85,7 @@ Otherwise you will run into port conflicts.
 You can run `docker compose ls` to verify. If it shows a process running in the `otel-in-action` directory,
 please switch to this directory and call `docker compose down` to stop it.
 
-### instrumentation of the Java (Spring Boot) component
+### Instrumentation of the Java (Spring Boot) component
 
 Change to the directory `automatic-instrumentation/initial/todobackend-springboot` path. If you are in the project root directory it is:
 
@@ -316,7 +316,7 @@ e.g. the `POST /todos/` or GET /todos/` one.
 You will get a breakdown of the spans which you saw before in the console output. Jaeger has them neatly arranged,
 so you can expand and basically walk through the call stack.
 
-If you want to simulate a slow you can execute:
+If you want to simulate a slow performing call you can execute:
 
 ```sh
 curl -X POST localhost:8080/todos/slow
@@ -325,9 +325,9 @@ curl -X POST localhost:8080/todos/slow
 You can observe the different behaviour in the Jaeger console.
 
 If you are familiar with Java you can of course also look at the code in the folder: `src/main/java/io/novatec/todobackend`
-Open the TodobackendApplication.java with your VS built-in explorer.
+Open the TodobackendApplication.java with your VS Code built-in editor.
 
-### instrumentation of the Python (Flask) component
+### Instrumentation of the Python (Flask) component
 
 Now that we have successfully auto-instrumented the Java part of the application, let's focus how to achieve similar results with the Python part. Leave the docker container and the Java part from the previous step up und running, we still need it now.
 
@@ -401,7 +401,9 @@ INFO:werkzeug:_internal:WARNING: This is a development server. Do not use it in 
 INFO:werkzeug:_internal:Press CTRL+C to quit
 ```
 
-Now access the both Web UIs again - the Python frontend. Add and remove some todos and observe the behaviour in Jaeger.
+Now access the Python Web UI, add and remove some todos.
+
+After that switch to the Jaeger Web UI. Once you refresh the `http://localhost:16686/search` URL, you can now see that 3 services have been captured with trace information. On the drop-down menu, you can see that `todoui-flask` has been added. Feel free to play around with the list and observe the results in Jaeger.
 
 
 ### Recap: Benefits and limitations of auto-instrumentation
