@@ -417,11 +417,17 @@ OpenTelemetry calls this information `SpanContext`.
 The boundary could be in-process or a network.
 As previously seen, the tracing SDK automatically generates a `SpanContext` for us.
 
+Let's investigate the current behavior of the application.
+In `app.py` add a decorator to the `do_stuff` function to create a new span.
+
+
 ```py { title="app.py" }
 @tracer.start_as_current_span("do_stuff")
 def do_stuff():
     # ...
 ```
+
+Curl the `/` endpoint and look at the output.
 
 ```json
 {
@@ -445,9 +451,7 @@ def do_stuff():
     "parent_id": null,
 }
 ```
-Let's investigate the current behavior of the application.
-In `app.py` add a decorator to the `do_stuff` function to create a new span.
-Curl the `/` endpoint and look at the output.
+
 You should now see two span objects being generated.
 If we compare the `index` and `do_stuff` span we see that:
 - both share the same `trace_id`.
@@ -457,7 +461,14 @@ In other words, `do_stuff` is a child span of `index`.
 The tracing SDK automagically handles context propagation within the same process.
 Let's see what happens when there is a network boundary in between.
 
-#### inject trace context into outgoing requests
+#### Inject trace context into outgoing requests
+
+For testing purposes, the lab environment includes a `echo` server that returns the HTTP requests back to the client.
+This is useful because it lets us examine what requests leaving our application look like.
+`do_stuff` uses the `requests` package to send a get request to `echo`.
+To examine what happens, let's add some `print` statements to look at response.
+
+Modify `app.py` according to the snippet below:
 
 ```py { title="app.py" }
 import json # <-- to pretty print response
@@ -473,10 +484,8 @@ def do_stuff():
     # ...
 ```
 
-For testing purposes, the lab environment includes a `echo` server that returns the HTTP requests back to the client.
-This is useful because it lets us examine what requests leaving our application look like.
-`do_stuff` uses the `requests` package to send a get request to `echo`.
-To examine what happens, let's add some `print` statements to look at response.
+After restarting the webserver and using curl to send a request to the `/` endpoint, you should see the output from our print statements.
+This will be printed out before the two spans
 
 ```bash
 Headers included in outbound request:
@@ -489,12 +498,19 @@ Headers included in outbound request:
 }
 ```
 
-After restarting the webserver and using curl to send a request to the `/` endpoint, you should see the output from our print statements.
 The request didn't include any tracing headers!
 If we do not inject SpanContext into outgoing requests, remote services have no information that the incoming request is part of an ongoing trace.
 Therefore, the tracing instrumentation decides to start a new trace by generating a new, but disconnected, `SpanContext`.
 The context propagation across services is currently broken.
 
+OpenTelemetry's data transmission system includes the concept of [propagators](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html).
+Propagators serialize context, so it can traverse the network along with the request.
+Let's import the [`inject`](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html#opentelemetry.propagate.inject) function from OpenTelemetry's `propagate` API.
+Create an empty dictionary and `inject` the headers from the current context into it.
+All we have to do now is to include this context in outgoing requests.
+The requests `get` method has a second argument that allows us to pass in information that will be sent as request headers.
+
+Modify `app.py` again according to the snippet below:
 ```py { title="app.py" }
 from opentelemetry.propagate import inject
 
@@ -506,13 +522,6 @@ def do_stuff():
     response = requests.get(url, headers=headers) # <- inject trace context into headers
     # ...
 ```
-
-OpenTelemetry's data transmission system includes the concept of [propagators](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html).
-Propagators serialize context, so it can traverse the network along with the request.
-Let's import the [`inject`](https://opentelemetry-python.readthedocs.io/en/latest/api/propagate.html#opentelemetry.propagate.inject) function from OpenTelemetry's `propagate` API.
-Create an empty dictionary and `inject` the headers from the current context into it.
-All we have to do now is to include this context in outgoing requests.
-The requests `get` method has a second argument that allows us to pass in information that will be sent as request headers.
 
 ```bash
 Headers included in outbound request:
@@ -531,7 +540,12 @@ If you have prior experience with distributed tracing, you might already know th
 By default, OpenTelemetry uses a [specification](https://www.w3.org/TR/trace-context/) established by the World Wide Web Consortium (W3C).
 Looking at the header's value, we can infer that it encodes the trace context as `<spec version>-<trace_id>-<parent_id>-<trace flag>`.
 
-#### continue an existing trace
+#### Continue an existing trace
+
+Let's switch perspective.
+Imagine that our Python application is a remote service that we send a request to.
+In this scenario, the service must recognize that the incoming request is part of an ongoing trace.
+To simulate this, let's add the `start_as_current_span` decorator to the `/users` endpoint of the application.
 
 ```py { title="app.py" }
 @app.route("/users", methods=["GET"])
@@ -539,15 +553,13 @@ Looking at the header's value, we can infer that it encodes the trace context as
 def get_user():
     # ...
 ```
+
+Use the `curl` command shown to send a request with a fictional tracing header to the application.
+
 ```sh
 curl -XGET "localhost:5000/users" --header "traceparent: 00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-00ffffffffffffff-01"
 ```
 
-Let's switch hats.
-Image that our Python application is a remote service that we send a request to.
-In this scenario, the service must recognize that the incoming request is part of an ongoing trace.
-To simulate this, let's add the `start_as_current_span` decorator to the `/users` endpoint of the application.
-Use the `curl` command shown above to send a request with a fictional tracing header to the application.
 If you look at output, you will notice that the tracer generated a span with a random `trace_id` and no `parent_id`.
 But this is not the behaviour what we want!
 Recall that `start_as_current_span` instantiates spans based on the current context of the tracer.
