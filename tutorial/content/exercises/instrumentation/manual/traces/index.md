@@ -30,8 +30,15 @@ By the end of this lab, you will be able to:
 This lab excercise demonstrates how to add tracing instrumentation to a Python application.
 The purpose of the exercises is to learn about the anatomy of spans and OpenTelemetry's tracing signal.
 It does not provide a realistic deployment scenario.
-In production, we export spans to a tracing backend and analyze traces via solutions such as [Jaeger](https://github.com/jaegertracing/jaeger), [Tempo](https://github.com/grafana/tempo), [Zipkin](https://github.com/openzipkin/zipkin), and more.
+In previous exercises, we exported spans to a tracing backend and analyzed traces via [Jaeger](https://github.com/jaegertracing/jaeger). 
 In this lab, we output spans to the local console to keep things simple.
+
+### How to perform the exercise
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
+* Initial directory: `manual-instrumentation-traces/initial`
+* Solution directory: `manual-instrumentation-traces/solution`
+* Python source code: `manual-instrumentation-traces/initial/src`
 The environment consists of two components:
 1. a Python service
     - uses [Flask](https://flask.palletsprojects.com) web framework
@@ -41,14 +48,59 @@ The environment consists of two components:
     - listens on port 6000, receives requests and sends them back to the client
     - called by the Python application to simulate communication with a remote service
     - allows us to inspect outbound requests
-    - Start with `docker compose up -d`
 
-To work on this lab, **open two terminals**.
-1. to start the application and view it's output
-   - navigate to `cd exercises/manual-instrumentation-traces/initial/src`
-   - to start the webserver run `python app.py`, to terminate it hit: `CTRL + C`
-2. to send request to the HTTP endpoints of the service
-   -  for example: `curl -XGET localhost:5000; echo`
+
+To work on this lab, **open three terminals**.
+1. Terminal to run the echo server
+
+Navigate to 
+
+```sh
+cd $EXERCISES
+cd manual-instrumentation-traces/initial
+```
+
+Start the echo server using
+```sh
+docker compose up
+```
+
+2. Terminal to run the application and view it's output
+
+Change to the Python source directory
+```sh
+cd $EXERCISES
+cd manual-instrumentation-traces/initial/src
+```
+
+Start the Python app/webserver
+```sh
+python app.py
+```
+
+3. Terminal to send request to the HTTP endpoints of the service
+
+The directory doesn't matter here
+
+Test the Python app:
+```sh
+curl -XGET localhost:5000; echo
+```
+
+You should see a response of the following type:
+```
+Hello, World! It's currently Thu, 11 Jul 2024 09:49:38
+```
+
+Test the echo server:
+```sh
+curl -XGET localhost:6000; echo
+```
+
+You should see a JSON response starting like:
+```
+{"host":{"hostname":"localhost","ip":"::ffff:172.20.0.1","ips":[]},"http":{"method":"GET","baseUrl"...}
+```
 
 To keep things concise, code snippets only contain what's relevant to that step.
 If you get stuck, you can find the solution in the `exercises/manual-instrumentation-traces/solution/src`
@@ -142,38 +194,50 @@ Add the `start_as_current_span` decorator to the `index` function.
 Notice that this decorator is a convenience function that abstracts away the details of trace context management from us.
 It handles the creation of a new span object, attaches it to the current context, and ends the span once the method returns.
 
-```json
-{
-    "name": "index",
-    "context": {
-        "trace_id": "0x64d6aa00b229557023afb032160c9237",
-        "span_id": "0xbff3f93fb12ff4ac",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": null,
-    "start_time": "2024-01-18T15:32:20.321307Z",
-    "end_time": "2024-01-18T15:32:20.428228Z",
-    "attributes": {},
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.24.0",
-            "service.name": "unknown_service"
-        },
-    }
-}
+Switch to the terminal, where you ran `python app.py` before. If it is still running, leave it else start it again using
+```sh
+python app.py
 ```
-In your primary terminal, run `python app.py` to start the web server on port 5000.
-Switch to your second terminal and use the following command to send a request to the `/` endpoint:
+
+Switch to your other terminal and use the following command to send a request to the `/` endpoint:
 
 ```bash
 curl -XGET localhost:5000; echo
 ```
+
 This causes the tracer to generate a span object, for which the tracing pipeline writes a JSON representation to the terminal.
 Take a look at the terminal where you application is running.
-You should see an output similar to the one shown above.
+You should see an output similar to the one shown below.
+
+```json
+{
+    "name": "index",
+    "context": {
+        "trace_id": "0x91762d8638140e0d1571815e67bdbcf4",
+        "span_id": "0xfd427d3c11732ddd",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2024-07-11T12:00:23.481840Z",
+    "end_time": "2024-07-11T12:00:23.598772Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {},
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.25.0",
+            "service.name": "unknown_service"
+        },
+        "schema_url": ""
+    }
+}
+```
 
 A span in OpenTelemetry represents a single operation within a trace and carries a wealth of information that provides insight into the operation's execution. This includes the `name` of the span, which is a human-readable string that describes the operation. The trace context, consisting of the `trace_id`, `span_id`, and `trace_state`, uniquely identifies the span within the trace and carries system-specific configuration data. The `SpanKind` indicates the role of the span, such as whether it's an internal operation, a server-side operation, or a client-side operation. If the `parent_id` is `null`, it signifies that the span is the root of a new trace. The `start_time` and `end_time` timestamps mark the beginning and end of the span's duration. Additionally, spans can contain `attributes` that provide further context, such as HTTP methods or response status codes, and a `resource` field that describes the service and environment. Other fields like `events`, `links`, and `status` offer additional details about the span's lifecycle, outcome and context.
 
@@ -185,10 +249,12 @@ This information is enough to reason about the chain of events in a transaction 
 However, it's important to understand that tracing is a much more potent tool.
 By enriching spans with additional context, traces can proivde meaningful insights about what is happening in a system.
 
-#### resource
+#### Resource
 A [Resource](https://opentelemetry.io/docs/specs/otel/resource/sdk/) is a set of static attributes that help us identify the source (and location) that captured a piece of telemetry.
 Right now, the span's `resource` field only contains basic information about the SDK, as well as an unknown `service.name`.
-Let's look at how we can add additional me
+Let's look at how we can add additional properties.
+
+Create a new file `resource_utils.py` in the `src` directory with the source code below:
 
 ```py { title="resource_utils.py" }
 from opentelemetry.sdk.resources import Resource
@@ -202,6 +268,9 @@ def create_resource(name: str, version: str) -> Resource:
     )
     return svc_resource
 ```
+
+Edit the existing `trace_utils.py` as shown below to invoke functionality from `resource_utils`.
+
 ```py { title="trace_utils.py" }
 from resource_utils import create_resource
 
@@ -213,10 +282,25 @@ def create_tracer(name: str, version: str) -> trace_api.Tracer:
     provider.add_span_processor(create_tracing_pipeline())
 ```
 
-Create a new file `resource_utils.py`.
+
 Specify the imports and create a function `create_resource`, which returns a [`Resource`](https://opentelemetry-python.readthedocs.io/en/latest/sdk/resources.html#opentelemetry.sdk.resources.Resource) object.
 By separating the resource and tracing configuration, we can easily reuse it with other telemetry signals.
 Inside `create_tracer`, we pass the value returned by `create_resource` to the `TraceProvider`.
+
+Let's verify that everything works as expected. When editing the code live the automatic reload and restart might break.
+In this case you must restart the app again using.
+
+```sh
+python app.py
+```
+
+Send a request using the previous curl command in the other terminal window.
+
+```bash
+curl -XGET localhost:5000; echo
+```
+
+If you look at the span exported to the terminal, you should now see that the resource attached to telemetry contains context about the service.
 
 ```json
 "resource": {
@@ -231,13 +315,10 @@ Inside `create_tracer`, we pass the value returned by `create_resource` to the `
 }
 ```
 
-Let's verify that everything works as expected.
-Restart the web server and send a request using the previous curl command.
-If you look at the span exported to the terminal, you should now see that the resource attached to telemetry contains context about the service.
 This is just an example to illustrate how resources can be used to describe the environment an application is running in.
 Other resource attributes may include information to identify the physical host, virtual machine, container instance, operating system, deployment platform, cloud provider, and more.
 
-#### semantic conventions
+#### Semantic conventions
 
 > There are only two hard things in Computer Science: cache invalidation and naming things.
 > -- Phil Karlton
@@ -249,6 +330,9 @@ Inconsistencies in the definition of telemetry make it harder to analyze the dat
 This is why OpenTelemetry's specification includes [semantic conventions](https://opentelemetry.io/docs/specs/semconv/).
 This standardization effort helps to improve consistency, prevents us from making typos, and avoids ambiguity due to differences in spelling.
 OpenTelemetry provides a Python package `opentelemetry-semantic-conventions` that was already installed as a dependency.
+
+Let's refactor our code.
+Start by specifying imports at the top of the file and use `ResourceAttributes` within the `create_resource` function.
 
 ```py { title="resource_utils.py" }
 from opentelemetry.semconv.resource import ResourceAttributes
@@ -263,18 +347,20 @@ def create_resource(name: str, version: str) -> Resource:
     return svc_rc
 ```
 
-Let's refactor our code.
-Start by specifying imports at the top of the file.
 Explore the [documentation](https://opentelemetry.io/docs/specs/semconv) to look for a convention that matches the metadata we want to record.
 The specification defines conventions for various aspects of a telemetry system (e.g. different telemetry signals, runtime environments, etc.).
 Due to the challenges of standardization and OpenTelemetry's strong commitment to long-term API stability, many conventions are still marked as experimental.
 For now, we'll use [this](https://opentelemetry.io/docs/specs/semconv/resource/#service) as an example.
 Instead of specifying the attributes keys (and sometimes values) by typing their string by hand, we reference objects provided by OpenTelemetry's `semconv` package.
 
+If you repeat the `curl` invocation and observe the trace you won't see a difference there. Just the code is now cleaner as the attributes are being used from a standardized package instead of being hard-coded and hence prone to break when there are future changes.
+
 #### SpanAttributes
 
 Aside from static resources, spans can also carry dynamic context through `SpanAttributes`.
 Thereby, we can attach information specific to the current operation to spans.
+
+Modify `app.py` to match the following code snippet.
 
 ```py { title="app.py" }
 from flask import Flask, make_response, request
@@ -293,7 +379,16 @@ def index():
             SpanAttributes.HTTP_RESPONSE_STATUS_CODE: 200,
         }
     )
+    do_stuff()
+    ...
 ```
+
+Make sure the application is still running after the changes. Otherwise restart it and redo the curl call.
+```bash
+curl -XGET localhost:5000; echo
+```
+
+The response will onw contain span attributes.
 
 ```json
 "attributes": {
