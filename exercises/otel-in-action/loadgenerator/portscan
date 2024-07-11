@@ -1,3 +1,5 @@
+docker exec -it otel-in-action-loadgenerator-1 /bin/sh
+
 nc -v -z otelcol 4317
 nc -v -z otelcol 4318
 
