@@ -451,7 +451,7 @@ def after_request_func(response: Response) -> Response:
     return response
 ```
 
-
+<!-- TODO: Generate Errors -->
 
 #### Latency
 
@@ -471,6 +471,14 @@ A major challenge is that there is no unified definition of how to measure laten
 We could measure the time a service spends processing application code, the time it takes to get a response from a remote service, and so on.
 To interpret measurements correctly, it is vital to have information on what was measured.
 
+Let's use the meter to create a Histogram instrument.
+Refer to the semantic conventions for [HTTP Metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/) for an instrument name and preferred unit of measurement.
+To measure the time it took to serve the request, we'll use our `before_request_func` and `after_request_func` functions.
+In `before_request_func`, create a timestamp for the start of the request and add it to the request context.
+In `after_request_func`, take a timestamp for the end of the request and subtract them to calculate the duration.
+We often need additional context to draw the right conclusions.
+For example, a service's latency number might indicate fast replies.
+
 ```py { title="metric_utils.py" }
 def create_request_instruments(meter: metrics.Meter) -> dict:
     request_latency = meter.create_histogram(
@@ -485,6 +493,9 @@ def create_request_instruments(meter: metrics.Meter) -> dict:
         "request_latency": request_latency,
     }
 ```
+
+However, in reality, the service might be fast because it serves errors instead of replies.
+Therefore, let's add some additional attributes.
 
 ```py { title="app.py" }
 @app.before_request
@@ -506,19 +517,26 @@ def after_request_func(response: Response) -> Response:
     return response
 ```
 
-Let's use the meter to create a Histogram instrument.
-Refer to the semantic conventions for [HTTP Metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/) for an instrument name and preferred unit of measurement.
-To measure the time it took to serve the request, we'll use our `before_request_func` and `after_request_func` functions.
-In `before_request_func`, create a timestamp for the start of the request and add it to the request context.
-In `after_request_func`, take a timestamp for the end of the request and subtract them to calculate the duration.
-We often need additional context to draw the right conclusions.
-For example, a service's latency number might indicate fast replies.
-However, in reality, the service might be fast because it serves errors instead of replies.
-Therefore, let's add some additional attributes.
+To test if everything works, run the app, use curl to send a request, and locate the Histogram instrument in the output.
+
+Before you do that stop the app `Ctrl+C` and start it with some filtered output:
 
 ```sh
 python app.py | tail -n +3 | jq '.resource_metrics[].scope_metrics[].metrics[] | select (.name=="http.server.request.duration")'
 ```
+
+
+
+```bash
+curl -XPOST localhost:5000; echo
+```
+
+```bash
+curl -XGET localhost:5000; echo
+```
+
+You should see that the request was associated with a bucket.
+Note that conventions recommend seconds as the unit of measurement for the request duration.
 
 ```json
 {
@@ -547,9 +565,6 @@ python app.py | tail -n +3 | jq '.resource_metrics[].scope_metrics[].metrics[] |
 }
 ```
 
-To test if everything works, run the app, use curl to send a request, and locate the Histogram instrument in the output.
-You should see that the request was associated with a bucket.
-Note that conventions recommend seconds as the unit of measurement for the request duration.
 We expect a majority of requests to be served in milliseconds.
 Therefore, the default bucket bounds defined by the Histogram aren't a good fit.
 We'll address this later, so ignore this for now.
@@ -572,7 +587,13 @@ It would be perfectly possible for a resource to experience high utilization wit
 However, Google's definition of saturation, confusingly, resembles utilization.
 Let's put the matter of terminology aside.
 
-```py
+Let's measure some resource utilization metrics.
+To keep things simple, we already installed the `psutil` library for you.
+Create a function `create_resource_instruments` to obtain instruments related to resources.
+Use the meter to create an `ObservableGauge` to track the current CPU utilization and an `ObservableUpDownCounter` to record the memory usage.
+Since both are asynchronous instruments, we also define two callback functions that are called on demand and return an Observation.
+
+```py { title="metric_utils.py" }
 import psutil
 
 # callbacks for asynchronous instruments
@@ -594,13 +615,10 @@ def create_resource_instruments(meter: metric_api.Meter) -> dict:
     return instruments
 ```
 
-Let's measure some resource utilization metrics.
-To keep things simple, we already installed the `psutil` library for you.
-Create a function `create_resource_instruments` to obtain instruments related to resources.
-Use the meter to create an `ObservableGauge` to track the current CPU utilization and an `ObservableUpDownCounter` to record the memory usage.
-Since both are asynchronous instruments, we also define two callback functions that are called on demand and return an Observation.
+Open `app.py`, import `create_resource_instruments`, and call it inside the main section.
+With our golden signals in place, let's use load-testing tools to simulate a workload.
 
-```py
+```py { title="app.py" }
 import logging
 from metric_utils import create_meter, create_request_instruments, create_resource_instruments
 
@@ -617,25 +635,37 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
 ```
 
-```sh
-# start app and filter output
-python app.py | tail -n +3 | jq '.resource_metrics[].scope_metrics[].metrics[] | select (.name=="process.cpu.utilization")'
-
-# apache bench
-ab -n 50000 -c 100 http://localhost:5000/users
-```
-
-Open `app.py`, import `create_resource_instruments`, and call it inside the main section.
-With our golden signals in place, let's use load-testing tools to simulate a workload.
 We'll use [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html), which is a single-threaded CLI tool for benchmarking HTTP web servers.
 Flask's `app.run()` starts a built-in web server that is meant for development purposes.
 Running a stress test and logging requests would render the console useless.
 To observe the output of the ConsoleMetricExporter, add a statement to disable the logger.
-Start the application, run the `ab` command to apply the load, and examine the metrics rendered to the terminal.
+
+Start the app and filter the output
+```sh
+# start app and filter output
+python app.py | tail -n +3 | jq '.resource_metrics[].scope_metrics[].metrics[] | select (.name=="process.cpu.utilization")'
+```
+
+Run the `ab` command to apply the load, and examine the metrics rendered to the terminal.
+```sh
+# apache bench
+ab -n 50000 -c 100 http://localhost:5000/users
+```
 
 ### Views
 
-```py
+So far, we have seen how to generate some metrics.
+Views let us customize how metrics are collected and output by the SDK.
+
+<!-- why don't we right in the first place? -->
+
+Before we begin, create a new function `create_views`.
+To register views, we pass them to the `MeterProvider`.
+The definition of a View consists of two parts.
+First, we must *match* the instrument(s) that we want to modify.
+The [`View`](https://opentelemetry-python.readthedocs.io/en/latest/sdk/metrics.view.html#opentelemetry.sdk.metrics.view.View) constructor provides many criteria to specify a selection.
+
+```py { title="metric_utils.py" }
 from opentelemetry.sdk.metrics.view import (
     View,
     DropAggregation,
@@ -656,21 +686,13 @@ def create_meter(name: str, version: str) -> metrics.Meter:
     )
 ```
 
-So far, we have seen how to generate some metrics.
-Views let us customize how metrics are collected and output by the SDK.
-
-<!-- why don't we right in the first place? -->
-
-Before we begin, create a new function `create_views`.
-To register views, we pass them to the `MeterProvider`.
-The definition of a View consists of two parts.
-First, we must *match* the instrument(s) that we want to modify.
-The [`View`](https://opentelemetry-python.readthedocs.io/en/latest/sdk/metrics.view.html#opentelemetry.sdk.metrics.view.View) constructor provides many criteria to specify a selection.
 Nothing prevents us from defining Views that apply to multiple instruments.
 Second, we must instruct the View on *how to modify* the metrics stream.
 Let's look at some examples to illustrate why Views can be useful.
 
-```py
+
+Modify the code as shown below:
+```py { title="app.py" }
 # adjust aggregation of an instrument
 histrogram_explicit_buckets = View(
     instrument_type=Histogram,
@@ -680,6 +702,7 @@ histrogram_explicit_buckets = View(
 views.append(histrogram_explicit_buckets)
 ```
 
+Run the app:
 ```bash
 python app.py | tail -n +3 | jq '.resource_metrics[].scope_metrics[].metrics[] | select (.name=="http.server.request.duration")'
 ```
@@ -691,7 +714,18 @@ However, this meant that measurements didn't align with the default bucket bound
 The View's `aggregation` argument lets us customize how instruments aggregate metrics.
 The example above illustrates how to change the bucket sizes for all histogram instruments.
 
-```py
+However, Views are much more powerful than changing an instrument's aggregation.
+For example, we can use `attribute_keys` to specify a white list of attributes to report.
+An operator might want to drop metric dimensions because they are deemed unimportant, to reduce memory usage and storage, prevent leaking sensitive information, and so on.
+If we pass an empty set, the SDK should no longer report separate counters for the URL paths.
+Moreover, a View's `name` parameter to rename a matched instrument.
+This could be used to ensure that generated metrics align with OpenTelemetry's semantic conventions.
+Moreover, Views allow us to filter what instruments should be processed.
+If we pass `DropAggregation`, the SDK will ignore all measurements from the matched instruments.
+You have now seen some basic examples of how Views let us match instruments and customize the metrics stream.
+Add these code snippets to `create_views` and observe the changes in the output.
+
+```py { title="metric_utils.py" }
 # change what attributes to report
 traffic_volume_drop_attributes = View(
     instrument_type=Counter,
@@ -717,16 +751,11 @@ drop_instrument = View(
 views.append(drop_instrument)
 ```
 
-However, Views are much more powerful than changing an instrument's aggregation.
-For example, we can use `attribute_keys` to specify a white list of attributes to report.
-An operator might want to drop metric dimensions because they are deemed unimportant, to reduce memory usage and storage, prevent leaking sensitive information, and so on.
-If we pass an empty set, the SDK should no longer report separate counters for the URL paths.
-Moreover, a View's `name` parameter to rename a matched instrument.
-This could be used to ensure that generated metrics align with OpenTelemetry's semantic conventions.
-Moreover, Views allow us to filter what instruments should be processed.
-If we pass `DropAggregation`, the SDK will ignore all measurements from the matched instruments.
-You have now seen some basic examples of how Views let us match instruments and customize the metrics stream.
-Feel free to add these code snippets to `create_views` and observe the changes in the output.
+Observe the output:
+
+```bash
+python app.py | tail -n +3 | jq '.resource_metrics[].scope_metrics[].metrics[] | select (.name=="http.server.request.duration")'
+```
 
 <!--
 ## quiz
