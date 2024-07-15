@@ -5,21 +5,28 @@ weight: 10
 ---
 
 ## How to perform the exercise
-* You need to either 
-  * start the [repository](https://github.com/NovatecConsulting/opentelemetry-training/) with Codespaces, Gitpod
-  * clone the repository with git and run it locally with dev containers or docker compose
-* Navigate to the directory: `exercises/otel-in-action`
-* To run the application either:
-  * Run the task for the application: `Run otel-in-action docker` (runs docker compose)
-  * Run the application with Terminal commands `docker compose up`
 
-## Intro
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
+* Initial directory: `otel-in-action`
+
+## Introduction
 
 This introductory lab exercise will demonstrate capabilities of OpenTelemetry from an end-user perspective. There will be no changes in configuration necessary. It's simply about starting a set of pre-defined containers and walking through usage scenarios.
 
 The intention is to provide a high-level understanding of how OpenTelemetry works, how it integrates with both application components and observability tools, and to become familiar with a typical setup.
 
 It furthermore provides a lookout to the various chapters of this lab.
+
+## Learning Objectives
+
+By the end of this chapter, you should be able to:
+- Gain Hands-On access to a pre-configured, OpenTelemetry-enabled application
+- Explain the roles of mandatory components
+- Use web-based dashboards for Tracing (Jaeger) and Monitoring (Prometheus)
+- Interact with the OpenTelemetry-enabled application and observe results in the various dashboard
+- Observe slow running and failing components
+
 
 ## Architecture
 
@@ -49,7 +56,8 @@ The entire stack of components is modeled in containers and can be run using a d
 To access the demo environment, switch to the directory for this exercise:
 
 ```sh { title="terminal" }
-cd exercises/otel-in-action
+cd $EXERCISES
+cd otel-in-action
 ```
 
 Then execute the docker-compose file to build and bring up the containers.
@@ -100,11 +108,13 @@ Name: python-java-otel-todolist-loadgenerator-1		Uptime: 3 minutes ago	Ports:
 
 ## Accessing the demo application components
 
+### URLs and Ports
+
 As you could see in the results of the `docker ps` call in the previous exercise most application components expose their service over a certain port.
 
 Via those ports it is possible to access the various exposed UIs.
 
-If you run your application with a local container daemon, simply access them via `localhost`. If you are using a cloud-based setup like Codespaces or Gitpod , please see the section "How to use this lab".
+If you run your application with a local devcontainer environment, you can simply access them via `localhost`. 
 
 Especially the [section](/exercises/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab) about ports and hostnames is relevant here.
 
@@ -113,11 +123,20 @@ Open the `PORTS` tab on the bottom of your IDE and locate the URLs for the web U
 - Python/Flask frontend - the service with port 5001
 - Java/Thymeleaf frontend - the service with port 8090
 
+{{< figure src="images/vscode_urls_ports.png" width=700 caption="Ports in VS Code" >}}
+
 The core part of the application exposes a REST API and can also be accessed via URL. It is the service with port 8080.
 
 However, it's of course more convenient (and better for showing distributed traces) when invoking the app through the web UIs.
 
-You can of course feel free to add some "ToDo" items yourself and/or set some of them done. Most likely you will also see an item called "Sample" come and go. This is being set and removed by the load generator.
+Start by opening the Python frontend in your browser on [http://localhost:5001](http://localhost:5001).
+It will bring up a Web UI looking like this:
+
+{{< figure src="images/todoui_frontend_sample.png" width=700 caption="Python Web UI" >}}
+
+You can feel free to add some "ToDo" items yourself and/or set some of them done. Most likely you will also see an item called "Sample" come and go. This is being set and removed by the load generator.
+
+Repeat the same steps with the alternate frontend running on [http://localhost:8090](http://localhost:8090).
 
 ## Configuration and data flow
 
