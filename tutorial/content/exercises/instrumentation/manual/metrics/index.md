@@ -237,7 +237,7 @@ Use the second terminal to send a request to `/` via
 curl -XGET localhost:5000; echo
 ```
 
-Observe the result:
+Observe the result in the terminal window where the python app is executed:
 
 ```json
 "resource": { // <- origin
@@ -382,12 +382,14 @@ Let's instrument our application accordingly.
 #### Traffic
 
 Let's measure the total amount of traffic for a service.
-First, go to `create_request_instruments` and `index` to delete everything related to the `index_counter` instrument.
+First, go to `create_request_instruments` and `index` to **delete** everything related to the `index_counter` instrument.
 Incrementing a counter on every route we serve would lead to a lot of code duplication.
 
-Modify the code to look like this:
+Modify the 2 source files to look like this:
 
 ```py { title="metric_utils.py" }
+from opentelemetry import metrics
+
 def create_request_instruments(meter: metrics.Meter) -> dict:
     traffic_volume = meter.create_counter(
         name="traffic_volume",
@@ -402,6 +404,14 @@ def create_request_instruments(meter: metrics.Meter) -> dict:
     return instruments
 ```
 
+```py { title="app.py" }
+@app.route("/", methods=["GET", "POST"])
+def index():
+    do_stuff()
+    current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime())
+    return f"Hello, World! It's currently {current_time}"
+```  
+
 Instead, let's create a custom function `before_request_func` and annotate it with Flask's `@app.before_request` decorator.
 Thereby, the function is executed on incoming requests before they are handled by the view serving a route.
 
@@ -413,6 +423,18 @@ def before_request_func():
     )
 ```
 
+Send a couple of POST and GET requests to `/` via 
+
+```bash
+curl -XPOST localhost:5000; echo
+```
+
+```bash
+curl -XGET localhost:5000; echo
+```
+
+Look at the output. Do you see the difference?
+
 #### Error rate
 
 As a next step, let's track the error rate of the service.
@@ -420,6 +442,7 @@ Create a separate Counter instrument.
 Ultimately, the decision of what constitutes a failed request is up to us.
 In this example, we'll simply refer to the status code of the response.
 
+Add `error_rate` to `metric_utils.py` as described here:
 
 ```py { title="metric_utils.py" }
 def create_request_instruments(meter: metrics.Meter) -> dict:
@@ -436,6 +459,8 @@ def create_request_instruments(meter: metrics.Meter) -> dict:
 ```
 
 To access it, create a function `after_request_func` and use Flask's `@app.after_request` decorator to execute it after a view function returns.
+
+Modify the code according to this snippet:
 
 ```py { title="app.py" }
 from flask import Flask, make_response, request, Response
@@ -479,6 +504,8 @@ In `after_request_func`, take a timestamp for the end of the request and subtrac
 We often need additional context to draw the right conclusions.
 For example, a service's latency number might indicate fast replies.
 
+Add `request_latency` to `metric_utils.py` as described here:
+
 ```py { title="metric_utils.py" }
 def create_request_instruments(meter: metrics.Meter) -> dict:
     request_latency = meter.create_histogram(
@@ -495,7 +522,8 @@ def create_request_instruments(meter: metrics.Meter) -> dict:
 ```
 
 However, in reality, the service might be fast because it serves errors instead of replies.
-Therefore, let's add some additional attributes.
+
+Therefore, let's add some additional attributes. Modify the code according to this snippet:
 
 ```py { title="app.py" }
 @app.before_request
