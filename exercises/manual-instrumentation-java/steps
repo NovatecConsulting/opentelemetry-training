@@ -39,3 +39,62 @@ More packages
             <artifactId>opentelemetry-semconv</artifactId>
             <version>1.26.0-alpha</version>
         </dependency>
+
+
+In Java app:
+
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.Attributes;
+
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.resources.Resource;
+
+import io.opentelemetry.semconv.ResourceAttributes;
+
+	@Bean
+	public OpenTelemetry openTelemetry(){
+
+		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+
+		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
+			.buildAndRegisterGlobal();
+
+		return openTelemetry;
+	}
+
+
+
+
+
+For Tracing:
+
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+
+import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+
+import io.opentelemetry.api.trace.Tracer;
+
+	@Bean
+	public OpenTelemetry openTelemetry(){
+
+		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+
+		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
+			.setResource(resource)
+			.build();
+
+		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
+			.setTracerProvider(sdkTracerProvider)
+			.buildAndRegisterGlobal();
+
+		return openTelemetry;
+	}
+
+Acquiring a tracer:
+
+Creating spans:
+
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Scope;
