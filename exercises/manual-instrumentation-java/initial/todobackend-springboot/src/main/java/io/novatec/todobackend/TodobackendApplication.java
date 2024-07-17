@@ -5,40 +5,23 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
-import org.springframework.context.annotation.Bean;
-
-//Basic Otel
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.common.Attributes;
-
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.resources.Resource;
-
-import io.opentelemetry.semconv.ResourceAttributes;
-
-//Tracing and Spans
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-
-import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-
-import io.opentelemetry.api.trace.Tracer;
-
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.context.Scope;
-
-
 @SpringBootApplication
 @RestController
 @CrossOrigin(origins = "*")
@@ -57,12 +40,9 @@ public class TodobackendApplication {
 	@Autowired
 	TodoRepository todoRepository;
 
-	@Autowired
-	OpenTelemetry openTelemetry;
-
-  	// TodobackendApplication(OpenTelemetry openTelemetry) {
-    // 	tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-  	// }
+  	TodobackendApplication(OpenTelemetry openTelemetry) {
+    	tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+  	}
 
 	private String getInstanceId() {
 
@@ -100,8 +80,6 @@ public class TodobackendApplication {
 
 	@PostMapping("/todos/{todo}")
 	String addTodo(@PathVariable String todo){
-
-		Tracer tracer = openTelemetry.getTracer("instrumentation-scope-name", "instrumentation-scope-version");
 
 		this.someInternalMethod(todo);
 		//todoRepository.save(new Todo(todo));
@@ -143,24 +121,6 @@ public class TodobackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TodobackendApplication.class, args);
 	}
-
-	@Bean
-	public OpenTelemetry openTelemetry(){
-
-		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
-
-		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
-			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
-			.setResource(resource)
-			.build();
-
-		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
-			.setTracerProvider(sdkTracerProvider)
-			.buildAndRegisterGlobal();
-
-		return openTelemetry;
-	}
-
 
 }
 
