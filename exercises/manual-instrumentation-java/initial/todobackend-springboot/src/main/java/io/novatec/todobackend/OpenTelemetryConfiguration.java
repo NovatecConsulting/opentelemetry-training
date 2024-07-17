@@ -15,7 +15,6 @@ import io.opentelemetry.semconv.ResourceAttributes;
 
 
 @Configuration
-
 public class OpenTelemetryConfiguration {
 
     @Bean

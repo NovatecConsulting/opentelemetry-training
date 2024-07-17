@@ -81,6 +81,8 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(@PathVariable String todo){
 
+		
+
 		this.someInternalMethod(todo);
 		//todoRepository.save(new Todo(todo));
 		logger.info("POST /todos/ "+todo.toString());
