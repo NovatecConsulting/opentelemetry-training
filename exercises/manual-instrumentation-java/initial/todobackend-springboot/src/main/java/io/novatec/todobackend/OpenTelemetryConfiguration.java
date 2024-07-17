@@ -14,6 +14,7 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.semconv.ResourceAttributes;
 
 
+@SuppressWarnings("deprecation")
 @Configuration
 public class OpenTelemetryConfiguration {
 

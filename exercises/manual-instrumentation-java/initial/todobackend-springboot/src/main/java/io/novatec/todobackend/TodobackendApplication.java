@@ -20,8 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Scope;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+
 @SpringBootApplication
 @RestController
 @CrossOrigin(origins = "*")
@@ -40,9 +44,9 @@ public class TodobackendApplication {
 	@Autowired
 	TodoRepository todoRepository;
 
-  	TodobackendApplication(OpenTelemetry openTelemetry) {
-    	tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-  	}
+	TodobackendApplication(OpenTelemetry openTelemetry) {
+		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+	}
 
 	private String getInstanceId() {
 
@@ -67,46 +71,54 @@ public class TodobackendApplication {
 	}
 
 	@GetMapping("/todos/")
-	List<String> getTodos(){
+	List<String> getTodos() {
 
 		List<String> todos = new ArrayList<String>();
 
 		todoRepository.findAll().forEach(todo -> todos.add(todo.getTodo()));
-		logger.info("GET /todos/ "+todos.toString());
-
+		logger.info("GET /todos/ " + todos.toString());
 
 		return todos;
 	}
 
 	@PostMapping("/todos/{todo}")
-	String addTodo(@PathVariable String todo){
+	String addTodo(@PathVariable String todo) {
 
-		
+		Span span = tracer.spanBuilder("addTodo").startSpan();
 
-		this.someInternalMethod(todo);
-		//todoRepository.save(new Todo(todo));
-		logger.info("POST /todos/ "+todo.toString());
+		try (Scope scope = span.makeCurrent()) {
 
-		return todo;
+			this.someInternalMethod(todo);
+			// todoRepository.save(new Todo(todo));
+			logger.info("POST /todos/ " + todo.toString());
+
+			return todo;
+
+		} catch (Throwable t) {
+			span.recordException(t);
+			throw t;
+		} finally {
+			span.end();
+		}
 
 	}
 
-	String someInternalMethod(String todo){
+	String someInternalMethod(String todo) {
 
 		todoRepository.save(new Todo(todo));
-		if(todo.equals("slow")){
+		if (todo.equals("slow")) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} 		
-		if(todo.equals("fail")){
+		}
+		if (todo.equals("fail")) {
 
 			System.out.println("Failing ...");
 			throw new RuntimeException();
-			
-		} 
+
+		}
 		return todo;
 
 	}
@@ -115,8 +127,8 @@ public class TodobackendApplication {
 	String removeTodo(@PathVariable String todo) {
 
 		todoRepository.deleteById(todo);
-		logger.info("DELETE /todos/ "+todo.toString());
-		return "removed "+todo;
+		logger.info("DELETE /todos/ " + todo.toString());
+		return "removed " + todo;
 
 	}
 
@@ -127,18 +139,19 @@ public class TodobackendApplication {
 }
 
 @Entity
-class Todo{
+class Todo {
 
 	@Id
 	String todo;
 
-	public Todo(){}
+	public Todo() {
+	}
 
-	public Todo(String todo){
+	public Todo(String todo) {
 		this.todo = todo;
 	}
 
-	public String getTodo(){
+	public String getTodo() {
 		return todo;
 	}
 
