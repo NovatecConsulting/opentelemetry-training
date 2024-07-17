@@ -46,7 +46,7 @@ public class MyTransformer implements ClassFileTransformer {
         return modifiedBytecode;
 ```
 
-You'll likely know that `main` method is the entry point of Java program.
+Most developers that have basic knowledge of Java will  know that the `main()` method is the entry point of a Java program.
 In addition to that, the Java Virtual Machine (JVM) also supports two other types of entry points: `premain` and `agentmain`.
 Both `premain` and `agentmain` have an optional parameter to pass an `Instrumentation` instance as an argument to the method.
 Java's built-in Instrumentation interface provides access to low-level functionality of the JVM.
@@ -94,7 +94,7 @@ cd $EXERCISES
 cd automatic-instrumentation/initial/todobackend-springboot
 ```
 
-This is the same Java application as used for the backend component in the `OpenTelemetry in Action`chapter.
+This is the same Java application as used for the backend component in the `OpenTelemetry in Action` chapter.
 
 Build the Java project using maven:
 
@@ -389,7 +389,7 @@ Execute the call like this:
 opentelemetry-instrument python app.py
 ```
 
-The output will look execatly like the non-instrumented application.
+The output will look exactly like the non-instrumented application.
 
 ```
  * Serving Flask app 'app'
@@ -403,7 +403,7 @@ INFO:werkzeug:_internal:Press CTRL+C to quit
 
 Now access the Python Web UI, add and remove some todos.
 
-After that switch to the Jaeger Web UI. Once you refresh the `http://localhost:16686/search` URL, you can now see that 3 services have been captured with trace information. On the drop-down menu, you can see that `todoui-flask` has been added. Feel free to play around with the list and observe the results in Jaeger.
+After that switch to the Jaeger Web UI. Once you refresh the `http://localhost:16686/search` URL, you can now see that 3 services have been captured with trace information. On the drop-down menu, you can see that `todoui-flask` component has been added. Feel free to play around with the list and observe the results in Jaeger.
 
 
 ### Recap: Benefits and limitations of auto-instrumentation

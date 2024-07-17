@@ -19,6 +19,12 @@ We'll use it to create a `Tracer` and configure a tracing pipeline (within the S
 The application uses the tracer to generate spans.
 The tracing pipeline consists of one (or more) [`SpanProcessor`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor) and  [`SpanExporters`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-exporter), which define how spans are processed and forwarded.
 
+This lab exercise demonstrates how to add tracing instrumentation to a Python application.
+The purpose of the exercises is to learn about the anatomy of spans and OpenTelemetry's tracing signal.
+It does not provide a realistic deployment scenario.
+In previous exercises, we exported spans to a tracing backend and analyzed traces via [Jaeger](https://github.com/jaegertracing/jaeger). 
+In this lab, we output spans to the local console to keep things simple.
+
 #### Learning Objectives
 By the end of this lab, you will be able to:
 - use the OpenTelemetry API and configure the SDK to generate spans
@@ -26,14 +32,10 @@ By the end of this lab, you will be able to:
 - enrich spans with additional metadata
 - ensure trace context propagation so spans can be connected into a trace
 
-#### How to perform the exercises
-This lab excercise demonstrates how to add tracing instrumentation to a Python application.
-The purpose of the exercises is to learn about the anatomy of spans and OpenTelemetry's tracing signal.
-It does not provide a realistic deployment scenario.
-In previous exercises, we exported spans to a tracing backend and analyzed traces via [Jaeger](https://github.com/jaegertracing/jaeger). 
-In this lab, we output spans to the local console to keep things simple.
+### How to perform the exercises
 
-### How to perform the exercise
+
+
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
 * Initial directory: `manual-instrumentation-traces/initial`
@@ -110,7 +112,7 @@ If you get stuck, you can find the solution in the `exercises/manual-instrumenta
 ### Configure the tracing pipeline and obtain a tracer
 Inside the `src` directory, create a new file `trace_utils.py`.
 We'll use it to separate tracing-related configuration from the main application.
-At the top of the file, specify the imports and create a new function `create_tracing_pipeline` as shown below:
+At the top of the file, specify the imports and create a new function `create_tracing_pipeline` as displayed below:
 
 ```py { title="trace_utils.py" }
 # OTel SDK
@@ -133,7 +135,18 @@ Here, we can choose between two categories:
     - completed spans are maintained in a buffer, a separate thread flushes batches of spans at regular intervals
     - has performance advantages, but spans might be dropped (because the application crashes before spans are exported, spans exceed the buffer capacity)
 
-Create a `BatchSpanProcessor` and pass the exporter to the constructor to connect both.
+We created a `BatchSpanProcessor` and pass the exporter to the constructor to connect both.
+
+Let’s begin by importing OpenTelemetry’s tracing API and the TracerProvider from the SDK as shown below. 
+With a basic pipeline in place, let's focus on instrumentation.
+Import the tracing API and the TracerProvider as shown above.
+Create a new function `create_tracer` and instantiate a `TracerProvider` with the help of the SDK package.
+Next, call the `add_span_processor` method and connect it to the tracing pipeline.
+
+By default, calls to the OpenTelemetry API are translated into noops.
+To call the SDK instead, we must register our `TracerProvider` with the API via the `set_tracer_provider` function.
+After that, we can finally call `get_tracer` on the provider to obtain a [`Tracer`](https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html#opentelemetry.trace.Tracer).
+Pass the service `name` and `version` as parameters, to uniquely identify the instrumentation.
 
 ```py { title="trace_utils.py" }
 # OTel API
@@ -153,15 +166,7 @@ def create_tracer(name: str, version: str) -> trace_api.Tracer:
     return tracer
 ```
 
-With a basic pipeline in place, let's focus on instrumentation.
-Import the tracing API and the TracerProvider as shown above.
-Create a new function `create_tracer` and instantiate a `TracerProvider` with the help of the SDK package.
-Next, call the `add_span_processor` method and connect it to the tracing pipeline.
-
-By default, calls to the OpenTelemetry API are translated into noops.
-To call the SDK instead, we must register our `TracerProvider` with the API via the `set_tracer_provider` function.
-After that, we can finally call `get_tracer` on the provider to obtain a [`Tracer`](https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html#opentelemetry.trace.Tracer).
-Pass the service `name` and `version` as parameters, to uniquely identify the instrumentation.
+In `app.py` import the create_tracer function and assign the return value to a global variable called tracer. 
 
 ```py { title="app.py" }
 from trace_utils import create_tracer
@@ -171,6 +176,12 @@ app = Flask(__name__)
 tracer = create_tracer("app.py", "0.1")
 ```
 
+Run the python command to verify that there are no errors.​
+
+```sh
+python app.py
+```
+
 The application uses the tracer to generate spans.
 In `app.py`, import `create_tracer`, invoke it, and assign the return value to a global variable called `tracer`.
 
@@ -178,12 +189,6 @@ In `app.py`, import `create_tracer`, invoke it, and assign the return value to a
 
 {{< figure src="images/tracer_generates_spans.drawio.png" width=650 caption="Tracing signal" >}}
 
-```py { title="app.py" }
-@app.route("/")
-@tracer.start_as_current_span("index")
-def index():
-    # ...
-```
 
 With the help of a tracer, let's generate our first piece of telemetry.
 On a high level, we must add instrumentation to our code that creates and finishes spans.
@@ -193,6 +198,13 @@ For brevity, we'll stick to a decorator-based approach.
 Add the `start_as_current_span` decorator to the `index` function.
 Notice that this decorator is a convenience function that abstracts away the details of trace context management from us.
 It handles the creation of a new span object, attaches it to the current context, and ends the span once the method returns.
+
+```py { title="app.py" }
+@app.route("/")
+@tracer.start_as_current_span("index")
+def index():
+    # ...
+```
 
 Switch to the terminal, where you ran `python app.py` before. If it is still running, leave it else start it again using
 ```sh
@@ -624,7 +636,7 @@ The context propagation is working as expected!
 The service should recognize the tracing header of the incoming request and create spans related to the transaction.
 Let's verify our work.
 
-If we were to export spans to a tracing backend, it could analyze the SpanContext of the individual objects and piece together a distributed trace.
+If we were to export spans to a tracing backend, it could analyze the `SpanContext` of the individual objects and piece together a distributed trace.
 
 <!--
 ## quiz

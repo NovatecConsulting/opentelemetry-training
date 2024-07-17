@@ -290,7 +290,7 @@ It represents the `name` and `version` parameters we passed to `get_meter`.
 The `metrics` field contains a list of metrics reported by instruments associated with the meter.
 Each metric consists of two main parts.
 First, there is information to identify the instrument (e.g. name, kind, unit, and description).
-Second, the `data` second contains a list of `data_points`, which are measurements recorded by the instrument.
+Second, the `data` contains a list of `data_points`, which are measurements recorded by the instrument.
 Each measurement typically consists of a `value`, `attributes`, and a `timestamp`.
 The `aggregation_temporality` indicates whether the metric is cumulative, and `is_monotonic` specifies whether the metric only increases (or decreases, in the case of a gauge). This model is designed to be flexible and extensible, ensuring compatibility with existing monitoring systems and standards like Prometheus and StatsD, facilitating interoperability with various monitoring tools.
 

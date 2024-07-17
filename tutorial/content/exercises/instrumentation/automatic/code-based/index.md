@@ -259,7 +259,7 @@ todo - SMILE
 
 Screenshot
 
-This means you can now also see the specific parameter which has been passed and relate it to a slow a performing call in case it happens.
+This means you can now also see the specific parameter which has been passed and relate it to a slow performing call in case it happens.
 
 Leave the Java application running, you will need it for the Python part as well.
 
@@ -272,7 +272,7 @@ There are two environment variables you can use to configure the annotations lib
 
 `OTEL_INSTRUMENTATION_METHODS_INCLUDE` and `OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS`
 
-As the name already implies they configure methods to be included as spans or excluded from instrumentation (e.g. if you want to surpress an existing `@WithSpan` implementation after code is already compiled)
+As the name already implies they configure methods to be included as spans or excluded from instrumentation (e.g. if you want to suppress an existing `@WithSpan` implementation after code is already compiled)
 
 In our example the corresponding environment setting to include the `someInternalMethod` to the spans without using the `@WithSpan` annotation in code would be:
 
@@ -302,7 +302,7 @@ cd automatic-instrumentation/initial/todoui-flask
 ```
 
 Similar to the exercise case in the Java example before, also in a Python there can be the requirement to get more observability information than the plain automatic instrumentation might reveal.
-This example will show a mixed mode auf automatic and manual instrumentation to achieve this behaviour and will already give a lookout to what will be covered in the dedicated `manual instrumentation` chapter.
+This example will show a mixed mode of automatic and manual instrumentation to achieve this behaviour and will already give a lookout to what will be covered in the dedicated `manual instrumentation` chapter.
 
 In this case we will custom instrument the already existing auto instrumentation and add a way to access the processed todo item on the frontend side of the application.
 
