@@ -1,4 +1,4 @@
-package io.novatec.todobackend;
+package io.novatec.todoui;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +32,7 @@ public class OpenTelemetryConfiguration {
 	@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public OpenTelemetry openTelemetry(){
 
-		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "tododui").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
 
 		OtlpGrpcSpanExporter jaegerOtlpExporter =
         OtlpGrpcSpanExporter.builder()

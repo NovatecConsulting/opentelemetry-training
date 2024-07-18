@@ -63,9 +63,6 @@ import io.opentelemetry.semconv.ResourceAttributes;
 	}
 
 
-
-
-
 For Tracing:
 
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
@@ -98,3 +95,8 @@ Creating spans:
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.context.Scope;
+
+
+Frontend:
+
+export BACKEND_URL=http://localhost:8080
