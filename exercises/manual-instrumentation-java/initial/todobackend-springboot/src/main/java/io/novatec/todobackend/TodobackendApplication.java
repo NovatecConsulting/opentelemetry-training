@@ -21,6 +21,7 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Scope;
 
 import jakarta.persistence.Entity;
@@ -86,20 +87,28 @@ public class TodobackendApplication {
 
 		Span span = tracer.spanBuilder("addTodo").startSpan();
 
+		System.out.println("Span initial:"+span.toString());
+		
+		span.setAttribute("http.method", "POST");
+		span.setAttribute("http.url", "/todos/{todo}");
+
+		System.out.println("Span with attribute:"+span.toString());
+
 		try (Scope scope = span.makeCurrent()) {
 
 			this.someInternalMethod(todo);
-			// todoRepository.save(new Todo(todo));
 			logger.info("POST /todos/ " + todo.toString());
-
 			return todo;
 
 		} catch (Throwable t) {
+			span.setStatus(StatusCode.ERROR, "Something bad happened!");
 			span.recordException(t);
-			throw t;
 		} finally {
+			System.out.println("Span before completion:"+span.toString());
 			span.end();
 		}
+
+		return "";
 
 	}
 
