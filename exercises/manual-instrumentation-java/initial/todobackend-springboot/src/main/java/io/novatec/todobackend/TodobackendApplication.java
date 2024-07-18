@@ -21,7 +21,9 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 
 import jakarta.persistence.Entity;
@@ -34,6 +36,8 @@ import jakarta.persistence.Id;
 public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
+
+	private OpenTelemetry openTelemetry;
 	private Tracer tracer;
 
 	@Value("${HOSTNAME:not_set}")
@@ -45,8 +49,10 @@ public class TodobackendApplication {
 	@Autowired
 	TodoRepository todoRepository;
 
-	TodobackendApplication(OpenTelemetry openTelemetry) {
+	public TodobackendApplication(OpenTelemetry openTelemetry) {
+		this.openTelemetry = openTelemetry;
 		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+		
 	}
 
 	private String getInstanceId() {
@@ -85,7 +91,9 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(@PathVariable String todo) {
 
-		Span span = tracer.spanBuilder("addTodo").startSpan();
+		//Context extractedContext = openTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), httpExchange, getter);
+
+		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 
 		System.out.println("Span initial:"+span.toString());
 		
