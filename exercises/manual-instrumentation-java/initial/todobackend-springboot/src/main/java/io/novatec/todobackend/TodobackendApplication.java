@@ -112,7 +112,16 @@ public class TodobackendApplication {
 
 	String someInternalMethod(String todo) {
 
+		Span childSpan = tracer.spanBuilder("someInternalMethod")
+			//.setParent(Context.current().with(parentSpan))
+			.startSpan();
+
+		childSpan.setAttribute("Todo item", todo);
+
 		todoRepository.save(new Todo(todo));
+		
+		childSpan.addEvent("Persisted to database");
+		
 		if (todo.equals("slow")) {
 			try {
 				Thread.sleep(1000);
@@ -126,6 +135,9 @@ public class TodobackendApplication {
 			throw new RuntimeException();
 
 		}
+
+		childSpan.addEvent("Finished checking todo item");
+		childSpan.end();
 		return todo;
 
 	}
