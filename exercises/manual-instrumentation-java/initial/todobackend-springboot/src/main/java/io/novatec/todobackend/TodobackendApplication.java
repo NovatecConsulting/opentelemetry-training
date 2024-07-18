@@ -92,8 +92,6 @@ public class TodobackendApplication {
 		span.setAttribute("http.method", "POST");
 		span.setAttribute("http.url", "/todos/{todo}");
 
-		System.out.println("Span with attribute:"+span.toString());
-
 		try (Scope scope = span.makeCurrent()) {
 
 			this.someInternalMethod(todo);
@@ -104,7 +102,7 @@ public class TodobackendApplication {
 			span.setStatus(StatusCode.ERROR, "Something bad happened!");
 			span.recordException(t);
 		} finally {
-			System.out.println("Span before completion:"+span.toString());
+			System.out.println("Span final:"+span.toString());
 			span.end();
 		}
 
