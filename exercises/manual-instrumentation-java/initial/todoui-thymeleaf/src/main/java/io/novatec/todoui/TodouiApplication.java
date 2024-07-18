@@ -128,6 +128,8 @@ public class TodouiApplication {
 
 		template.postForEntity(endpoint+"/todos/"+toDo, null, String.class);
 
+		
+
 		span.end();
 
 		return "redirect:/";
