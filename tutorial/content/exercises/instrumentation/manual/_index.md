@@ -1,6 +1,6 @@
 +++
 title = "manual instrumentation - Python"
-linkTitle = "manual"
+linkTitle = "manual - Python"
 draft = false
 weight = 2
 +++

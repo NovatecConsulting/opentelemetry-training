@@ -77,7 +77,6 @@
             <artifactId>opentelemetry-exporter-otlp</artifactId>
         </dependency>
         <dependency>
-            <!-- Not managed by opentelemetry-bom -->
             <groupId>io.opentelemetry.semconv</groupId>
             <artifactId>opentelemetry-semconv</artifactId>
             <version>1.26.0-alpha</version>

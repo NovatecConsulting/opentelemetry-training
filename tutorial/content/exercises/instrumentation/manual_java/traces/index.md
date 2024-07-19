@@ -19,32 +19,30 @@ We'll use it to create a `Tracer` and configure a tracing pipeline (within the S
 The application uses the tracer to generate spans.
 The tracing pipeline consists of one (or more) [`SpanProcessor`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-processor) and  [`SpanExporters`](https://opentelemetry.io/docs/specs/otel/trace/sdk/#span-exporter), which define how spans are processed and forwarded.
 
-This lab exercise demonstrates how to add tracing instrumentation to a Python application.
+This lab exercise demonstrates how to add tracing instrumentation to a Java/Spring Boot application.
 The purpose of the exercises is to learn about the anatomy of spans and OpenTelemetry's tracing signal.
 It does not provide a realistic deployment scenario.
-In previous exercises, we exported spans to a tracing backend and analyzed traces via [Jaeger](https://github.com/jaegertracing/jaeger). 
-In this lab, we output spans to the local console to keep things simple.
+In this lab, we output spans to the local console to keep things simple and export it to [Jaeger](https://github.com/jaegertracing/jaeger) to show multiple ways of exporting.
 
 #### Learning Objectives
 By the end of this lab, you will be able to:
 - use the OpenTelemetry API and configure the SDK to generate spans
 - understand the basic structure of a span
 - enrich spans with additional metadata
-- ensure trace context propagation so spans can be connected into a trace
+<!-- - ensure trace context propagation so spans can be connected into a trace -->
 
 ### How to perform the exercises
 
-
-
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
-* Initial directory: `manual-instrumentation-traces/initial`
-* Solution directory: `manual-instrumentation-traces/solution`
-* Python source code: `manual-instrumentation-traces/initial/src`
+* Initial directory: `manual-instrumentation-java/initial`
+* Solution directory: `manual-instrumentation-java/solution`
+* Java/Spring Boot backend component: `manual-instrumentation-java/initial/todobackend-springboot`
+
 The environment consists of two components:
-1. a Python service
-    - uses [Flask](https://flask.palletsprojects.com) web framework
-    - listens on port 5000 and serves serveral HTTP endpoints
+1. a Spring Boot REST API service
+    - uses [Spring Boot ](https://www.spring.io) framework
+    - listens on port 8080 and serves serveral CRUD style HTTP endpoints
     - simulates an application we want to instrument
 2. echo server
     - listens on port 6000, receives requests and sends them back to the client
@@ -52,79 +50,151 @@ The environment consists of two components:
     - allows us to inspect outbound requests
 
 
-To work on this lab, **open three terminals**.
+To start with this lab, open **two terminals**.
 1. Terminal to run the echo server
 
 Navigate to 
 
 ```sh
 cd $EXERCISES
-cd manual-instrumentation-traces/initial
+cd manual-instrumentation-java/initial/todobackend-springboot
 ```
 
-Start the echo server using
+Run:
+
 ```sh
-docker compose up
+mvn spring-boot:run    
 ```
 
-2. Terminal to run the application and view it's output
 
-Change to the Python source directory
-```sh
-cd $EXERCISES
-cd manual-instrumentation-traces/initial/src
-```
-
-Start the Python app/webserver
-```sh
-python app.py
-```
-
-3. Terminal to send request to the HTTP endpoints of the service
+2. Terminal to send request to the HTTP endpoints of the service
 
 The directory doesn't matter here
 
 Test the Python app:
 ```sh
-curl -XGET localhost:5000; echo
+curl -XGET localhost:8080/todos/; echo
 ```
 
 You should see a response of the following type:
 ```
-Hello, World! It's currently Thu, 11 Jul 2024 09:49:38
-```
-
-Test the echo server:
-```sh
-curl -XGET localhost:6000; echo
-```
-
-You should see a JSON response starting like:
-```
-{"host":{"hostname":"localhost","ip":"::ffff:172.20.0.1","ips":[]},"http":{"method":"GET","baseUrl"...}
+[]
 ```
 
 To keep things concise, code snippets only contain what's relevant to that step.
-If you get stuck, you can find the solution in the `exercises/manual-instrumentation-traces/solution/src`
+If you get stuck, you can find the solution in the `exercises/manual-instrumentation-java/solution`
 
 ---
 
 ### Configure the tracing pipeline and obtain a tracer
-Inside the `src` directory, create a new file `trace_utils.py`.
-We'll use it to separate tracing-related configuration from the main application.
-At the top of the file, specify the imports and create a new function `create_tracing_pipeline` as displayed below:
+The application has not been modified for OpenTelemetry, so we start entirely from scratch.
+Before we can make changes to the Java code we need to add some necessary dependencies.
 
-```py { title="trace_utils.py" }
-# OTel SDK
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter, BatchSpanProcessor
+In the first window stop the app using Ctrl+C and edit the pom.xml file. 
+Add the following dependencies. Do not add the dots (...). Just embed the dependencies.
 
-def create_tracing_pipeline() -> BatchSpanProcessor:
-    console_exporter = ConsoleSpanExporter()
-    span_processor = BatchSpanProcessor(console_exporter)
-    return span_processor
+
+```xml { title="pom.xml" }
+
+	<dependencies>
+    ...
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+            <version>1.26.0-alpha</version>
+        </dependency>
+        ...
+	</dependencies>
 ```
 
-For debugging purposes, we'll instantiate a `ConsoleSpanExporter` to output spans to the local console.
+Within the same file add the following code snippet
+
+```xml { title="pom.xml" }
+<project>
+...
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>1.40.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+...
+</project>
+```
+
+Within the folder of the main application file `TodobackendApplication.java` add a new file called `OpenTelemetryConfiguration.java`.
+We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. It is recommended to edit the file not via command line, but to use your built-in editor.
+
+Add the following content to this file:
+
+```java { title="OpenTelemetryConfiguration.java" }
+package io.novatec.todobackend;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+//Basic Otel API & SDK
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.semconv.ResourceAttributes;
+
+//Tracing and Spans
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+
+import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+
+@SuppressWarnings("deprecation")
+@Configuration
+public class OpenTelemetryConfiguration {
+
+    @Bean
+	public OpenTelemetry openTelemetry(){
+
+		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+
+		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
+			.setResource(resource)
+			.build();	
+
+		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
+			.setTracerProvider(sdkTracerProvider)
+			.build();
+
+		return openTelemetry;
+	}
+
+}
+```
+Explanation about the contents of this file:
+
+This Configuration class will create a Bean to access OpenTelemetry API functionality. 
+It is an initial configuration for tracing properties only.
+
+For easy debugging purposes, we'll instantiate a `LoggingSpanExporter` to output spans to the local console.
 Next, we have to create a `SpanProcessor` to push generated spans to the SpanExporter.
 Here, we can choose between two categories:
 - synchronous (i.e. [SimpleSpanProcessor](https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.SimpleSpanProcessor))
@@ -135,36 +205,65 @@ Here, we can choose between two categories:
     - completed spans are maintained in a buffer, a separate thread flushes batches of spans at regular intervals
     - has performance advantages, but spans might be dropped (because the application crashes before spans are exported, spans exceed the buffer capacity)
 
-We created a `BatchSpanProcessor` and pass the exporter to the constructor to connect both.
+We created a `SimpleSpanProcessor` and pass the exporter to the `create` method to connect both.
 
-Let’s begin by importing OpenTelemetry’s tracing API and the TracerProvider from the SDK as shown below. 
-With a basic pipeline in place, let's focus on instrumentation.
-Import the tracing API and the TracerProvider as shown above.
-Create a new function `create_tracer` and instantiate a `TracerProvider` with the help of the SDK package.
-Next, call the `add_span_processor` method and connect it to the tracing pipeline.
+It is recommended to keep this file open in the editor as there will be addition to it over the course of this exercise.
 
-By default, calls to the OpenTelemetry API are translated into noops.
-To call the SDK instead, we must register our `TracerProvider` with the API via the `set_tracer_provider` function.
-After that, we can finally call `get_tracer` on the provider to obtain a [`Tracer`](https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html#opentelemetry.trace.Tracer).
-Pass the service `name` and `version` as parameters, to uniquely identify the instrumentation.
 
-```py { title="trace_utils.py" }
-# OTel API
-from opentelemetry import trace as trace_api
+Let’s begin by importing OpenTelemetry’s tracing API and the TracerProvider from the SDK in our main Java application as shown below. 
+Open `TodobackendApplication.java` in your editor and tart by addind the following import statements. Place them below the already existing ones:
 
-# OTel SDK
-from opentelemetry.sdk.trace import TracerProvider
+```java { title="TodobackendApplication.java" }
 
-def create_tracer(name: str, version: str) -> trace_api.Tracer:
-    # setup provider
-    provider = TracerProvider()
-    provider.add_span_processor(create_tracing_pipeline())
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
 
-    # register SDK to replace noop implementation
-    trace_api.set_tracer_provider(provider)
-    tracer = trace_api.get_tracer(name, version)
-    return tracer
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
+
 ```
+
+As a next step we reference the bean in the main application.
+
+Add two global variables at the top of the class:
+
+```java { title="TodobackendApplication.java" }
+public class TodobackendApplication {
+
+	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
+
+	private OpenTelemetry openTelemetry;
+	private Tracer tracer;
+```
+
+We'll use constuctor injection, so add the following constructor to the class, too.
+In this constuctor we instantiate the OpenTelemetry and Tracer object and make them usable.
+
+```java { title="TodobackendApplication.java" }
+	public TodobackendApplication(OpenTelemetry openTelemetry) {
+		this.openTelemetry = openTelemetry;
+		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+		
+	}
+```
+
+At this point it is recommended to rebuild and run the application to verify if all the changes have been applied correctly.
+
+In your main terminal window run:
+
+```sh
+mvn spring-boot:run    
+```
+
+If there are any errors review the changes and repeat.
+
+### Generate spans
+
+Now that the application is ready to generate traces let's start focussing on the method that receives
+
 
 In `app.py` import the create_tracer function and assign the return value to a global variable called tracer. 
 
