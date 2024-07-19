@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-05-09T12:35:10.762Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" version="24.3.1" etag="bzHHV0QsE4ZjKanJCY-Q" type="google">
+  <diagram name="Page-1" id="kPoH1Z3M8INPXvei_DwG">
+    <mxGraphModel dx="3578" dy="2924" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="produce telemetry" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fillColor=none;dashed=1;arcSize=4;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="780" y="-670" width="1800" height="910" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="&amp;nbsp;OTel SDK" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;align=left;verticalAlign=top;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="790" y="-350" width="1000" height="530" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="context" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;align=left;verticalAlign=top;fontStyle=1;dashed=1;dashPattern=1 4;" vertex="1" parent="1">
+          <mxGeometry x="800" y="-200" width="160" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="telemetry generation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;align=left;verticalAlign=top;fontStyle=1;dashed=1;dashPattern=1 4;" vertex="1" parent="1">
+          <mxGeometry x="990" y="-210" width="340" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="&amp;nbsp;OTel API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="790" y="-510" width="720" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="13" target="16" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" source="13" target="16" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="to create a" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" connectable="0" vertex="1" parent="8">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10" value="implements" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;curved=1;" edge="1" source="13" target="18" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="associated with" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="13" target="27" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1148" y="-230" />
+              <mxPoint x="870" y="-230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="12" value="&amp;nbsp;owns configuration for&amp;nbsp;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="13" target="19" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1148" y="-230" />
+              <mxPoint x="1650" y="-230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="13" value="MeterProvider" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1027.5" y="-320" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="16" target="29" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="16" target="30" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="meter" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1087.5" y="-167.05999999999995" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="used to register&lt;br&gt;&amp;nbsp;a global default" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;curved=1;" edge="1" source="18" target="13" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="metrics API" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1027.5" y="-480" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="metrics pipeline" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;align=left;verticalAlign=top;fontStyle=1;dashed=1;dashPattern=1 4;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="-210" width="410" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="MetricReader" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1400" y="82.06" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="21" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="25" target="46" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="22" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="25" target="45" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="23" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="25" target="44" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="24" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="25" target="43" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="MetricExporter&lt;br&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;(push)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1630" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="&amp;nbsp;for all metrics&amp;nbsp;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="27" target="16" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="resource" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="810" y="-167.05999999999995" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="28" value="Views&lt;div&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;(customize metrics generated by SDK)&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1390" y="-167.06" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="29" value="instrument&lt;br&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;(sync)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1015" y="-60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="30" value="instrument&lt;br&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;(async)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1165" y="-60" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=75;exitDy=54;exitPerimeter=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="32" target="20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="32" value="Measurement&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;sketch=1;curveFitting=1;jiggle=2;size=18;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1037.5" y="57.059999999999945" width="75" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="33" value="report" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="29" target="32" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="34" value="report" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;sketch=1;curveFitting=1;jiggle=2;entryX=0.456;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" source="35" target="39" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1100" y="10.059999999999945" as="sourcePoint" />
+            <mxPoint x="1225" y="62.059999999999945" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="35" value="callback" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="1165" width="120" height="22.06" as="geometry" />
+        </mxCell>
+        <mxCell id="36" value="value" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="97.05999999999995" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="37" value="attr" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="122.05999999999995" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=75;exitDy=54;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="39" target="20" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="39" value="Measurement&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;sketch=1;curveFitting=1;jiggle=2;size=18;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1195" y="57.059999999999945" width="75" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="40" value="value" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1207.5" y="97.05999999999995" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="41" value="attr" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1207.5" y="122.05999999999995" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="42" value="MetricExporter&lt;br&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;(pull)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1630" y="77.06" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="43" value="metric" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;fontSize=14;strokeColor=#000000;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="30.000000000000057" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="44" value="metric" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;fontSize=14;strokeColor=#000000;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1810" y="5.684341886080802e-14" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="45" value="metric" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;fontSize=14;strokeColor=#000000;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="22.06000000000006" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="46" value="metric" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;fontSize=14;strokeColor=#000000;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="-17.93999999999994" width="90" height="40" as="geometry" />
+        </mxCell>
+        <UserObject label="&lt;div style=&quot;color: rgb(204, 204, 204); font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 15px; line-height: 140%; white-space: pre;&quot;&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: rgb(204, 204, 204);&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;resource_metrics&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;    {&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;      &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;scope_metrics&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;        {&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;scope&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;app.py&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;version&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;0.1&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;schema_url&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          },&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;metrics&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            {&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;process.memory.usage&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;description&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;total amount of memory used&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;unit&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;By&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;data&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;data_points&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                  {&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;attributes&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {},&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;start_time_unix_nano&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;1713351214657218000&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;time_unix_nano&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;1713351214657419300&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;673140736&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                  }&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                ],&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;aggregation_temporality&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;is_monotonic&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;false&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              }&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            }&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          ]&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;        }&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;      ]&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;      &lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&quot;resource&quot;&lt;/span&gt;: {&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;        &lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&quot;attributes&quot;&lt;/span&gt;: {&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;          &lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&quot;telemetry.sdk.language&quot;&lt;/span&gt;: &lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&quot;python&quot;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;          &lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&quot;host.name&quot;&lt;/span&gt;: &lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&quot;ebdcf73e98c0&quot;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;          &lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&quot;service.name&quot;&lt;/span&gt;: &lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&quot;app.py&quot;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;          &lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&quot;service.version&quot;&lt;/span&gt;: &lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&quot;0.1&quot;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;        }&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;      },&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;   ...&lt;/div&gt;&lt;div style=&quot;line-height: 140%;&quot;&gt;}&lt;/div&gt;&lt;/div&gt;" link="&lt;div style=&quot;color: #cccccc;background-color: #1f1f1f;font-family: &#39;Droid Sans Mono&#39;, &#39;monospace&#39;, monospace;font-weight: normal;font-size: 14px;line-height: 19px;white-space: pre;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;resource_metrics&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;    {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;      &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;resource&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;        &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;attributes&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;telemetry.sdk.language&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;python&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;host.name&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;ebdcf73e98c0&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;service.name&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;app.py&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;service.version&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;0.1&quot;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;        }&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;      },&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;      &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;scope_metrics&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;        {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;scope&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;app.py&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;version&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;0.1&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;schema_url&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          },&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;metrics&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;process.memory.usage&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;description&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;total amount of memory used&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;unit&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&quot;By&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;data&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;data_points&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: [&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                  {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;attributes&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: {},&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;start_time_unix_nano&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;1713351214657218000&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;time_unix_nano&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;1713351214657419300&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                    &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;673140736&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                  }&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                ],&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;aggregation_temporality&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #b5cea8;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;                &lt;/span&gt;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;&quot;is_monotonic&quot;&lt;/span&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;false&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;              }&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;            }&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;          ]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;        }&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;      ]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;    }&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;  ]&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #cccccc;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" id="47">
+          <mxCell style="text;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#333333;fontColor=#333333;strokeColor=#666666;fontSize=12;rounded=0;fontStyle=1;" vertex="1" parent="1">
+            <mxGeometry x="1960" y="-645" width="590" height="860" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="48" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;sketch=1;curveFitting=1;jiggle=2;glass=0;fillOpacity=20;strokeOpacity=20;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="-625" width="570" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="49" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;glass=0;shadow=0;fillOpacity=20;strokeOpacity=20;sketch=1;curveFitting=1;jiggle=2;strokeWidth=1;perimeterSpacing=0;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="-600" width="570" height="163" as="geometry" />
+        </mxCell>
+        <mxCell id="50" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;glass=0;fillOpacity=20;strokeOpacity=20;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="-395" width="570" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="51" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;curveFitting=1;jiggle=2;glass=0;fillOpacity=20;strokeOpacity=20;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="-270" width="570" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="52" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;glass=0;fillOpacity=20;strokeOpacity=20;sketch=1;curveFitting=1;jiggle=2;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="-15" width="580" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="53" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;sketch=1;curveFitting=1;jiggle=2;" edge="1" source="54" target="18" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="54" value="application" style="rounded=0;whiteSpace=wrap;html=1;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="795" y="-610" width="710" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="55" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;sketch=1;curveFitting=1;jiggle=2;strokeWidth=2;dashPattern=1 4;endArrow=none;endFill=0;" edge="1" source="46" target="47" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1920" y="-60" as="sourcePoint" />
+            <mxPoint x="2000" y="-240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

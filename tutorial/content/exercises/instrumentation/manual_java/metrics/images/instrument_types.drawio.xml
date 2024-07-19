@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-04-18T11:01:53.886Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" version="24.2.5" etag="pX54loBnA9yZOH73WmsF" type="google">
+  <diagram name="Page-1" id="D3W7KlW4eyRQNYt2r1FI">
+    <mxGraphModel dx="-471" dy="691" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="&lt;b style=&quot;font-size: 18px;&quot;&gt;types of instruments&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontSize=18;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2120" y="310" width="860" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="&lt;div&gt;asynchronous&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;verticalAlign=top;dashed=1;dashPattern=1 4;" vertex="1" parent="1">
+          <mxGeometry x="2400" y="390" width="230" height="470" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="&lt;div&gt;synchronous&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;sketch=1;curveFitting=1;jiggle=2;fontStyle=1;verticalAlign=top;dashed=1;dashPattern=1 4;" vertex="1" parent="1">
+          <mxGeometry x="2150" y="390" width="230" height="470" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=1 4;sketch=1;curveFitting=1;jiggle=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="2180" y="490" width="770" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=1 4;sketch=1;curveFitting=1;jiggle=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="2180" y="580" width="770" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=1 4;sketch=1;curveFitting=1;jiggle=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="2180" y="675" width="770" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=1 4;sketch=1;curveFitting=1;jiggle=2;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="2180" y="765" width="770" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="Counter" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2210" y="500" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="Observable&lt;br&gt;Counter" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2455" y="502.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="&lt;span style=&quot;color: rgb(33, 37, 41); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Helvetica Neue&amp;quot;, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;&lt;/span&gt;&lt;a href=&quot;https://wikipedia.org/wiki/Monotonic_function&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;external-link&quot; style=&quot;box-sizing: border-box; color: var(--bs-link-color); text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Helvetica Neue&amp;quot;, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255);&quot;&gt;monotonically&lt;/a&gt;&lt;span style=&quot;color: rgb(33, 37, 41); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Helvetica Neue&amp;quot;, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;increasing value(s)&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;verticalAlign=middle;align=left;" vertex="1" parent="1">
+          <mxGeometry x="2645" y="512.5" width="285" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="Histogram" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2210" y="775" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="Gauge" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2210" y="685" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="Asynchronous&lt;br&gt;Gauge" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2455" y="687.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="UpDownCounter" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2210" y="590" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="Asynchronous&lt;br&gt;UpDownCounter" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#dae8fc;strokeColor=#6c8ebf;sketch=1;curveFitting=1;jiggle=2;" vertex="1" parent="1">
+          <mxGeometry x="2455" y="592.5" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="&lt;span style=&quot;color: rgb(33, 37, 41); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Helvetica Neue&amp;quot;, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;supports increments and decrements&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;verticalAlign=middle;align=left;" vertex="1" parent="1">
+          <mxGeometry x="2645" y="600" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="&lt;span style=&quot;color: rgb(33, 37, 41); font-family: -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Helvetica Neue&amp;quot;, Arial, sans-serif, &amp;quot;Apple Color Emoji&amp;quot;, &amp;quot;Segoe UI Emoji&amp;quot;, &amp;quot;Segoe UI Symbol&amp;quot;; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;non-additive value(s)&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;verticalAlign=middle;align=left;" vertex="1" parent="1">
+          <mxGeometry x="2645" y="695" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="&lt;font color=&quot;#212529&quot; face=&quot;-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol&quot;&gt;&lt;span style=&quot;font-size: 16px; background-color: rgb(255, 255, 255);&quot;&gt;frequency distribution&lt;/span&gt;&lt;/font&gt;" style="text;whiteSpace=wrap;html=1;verticalAlign=middle;align=left;" vertex="1" parent="1">
+          <mxGeometry x="2645" y="785" width="240" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="&lt;ul style=&quot;forced-color-adjust: none; color: rgb(51, 51, 51); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;li style=&quot;forced-color-adjust: none;&quot;&gt;&lt;font style=&quot;forced-color-adjust: none; font-size: 12px;&quot;&gt;register callback function,&amp;nbsp;&lt;/font&gt;which will be invoked only on demand&lt;/li&gt;&lt;/ul&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2400" y="410" width="230" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="&lt;ul style=&quot;forced-color-adjust: none; color: rgb(51, 51, 51); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(251, 251, 251); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;li style=&quot;forced-color-adjust: none;&quot;&gt;&lt;font style=&quot;forced-color-adjust: none; font-size: 12px;&quot;&gt;invoked inline with application logic&lt;/font&gt;&lt;/li&gt;&lt;li style=&quot;forced-color-adjust: none;&quot;&gt;&lt;span style=&quot;forced-color-adjust: none; background-color: initial;&quot;&gt;&lt;font style=&quot;forced-color-adjust: none; font-size: 12px;&quot;&gt;can be associated with the current context&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2150" y="410" width="230" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
