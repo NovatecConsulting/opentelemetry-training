@@ -69,6 +69,7 @@
 			},
 			"extensions": [
 				"vscjava.vscode-java-pack",
+				"vscjava.vscode-java-dependency",
 				"ms-python.vscode-pylance",
 				"charliermarsh.ruff",
 				"ms-python.isort",
