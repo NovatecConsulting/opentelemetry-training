@@ -68,6 +68,7 @@
 				"python.analysis.autoImportCompletions": true
 			},
 			"extensions": [
+				"vscjava.vscode-java-pack",
 				"ms-python.vscode-pylance",
 				"charliermarsh.ruff",
 				"ms-python.isort",
