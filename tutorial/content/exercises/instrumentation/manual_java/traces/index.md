@@ -262,95 +262,112 @@ If there are any errors review the changes and repeat.
 
 ### Generate spans
 
-Now that the application is ready to generate traces let's start focussing on the method that receives
-
-
-In `app.py` import the create_tracer function and assign the return value to a global variable called tracer. 
-
-```py { title="app.py" }
-from trace_utils import create_tracer
-
-# global variables
-app = Flask(__name__)
-tracer = create_tracer("app.py", "0.1")
-```
-
-Run the python command to verify that there are no errors.​
-
-```sh
-python app.py
-```
-
-The application uses the tracer to generate spans.
-In `app.py`, import `create_tracer`, invoke it, and assign the return value to a global variable called `tracer`.
-
-### Generate spans
-
 {{< figure src="images/tracer_generates_spans.drawio.png" width=650 caption="Tracing signal" >}}
 
+Now that the application is ready to generate traces let's start focussing on the method to be instrumented.
+
+Locate the `addTodo` method which initially looks like this:
+
+```java { title="TodobackendApplication.java" }
+	@PostMapping("/todos/{todo}")
+	String addTodo(@PathVariable String todo){
+
+		this.someInternalMethod(todo);
+		logger.info("POST /todos/ "+todo.toString());
+
+		return todo;
+
+	}
+```
 
 With the help of a tracer, let's generate our first piece of telemetry.
 On a high level, we must add instrumentation to our code that creates and finishes spans.
-OpenTelemetry's Python implementation provides multiple ways to do this.
-Some aim to be simple and non-intrusive, while others are explicit but offer greater control.
-For brevity, we'll stick to a decorator-based approach.
-Add the `start_as_current_span` decorator to the `index` function.
-Notice that this decorator is a convenience function that abstracts away the details of trace context management from us.
-It handles the creation of a new span object, attaches it to the current context, and ends the span once the method returns.
+OpenTelemetry's Java implementation provides  ways to do this.
 
-```py { title="app.py" }
-@app.route("/")
-@tracer.start_as_current_span("index")
-def index():
-    # ...
+Add two instructions at the beginning and end of the method to start and stop the span.
+The resulting code is supposed to look like this:
+
+```java { title="TodobackendApplication.java" }
+	@PostMapping("/todos/{todo}")
+	String addTodo(@PathVariable String todo){
+
+		Span span = tracer.spanBuilder("addTodo").startSpan();
+		
+		this.someInternalMethod(todo);
+		logger.info("POST /todos/ "+todo.toString());
+
+		span.end();        
+
+		return todo;
+
+	}
 ```
 
-Switch to the terminal, where you ran `python app.py` before. If it is still running, leave it else start it again using
+As you can see we referenced the `tracer` object which was initialized in the constructor and passed a String to the `spanBuilder` method, which will later be the name of the span.
+
+Stop, rebuild and restart the application:
+
 ```sh
-python app.py
+mvn spring-boot:run    
 ```
 
 Switch to your other terminal and use the following command to send a request to the `/` endpoint:
 
 ```bash
-curl -XGET localhost:5000; echo
+curl -XPOST localhost:8080/todos/NEW; echo
 ```
 
-This causes the tracer to generate a span object, for which the tracing pipeline writes a JSON representation to the terminal.
+This causes the tracer to generate a span object, for which the tracing pipeline writes a logging statement into the application log.
 Take a look at the terminal where you application is running.
-You should see an output similar to the one shown below.
+You should see a log statement similar to the one shown below.
 
-```json
-{
-    "name": "index",
-    "context": {
-        "trace_id": "0x91762d8638140e0d1571815e67bdbcf4",
-        "span_id": "0xfd427d3c11732ddd",
-        "trace_state": "[]"
-    },
-    "kind": "SpanKind.INTERNAL",
-    "parent_id": null,
-    "start_time": "2024-07-11T12:00:23.481840Z",
-    "end_time": "2024-07-11T12:00:23.598772Z",
-    "status": {
-        "status_code": "UNSET"
-    },
-    "attributes": {},
-    "events": [],
-    "links": [],
-    "resource": {
-        "attributes": {
-            "telemetry.sdk.language": "python",
-            "telemetry.sdk.name": "opentelemetry",
-            "telemetry.sdk.version": "1.25.0",
-            "service.name": "unknown_service"
-        },
-        "schema_url": ""
-    }
-}
+```log
+2024-07-21T12:58:04.842Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : ba6c894e6774d02d78fe2d48acbdfcc6 72cba2d03eab76a8 INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
 ```
 
-A span in OpenTelemetry represents a single operation within a trace and carries a wealth of information that provides insight into the operation's execution. This includes the `name` of the span, which is a human-readable string that describes the operation. The trace context, consisting of the `trace_id`, `span_id`, and `trace_state`, uniquely identifies the span within the trace and carries system-specific configuration data. The `SpanKind` indicates the role of the span, such as whether it's an internal operation, a server-side operation, or a client-side operation. If the `parent_id` is `null`, it signifies that the span is the root of a new trace. The `start_time` and `end_time` timestamps mark the beginning and end of the span's duration. Additionally, spans can contain `attributes` that provide further context, such as HTTP methods or response status codes, and a `resource` field that describes the service and environment. Other fields like `events`, `links`, and `status` offer additional details about the span's lifecycle, outcome and context.
+This shows that it actually works, however the output is still a bit cryptic.
+
+Let's inspect this from a Java perspective, by writing the state of the object to standard out.
+
+Add the following log statement between the `span.end()` call and the return statement:
+
+```java { title="TodobackendApplication.java" }
+		span.end();
+		logger.info("Span.toString():"+span.toString());
+
+		return todo;
+	}
+```
+
+Stop, rebuild and restart the application:
+
+```sh
+mvn spring-boot:run    
+```
+
+Switch to your other terminal and use the following command to send a request to the `/` endpoint:
+
+```bash
+curl -XPOST localhost:8080/todos/NEW; echo
+```
+
+Below the logging statement from the `LoggingExporter` you should now see more descriptive details:
+
+```log
+2024-07-21T13:05:27.650Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 49fa6e942dd137fdc11ef1178f938078 eeda77d2bfd15a0c INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
+2024-07-21T13:05:27.651Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=49fa6e942dd137fdc11ef1178f938078, spanId=eeda77d2bfd15a0c, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=INTERNAL, attributes=null, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721567127643127423, endEpochNanos=1721567127650834923}
+```
+
+A span in OpenTelemetry represents a single operation within a trace and carries a wealth of information that provides insight into the operation's execution. This includes the `name` of the span, which is a human-readable string that describes the operation. The trace context, consisting of the `traceId`, `spadId`, and `traceState`, uniquely identifies the span within the trace and carries system-specific configuration data. The `SpanKind` indicates the role of the span, such as whether it's an internal operation, a server-side operation, or a client-side operation. If the `parentId` is `null`, it signifies that the span is the root of a new trace. The `startEpochNanos` and `endEpochNanos` timestamps mark the beginning and end of the span's duration. Additionally, spans can contain `attributes` that provide further context, such as HTTP methods or response status codes.
+ Other fields like `events`, `links`, and `status` offer additional details about the span's lifecycle, outcome and context.
+
+ This is also tells us a bit more about the output of the LoggingSpanExporter:
+
+ ```log
+2024-07-21T13:05:27.650Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 49fa6e942dd137fdc11ef1178f938078 eeda77d2bfd15a0c INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
+ ```
+
+The first identifier is the `traceId`, the second one is `spandId` followed by `SpanKind`.
 
 ### Enrich spans with context
 {{< figure src="images/enrich_spans_with_context.drawio.png" width=650 caption="enriching spans with resources and attributes" >}}
@@ -360,81 +377,278 @@ This information is enough to reason about the chain of events in a transaction 
 However, it's important to understand that tracing is a much more potent tool.
 By enriching spans with additional context, traces can proivde meaningful insights about what is happening in a system.
 
-#### Resource
-A [Resource](https://opentelemetry.io/docs/specs/otel/resource/sdk/) is a set of static attributes that help us identify the source (and location) that captured a piece of telemetry.
-Right now, the span's `resource` field only contains basic information about the SDK, as well as an unknown `service.name`.
-Let's look at how we can add additional properties.
+Let's specify the Span kind and set some resource attributes:
 
-Create a new file `resource_utils.py` in the `src` directory with the source code below:
+Add the setSpanKind invocation to the call, which initializes the new span.
+And specify two attributes:
 
-```py { title="resource_utils.py" }
-from opentelemetry.sdk.resources import Resource
-
-def create_resource(name: str, version: str) -> Resource:
-    svc_resource = Resource.create(
-        {
-            "service.name": name,
-            "service.version": version,
-        }
-    )
-    return svc_resource
+```java { title="TodobackendApplication.java" }
+		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+		
+		span.setAttribute("http.method", "POST");
+		span.setAttribute("http.url", "/todos/{todo}");
 ```
 
-Edit the existing `trace_utils.py` as shown below to invoke functionality from `resource_utils`.
-
-```py { title="trace_utils.py" }
-from resource_utils import create_resource
-
-def create_tracer(name: str, version: str) -> trace_api.Tracer:
-    # create provider
-    provider = TracerProvider(
-        resource=create_resource(name, version)
-    )
-    provider.add_span_processor(create_tracing_pipeline())
-```
-
-
-Specify the imports and create a function `create_resource`, which returns a [`Resource`](https://opentelemetry-python.readthedocs.io/en/latest/sdk/resources.html#opentelemetry.sdk.resources.Resource) object.
-By separating the resource and tracing configuration, we can easily reuse it with other telemetry signals.
-Inside `create_tracer`, we pass the value returned by `create_resource` to the `TraceProvider`.
-
-Let's verify that everything works as expected. When editing the code live the automatic reload and restart might break.
-In this case you must restart the app again using.
+Stop, rebuild and restart the application:
 
 ```sh
-python app.py
+mvn spring-boot:run    
 ```
 
-Send a request using the previous curl command in the other terminal window.
+Switch to your other terminal and use the following command to send a request to the `/` endpoint:
 
 ```bash
-curl -XGET localhost:5000; echo
+curl -XPOST localhost:8080/todos/NEW; echo
 ```
 
-If you look at the span exported to the terminal, you should now see that the resource attached to telemetry contains context about the service.
+The resulting output will look like:
 
-```json
-"resource": {
-    "attributes": {
-        "telemetry.sdk.language": "python",
-        "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "1.24.0",
-        "service.name": "app.py",
-        "service.version": "0.1"
-    },
-    "schema_url": ""
-}
+TODO: Replace
+
+ ```log
+2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 21d97f2813576a1a2942457e9f0c671b 7474ed21e4081af8 SERVER [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}
+2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=21d97f2813576a1a2942457e9f0c671b, spanId=7474ed21e4081af8, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721569568329729512, endEpochNanos=1721569568336094221}
 ```
 
-This is just an example to illustrate how resources can be used to describe the environment an application is running in.
-Other resource attributes may include information to identify the physical host, virtual machine, container instance, operating system, deployment platform, cloud provider, and more.
+In this case all span attribute values have been hardcoded. Of course you can also assign values that you retrieve through a Java API directly.
+Let's get some details from the `HttpServletRequest` object.
 
+Modify the entire method to look like this:
+
+```java { title="TodobackendApplication.java" }
+	@PostMapping("/todos/{todo}")
+	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
+
+		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+
+		span.setAttribute("http.method", request.getMethod());
+		span.setAttribute("http.url", request.getRequestURL().toString());
+		span.setAttribute("client.address", request.getRemoteAddr());
+		span.setAttribute("user.agent",request.getHeader("User-Agent"));
+		
+		this.someInternalMethod(todo);
+		logger.info("POST /todos/ "+todo.toString());
+
+		response.setStatus(HttpServletResponse.SC_CREATED);
+
+		span.setAttribute("response.status", HttpServletResponse.SC_CREATED);
+
+		span.end();
+		logger.info("Span.toString():"+span.toString());
+
+		return todo;
+	}
+``` 
+
+If your editor does not automatically add the import statements, you need to do this manually.
+Make sure the following import statements are in place:
+
+```java { title="TodobackendApplication.java" }
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+``` 
+
+Restart the app and repeat the curl call.
+
+The resulting output will look like:
+
+ ```log
+2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 21d97f2813576a1a2942457e9f0c671b 7474ed21e4081af8 SERVER [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}
+2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=21d97f2813576a1a2942457e9f0c671b, spanId=7474ed21e4081af8, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721569568329729512, endEpochNanos=1721569568336094221}
+```
+
+The trace will now contain attributes from the Servlet request and also details from the response, that have been set throughout the invocation of this method.
+
+### Nested spans
+
+So far the the manual instrumentation has all been taking place within the method `addTodo`. Even though this method invokes another method `someInternalMethod` nothing of that behaviour is being captured by the current isntrumentation.
+
+Let's change that an put 3 statements into your code, 2 for the spans and one additional log.
+
+```java { title="TodobackendApplication.java" }
+	String someInternalMethod(String todo){
+
+		Span childSpan = tracer.spanBuilder("someInternalMethod").setSpanKind(SpanKind.INTERNAL).startSpan();
+
+        ...
+
+		logger.info("childSpan.toString():"+childSpan.toString());
+		childSpan.end();
+		return todo;
+
+	}
+```
+
+Again, restart the app and repeat the curl call.
+
+You will now get information from two different spans in your log:
+
+```log
+2024-07-21T14:25:21.369Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : childSpan.toString():SdkSpan{traceId=4824ee335e161b729416d1c3728da0d0, spanId=673a995310fa21b2, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=someInternalMethod, kind=INTERNAL, attributes=null, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721571921364073673, endEpochNanos=0}
+
+...
+
+2024-07-21T14:25:21.370Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=2551e1c45eeb37c9ab1bd7a016fa5833, spanId=c955fbcc8f45d28e, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721571921363715964, endEpochNanos=1721571921370347506}
+```
+
+The interesting part in both spans is the followig part:
+
+```log
+parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000
+```
+
+The parent span will always be `null` with a new call. However he we have a relation between the two calls, so it is surprising that the child span (or let's say the one we know is the chaild span) has this setting as well. So from the perspective of OpenTelemetry these are two totally independent spans.
+
+We need to use the OpenTelemetry context scope. Embed the call to the child method `someInternalMethod` with the following block:
+
+```java { title="TodobackendApplication.java" }
+		try (Scope scope = span.makeCurrent()) {
+			this.someInternalMethod(todo);
+		} finally {
+			span.end();
+		}
+```
+
+Also add the following import:
+
+```java { title="TodobackendApplication.java" }
+import io.opentelemetry.context.Scope;
+```
+
+Build, run and curl again.
+
+```log
+2024-07-21T15:11:10.327Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : childSpan.toString():SdkSpan{traceId=4c561f212ee8a152663f960490dac269, spanId=aa5935fc54da79da, parentSpanContext=ImmutableSpanContext{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c, traceFlags=01, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=true}, name=someInternalMethod, kind=INTERNAL, attributes=null, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721574670304760501, endEpochNanos=0}
+``
+
+2024-07-21T15:11:10.327Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, http.method=POST}, capacity=128, totalAddedValues=4}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721574670300677293, endEpochNanos=1721574670327453585}
+```
+
+If you look at the `someInternalMethod`  span first and focus on the parent span context, you will see:
+
+```log
+parentSpanContext=ImmutableSpanContext{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c
+```
+
+which is exactly the trace and span id of the `addTodo` method.
+
+The OpenTelemetry API offers also an automated way to propagate the parent span to child spans. This works however only, if they run within the same thread.
+
+### Handling an error
+
+The `someInternalMethod` can simulate an error behaviour and throw an exception, if somebody uses the todo with name `fail`. 
+
+```java { title="TodobackendApplication.java" }
+		if(todo.equals("fail")){
+
+			System.out.println("Failing ...");
+			throw new RuntimeException();
+			
+		} 
+```
+
+We can catch this exception in the `addTodo` method.
+
+Extend the `try{}` block we created in the previous step with the following code:
+
+```java { title="TodobackendApplication.java" }
+		try (Scope scope = span.makeCurrent()) {
+			this.someInternalMethod(todo);
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			span.setAttribute("response.status", HttpServletResponse.SC_CREATED);
+		} catch (Throwable t) {
+			span.setStatus(StatusCode.ERROR, "Error on server side!");
+			span.recordException(t);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			span.setAttribute("response.status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} finally {
+			span.end();
+		}
+```
+
+Restart the app. 
+
+This time execute the curl call with the todo triggering a failure.
+
+```bash
+curl -XPOST localhost:8080/todos/fail; echo
+```
+
+If you look at the output log now, you can see the error status in the parent span.
+
+```log
+2024-07-21T16:01:27.683Z  INFO 70461 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=29b65aa14526263d1a74c117dbbf7ea8, spanId=6296d1d4ba880147, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={http.method=POST, http.url=http://localhost:8080/todos/fail, client.address=127.0.0.1, user.agent=curl/7.81.0, response.status=500}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=ERROR, description=Error on server side!}, totalRecordedEvents=1, totalRecordedLinks=0, startEpochNanos=1721577687675216250, endEpochNanos=1721577687683172166}
+```
+
+### Adding events
+
+
+
+### Exporting traces via OTLP
+
+So far everything we collected as tracing information has been processed by the pipeline we defined in the `OpenTelemetryConfiguration` class.
+This configures the pipeline to use `SimpleSpanProcessor` in combination with `LoggingSpanExporter`.
+
+This time we want to export in OTLP format to a gRPC receiving endpoint. The `OtlpGrpcSpanExporter` can help us here:
+
+Modify the beginning of the class to the code shown below:
+
+```java { title="TodobackendApplication.java" }
+	public OpenTelemetry openTelemetry(){
+
+		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+
+		OtlpGrpcSpanExporter jaegerOtlpExporter =
+        OtlpGrpcSpanExporter.builder()
+            .setEndpoint("http://localhost:4317")
+            .setTimeout(30, TimeUnit.SECONDS)
+            .build();
+
+		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
+			.addSpanProcessor(SimpleSpanProcessor.create(jaegerOtlpExporter))
+			.setResource(resource)
+			.build();	
+```
+
+As you can see we created an instance of `OtlpGrpcSpanExporter` called `jaegerOtlpExporter` and configured it to send the data to `http://localhost:4317`.
+
+In the Tracer Provider we just added another `addSpanProcessor` call to the already existing one. OpenTelemetry is able to handle mulitple different and parallel processors.
+
+Rebuild, restart and issue a curl call. 
+
+```sh
+mvn spring-boot:run    
+```
+
+```bash
+curl -XPOST localhost:8080/todos/NEW; echo
+```
+
+Besides the familiar logging statements, you will see two errors in the logs now:
+
+```log
+2024-07-21T16:18:20.179Z  WARN 70461 --- [springboot-backend ] [alhost:4317/...] i.o.exporter.internal.grpc.GrpcExporter  : Failed to export spans. Server responded with gRPC status code 2. Error message: Failed to connect to localhost/[0:0:0:0:0:0:0:1]:4317
+2024-07-21T16:18:20.179Z  WARN 70461 --- [springboot-backend ] [alhost:4317/...] i.o.exporter.internal.grpc.GrpcExporter  : Failed to export spans. Server responded with gRPC status code 2. Error message: Failed to connect to localhost/[0:0:0:0:0:0:0:1]:4317
+```
+
+This is because there is nothing listening on `http://localhost:4317`. 
+
+Open another terminal window and start a docker container like this:
+
+```sh
+docker run -d --name jaeger \
+  -e COLLECTOR_OTLP_ENABLED=true \
+  -p 16686:16686 \
+  -p 4317:4317 \
+  jaegertracing/all-in-one
+```
+
+After this container has started, execute a couple of traces and investigate the details in the Jaeger web console `http://localhost:16686`
+
+<!--  
 #### Semantic conventions
 
-> There are only two hard things in Computer Science: cache invalidation and naming things.
-> -- Phil Karlton
-
-Consistency is a hallmark of high-quality telemetry.
 Looking at the previous example, nothing prevents a developer from using arbitrary keys for resource attributes (e.g. `version` instead of `service.version`).
 While human intuition allows us to conclude that both refer to the same thing, machines are (luckily) not that smart.
 Inconsistencies in the definition of telemetry make it harder to analyze the data down the line.
@@ -457,6 +671,7 @@ def create_resource(name: str, version: str) -> Resource:
     )
     return svc_rc
 ```
+
 
 Explore the [documentation](https://opentelemetry.io/docs/specs/semconv) to look for a convention that matches the metadata we want to record.
 The specification defines conventions for various aspects of a telemetry system (e.g. different telemetry signals, runtime environments, etc.).
@@ -515,6 +730,9 @@ Then, we can use `set_attributes` to pass a dictionary of key / value pairs.
 The semantic conventions related to [tracing](https://opentelemetry.io/docs/specs/semconv/general/trace/) standardize many attributes related to the [HTTP protocol](https://opentelemetry.io/docs/specs/semconv/http/http-spans/).
 To access information like request method, headers, and more, we import `request` from the flask package.
 Flask creates a [request context](https://flask.palletsprojects.com/en/2.3.x/reqcontext/) for each incoming HTTP request and tears it down after the request is processed.
+-->
+
+<!--  
 
 ### Context propagation
 
