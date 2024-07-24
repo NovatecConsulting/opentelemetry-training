@@ -12,9 +12,9 @@
 	</parent>
 
 	<groupId>io.novatec</groupId>
-	<artifactId>todobackend</artifactId>
+	<artifactId>todobackend-automatic</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>todobackend</name>
+	<name>todobackend-automatic</name>
 	<description>Novatec Demo Application</description>
 
 	<properties>
