@@ -37,17 +37,13 @@ public class OpenTelemetryConfiguration {
 		OtlpGrpcSpanExporter jaegerOtlpExporter =
         OtlpGrpcSpanExporter.builder()
             .setEndpoint("http://localhost:4317")
-            .setTimeout(30, TimeUnit.SECONDS)
             .build();
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
 			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
 			.addSpanProcessor(SimpleSpanProcessor.create(jaegerOtlpExporter))
-    //      .addSpanProcessor(BatchSpanProcessor.builder(LoggingSpanExporter.create()).build()) // same results for now
 			.setResource(resource)
 			.build();	
-	//		.buildAndRegisterGlobal();	
-
 
 		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
 			.setTracerProvider(sdkTracerProvider)
