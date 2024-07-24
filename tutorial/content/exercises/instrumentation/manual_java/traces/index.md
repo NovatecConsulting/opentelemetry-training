@@ -403,11 +403,9 @@ curl -XPOST localhost:8080/todos/NEW; echo
 
 The resulting output will look like:
 
-TODO: Replace
-
  ```log
-2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 21d97f2813576a1a2942457e9f0c671b 7474ed21e4081af8 SERVER [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}
-2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=21d97f2813576a1a2942457e9f0c671b, spanId=7474ed21e4081af8, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721569568329729512, endEpochNanos=1721569568336094221}
+2024-07-24T09:22:07.460Z  INFO 7977 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : f150c6404cf8c58398d94bbecb094fdb cd93535232b8d8ca SERVER [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={http.url=/todos/{todo}, http.method=POST}, capacity=128, totalAddedValues=2}
+2024-07-24T09:22:07.461Z  INFO 7977 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=f150c6404cf8c58398d94bbecb094fdb, spanId=cd93535232b8d8ca, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={http.url=/todos/{todo}, http.method=POST}, capacity=128, totalAddedValues=2}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721812927453408887, endEpochNanos=1721812927460726137}
 ```
 
 In this case all span attribute values have been hardcoded. Of course you can also assign values that you retrieve through a Java API directly.
