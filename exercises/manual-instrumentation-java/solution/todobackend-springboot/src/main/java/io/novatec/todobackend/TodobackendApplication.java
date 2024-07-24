@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 
@@ -70,34 +73,78 @@ public class TodobackendApplication {
 		return todos;
 	}
 
+	@PostMapping("/todos/old/{todo}")
+	String addTodoOld(@PathVariable String todo) {
+
+		//Context extractedContext = openTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), httpExchange, getter);
+
+		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+
+		System.out.println("Span initial:"+span.toString());
+		
+		span.setAttribute("http.method", "POST");
+		span.setAttribute("http.url", "/todos/{todo}");
+
+		try (Scope scope = span.makeCurrent()) {
+
+			this.someInternalMethod(todo);
+			logger.info("POST /todos/ " + todo.toString());
+			return todo;
+
+		} catch (Throwable t) {
+			span.setStatus(StatusCode.ERROR, "Something bad happened!");
+			span.recordException(t);
+		} finally {
+			System.out.println("Span final:"+span.toString());
+			span.end();
+		}
+
+		return "";
+
+	}
+
 	@PostMapping("/todos/{todo}")
 	String addTodo(@PathVariable String todo){
 
+		Span span = tracer.spanBuilder("addTodo").startSpan();
+		
 		this.someInternalMethod(todo);
-		//todoRepository.save(new Todo(todo));
 		logger.info("POST /todos/ "+todo.toString());
+
+		span.end();
 
 		return todo;
 
 	}
 
-	@WithSpan
-	String someInternalMethod(@SpanAttribute String todo){
+	String someInternalMethod(String todo) {
+
+		Span childSpan = tracer.spanBuilder("someInternalMethod")
+			//.setParent(Context.current().with(parentSpan))
+			.startSpan();
+
+		childSpan.setAttribute("Todo item", todo);
 
 		todoRepository.save(new Todo(todo));
-		if(todo.equals("slow")){
+		
+		childSpan.addEvent("Persisted to database");
+		
+		if (todo.equals("slow")) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} 		
-		if(todo.equals("fail")){
+		}
+		if (todo.equals("fail")) {
 
 			System.out.println("Failing ...");
 			throw new RuntimeException();
-			
-		} 
+
+		}
+
+		childSpan.addEvent("Finished checking todo item");
+		childSpan.end();
 		return todo;
 
 	}

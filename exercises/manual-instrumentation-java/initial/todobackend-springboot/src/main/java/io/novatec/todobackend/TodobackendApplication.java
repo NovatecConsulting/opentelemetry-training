@@ -19,15 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
-
+import io.opentelemetry.context.Scope;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.context.Context;
-import io.opentelemetry.context.Scope;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootApplication
 @RestController
@@ -89,62 +88,56 @@ public class TodobackendApplication {
 	}
 
 	@PostMapping("/todos/{todo}")
-	String addTodo(@PathVariable String todo) {
+	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
-		//Context extractedContext = openTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), httpExchange, getter);
+		logger.info("POST /todos/ "+todo.toString());
 
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 
-		System.out.println("Span initial:"+span.toString());
+		span.setAttribute("http.method", request.getMethod());
+		span.setAttribute("http.url", request.getRequestURL().toString());
+		span.setAttribute("client.address", request.getRemoteAddr());
+		span.setAttribute("user.agent",request.getHeader("User-Agent"));
 		
-		span.setAttribute("http.method", "POST");
-		span.setAttribute("http.url", "/todos/{todo}");
-
 		try (Scope scope = span.makeCurrent()) {
-
 			this.someInternalMethod(todo);
-			logger.info("POST /todos/ " + todo.toString());
-			return todo;
-
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			span.setAttribute("response.status", HttpServletResponse.SC_CREATED);
 		} catch (Throwable t) {
-			span.setStatus(StatusCode.ERROR, "Something bad happened!");
+			span.setStatus(StatusCode.ERROR, "Error on server side!");
 			span.recordException(t);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			span.setAttribute("response.status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
-			System.out.println("Span final:"+span.toString());
 			span.end();
 		}
+		
+		logger.info("Span.toString():"+span.toString());
+		return todo;
 
-		return "";
+	} 
 
-	}
+	String someInternalMethod(String todo){
 
-	String someInternalMethod(String todo) {
-
-		Span childSpan = tracer.spanBuilder("someInternalMethod")
-			//.setParent(Context.current().with(parentSpan))
-			.startSpan();
-
-		childSpan.setAttribute("Todo item", todo);
+		Span childSpan = tracer.spanBuilder("someInternalMethod").setSpanKind(SpanKind.INTERNAL).startSpan();
 
 		todoRepository.save(new Todo(todo));
 		
-		childSpan.addEvent("Persisted to database");
-		
-		if (todo.equals("slow")) {
+		if(todo.equals("slow")){
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-		if (todo.equals("fail")) {
+		} 		
+		if(todo.equals("fail")){
 
 			System.out.println("Failing ...");
 			throw new RuntimeException();
+			
+		} 
 
-		}
-
-		childSpan.addEvent("Finished checking todo item");
+		logger.info("childSpan.toString():"+childSpan.toString());
 		childSpan.end();
 		return todo;
 
