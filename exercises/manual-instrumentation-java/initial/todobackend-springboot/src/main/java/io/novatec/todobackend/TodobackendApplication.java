@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.api.trace.StatusCode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +30,6 @@ public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
 
-	private OpenTelemetry openTelemetry;
-	private Tracer tracer;
-
 	@Value("${HOSTNAME:not_set}")
 	String hostname;
 
@@ -48,11 +39,6 @@ public class TodobackendApplication {
 	@Autowired
 	TodoRepository todoRepository;
 
-	public TodobackendApplication(OpenTelemetry openTelemetry) {
-		this.openTelemetry = openTelemetry;
-		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-		
-	}
 
 	private String getInstanceId() {
 
@@ -92,34 +78,13 @@ public class TodobackendApplication {
 
 		logger.info("POST /todos/ "+todo.toString());
 
-		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+		this.someInternalMethod(todo);
 
-		span.setAttribute("http.method", request.getMethod());
-		span.setAttribute("http.url", request.getRequestURL().toString());
-		span.setAttribute("client.address", request.getRemoteAddr());
-		span.setAttribute("user.agent",request.getHeader("User-Agent"));
-		
-		try (Scope scope = span.makeCurrent()) {
-			this.someInternalMethod(todo);
-			response.setStatus(HttpServletResponse.SC_CREATED);
-			span.setAttribute("response.status", HttpServletResponse.SC_CREATED);
-		} catch (Throwable t) {
-			span.setStatus(StatusCode.ERROR, "Error on server side!");
-			span.recordException(t);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			span.setAttribute("response.status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		} finally {
-			span.end();
-		}
-		
-		logger.info("Span.toString():"+span.toString());
 		return todo;
 
 	} 
 
 	String someInternalMethod(String todo){
-
-		Span childSpan = tracer.spanBuilder("someInternalMethod").setSpanKind(SpanKind.INTERNAL).startSpan();
 
 		todoRepository.save(new Todo(todo));
 		
@@ -137,8 +102,6 @@ public class TodobackendApplication {
 			
 		} 
 
-		logger.info("childSpan.toString():"+childSpan.toString());
-		childSpan.end();
 		return todo;
 
 	}

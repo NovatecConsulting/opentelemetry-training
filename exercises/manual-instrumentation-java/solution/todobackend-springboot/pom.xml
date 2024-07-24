@@ -12,9 +12,9 @@
 	</parent>
 
 	<groupId>io.novatec</groupId>
-	<artifactId>todobackend</artifactId>
+	<artifactId>todobackend-manual-solution</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>todobackend</name>
+	<name>todobackend-manual-solution</name>
 	<description>Novatec Demo Application</description>
 
 	<properties>
@@ -55,10 +55,33 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.opentelemetry.instrumentation</groupId>
-			<artifactId>opentelemetry-instrumentation-annotations</artifactId>
-			<version>2.4.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+            <version>1.26.0-alpha</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>
@@ -69,5 +92,17 @@
 			</plugin>
 		</plugins>
 	</build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>1.40.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
