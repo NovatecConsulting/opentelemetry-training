@@ -90,7 +90,7 @@ If you get stuck, you can find the solution in the `exercises/manual-instrumenta
 The application has not been modified for OpenTelemetry, so we start entirely from scratch.
 Before we can make changes to the Java code we need to add some necessary dependencies.
 
-In the first window stop the app using Ctrl+C and edit the pom.xml file. 
+In the first window stop the app using `Ctrl+C` and edit the `pom.xml` file. 
 Add the following dependencies. Do not add the dots (...). Just embed the dependencies.
 
 
