@@ -507,7 +507,7 @@ We need to use the OpenTelemetry context scope. Embed the call to the child meth
 		}
 ```
 
-Also add the following import:
+Also make sure the following import exists:
 
 ```java { title="TodobackendApplication.java" }
 import io.opentelemetry.context.Scope;
@@ -591,7 +591,7 @@ This time we want to export in OTLP format to a gRPC receiving endpoint. The `Ot
 
 Modify the beginning of the class to the code shown below:
 
-```java { title="TodobackendApplication.java" }
+```java { title="OpenTelemetryConfiguration.java" }
 	public OpenTelemetry openTelemetry(){
 
 		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
@@ -608,6 +608,14 @@ Modify the beginning of the class to the code shown below:
 			.setResource(resource)
 			.build();	
 ```
+
+Also make sure the following import exists:
+
+```java { title="OpenTelemetryConfiguration.java" }
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
+```
+
+
 
 As you can see we created an instance of `OtlpGrpcSpanExporter` called `jaegerOtlpExporter` and configured it to send the data to `http://localhost:4317`.
 
@@ -643,6 +651,9 @@ docker run -d --name jaeger \
 ```
 
 After this container has started, execute a couple of traces and investigate the details in the Jaeger web console `http://localhost:16686`
+
+
+# Metrics
 
 <!--  
 #### Semantic conventions
