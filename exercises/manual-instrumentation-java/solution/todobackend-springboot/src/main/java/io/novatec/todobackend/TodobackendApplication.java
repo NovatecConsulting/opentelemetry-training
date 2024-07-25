@@ -18,6 +18,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.opentelemetry.api.OpenTelemetry;
+
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.api.trace.Span;
@@ -38,6 +45,8 @@ public class TodobackendApplication {
 
 	private OpenTelemetry openTelemetry;
 	private Tracer tracer;
+	private Meter meter;
+	private LongCounter counter;
 
 	@Value("${HOSTNAME:not_set}")
 	String hostname;
@@ -51,7 +60,13 @@ public class TodobackendApplication {
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 		this.openTelemetry = openTelemetry;
 		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-		
+		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
+
+		counter = meter.counterBuilder("todobackend.requests.counter")
+				.setDescription("How many times the GET call has been invoked.")
+				.setUnit("requests")
+				.build();
+
 	}
 
 	private String getInstanceId() {
@@ -83,22 +98,23 @@ public class TodobackendApplication {
 
 		todoRepository.findAll().forEach(todo -> todos.add(todo.getTodo()));
 		logger.info("GET /todos/ " + todos.toString());
+		counter.add(1,Attributes.of(stringKey("http.method"), "GET"));
 
 		return todos;
 	}
 
 	@PostMapping("/todos/{todo}")
-	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
+	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo) {
 
-		logger.info("POST /todos/ "+todo.toString());
+		logger.info("POST /todos/ " + todo.toString());
 
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 
 		span.setAttribute("http.method", request.getMethod());
 		span.setAttribute("http.url", request.getRequestURL().toString());
 		span.setAttribute("client.address", request.getRemoteAddr());
-		span.setAttribute("user.agent",request.getHeader("User-Agent"));
-		
+		span.setAttribute("user.agent", request.getHeader("User-Agent"));
+
 		try (Scope scope = span.makeCurrent()) {
 			this.someInternalMethod(todo);
 			response.setStatus(HttpServletResponse.SC_CREATED);
@@ -111,33 +127,33 @@ public class TodobackendApplication {
 		} finally {
 			span.end();
 		}
-		
-		logger.info("Span.toString():"+span.toString());
+
+		logger.info("Span.toString():" + span.toString());
 		return todo;
 
-	} 
+	}
 
-	String someInternalMethod(String todo){
+	String someInternalMethod(String todo) {
 
 		Span childSpan = tracer.spanBuilder("someInternalMethod").setSpanKind(SpanKind.INTERNAL).startSpan();
 
 		todoRepository.save(new Todo(todo));
-		
-		if(todo.equals("slow")){
+
+		if (todo.equals("slow")) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} 		
-		if(todo.equals("fail")){
+		}
+		if (todo.equals("fail")) {
 
 			System.out.println("Failing ...");
 			throw new RuntimeException();
-			
-		} 
 
-		logger.info("childSpan.toString():"+childSpan.toString());
+		}
+
+		logger.info("childSpan.toString():" + childSpan.toString());
 		childSpan.end();
 		return todo;
 

@@ -39,15 +39,11 @@ By the end of this lab, you will be able to:
 * Solution directory: `manual-instrumentation-java/solution`
 * Java/Spring Boot backend component: `manual-instrumentation-java/initial/todobackend-springboot`
 
-The environment consists of two components:
+The environment consists of one component:
 1. a Spring Boot REST API service
     - uses [Spring Boot ](https://www.spring.io) framework
     - listens on port 8080 and serves serveral CRUD style HTTP endpoints
     - simulates an application we want to instrument
-2. echo server
-    - listens on port 6000, receives requests and sends them back to the client
-    - called by the Python application to simulate communication with a remote service
-    - allows us to inspect outbound requests
 
 
 To start with this lab, open **two terminals**.
@@ -71,7 +67,7 @@ mvn spring-boot:run
 
 The directory doesn't matter here
 
-Test the Python app:
+Test the Java app:
 ```sh
 curl -XGET localhost:8080/todos/; echo
 ```
@@ -652,8 +648,8 @@ docker run -d --name jaeger \
 
 After this container has started, execute a couple of traces and investigate the details in the Jaeger web console `http://localhost:16686`
 
+The exercise completes with this step.
 
-# Metrics
 
 <!--  
 #### Semantic conventions
