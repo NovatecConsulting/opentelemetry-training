@@ -18,34 +18,49 @@ To run the lab on your local machine, you'll need to have [Docker](https://docs.
 When you open this repository with a locally installed VS Code instance, you'll see a prompt in the bottom right corner.
 ![Prompt to open the repo inside a Dev container](tutorial/content/exercises/introduction/images/prompt.png)
 
-Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer.json) specification to set up the IDE. If you missed the prompt hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
-
-* Open this repository in [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) or in [Gitpod](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
-* Or install [Docker](https://docs.docker.com/engine/install/), [VS Code](https://code.visualstudio.com/download) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-
-With [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) a VS Instance in your browser will be opened automatically
-
-The Dev Container spec will automatically open the exercises part with a fully fledged and configured IDE and expose the tutorial on a port to your local system.
-
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/NovatecConsulting/opentelemetry-training) [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
-
-
-## How to navigate around the IDE
-GitHub Codespaces and Gitpod will automatically run the [devcontainer.json](.devcontainer.json) and are immediately ready to go.
-When using this repo with a locally installed VS Code instance you will be greeted by a prompt in the bottom right corner.
-![Prompt to open the repo inside a Dev container](assets/prompt.png)
+Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer/devcontainer.json) specification to set up the IDE. If you missed the prompt hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
 
 After that the [devcontainer spec](.devcontainer.json) will pull all needed dependencies to build and run the devcontainer in which we will work on the lab content. This can take a bit, so be patient.
 
-If the terminal is not visible open it under `View/Terminal`
-![Open the terminal](assets/open-terminal.png)
+![Open the terminal](tutorial/content/exercises/introduction/images/open-terminal.png)
 
-When you run an application that exposes a port, VS Code will notify you that it is accessible. To open the application just click `Open in Browser` or open your Browser manually and type the URL yourself.
-![Open the browser](assets/open-port.png)
+When you run an application that exposes a port, VS Code will notify you that it is accessible. 
+To open the application, just click `Open in Browser` or open your Browser manually and type the URL yourself.
+![Open the browser](tutorial/content/exercises/introduction/images/open-port.png)
 
 When you missed the prompt you can see the open ports in the `PORTS` tab.
-![Where to find the forwarded ports](assets/ports.png)
+![Where to find the forwarded ports](tutorial/content/exercises/introduction/images/ports.png)
 
-You can at all times use the terminal to run applications and docker images. But you can also use the tab `Terminal/Run Task`
-![Tasks](assets/tasks.png)
-which will open a terminal and run the needed command automatically. For some exercises you need to run two tasks, which will be explained in the respective lab.
+### Running the lab remotely
+
+To run the lab in a cloud-based development environment, you have two options: [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) or [Gitpod](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training).
+
+To utilize either option, you'll need a personal GitHub account.
+In both cases, a VSCode Instance in your browser will be opened automatically and you are immediately ready to go.
+
+Normally Codespaces and Gitpod should work in an almost identical way as a local devcontainer setup. However these platforms are subject to change and we can't keep the lab tested continously on all remote platforms.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/NovatecConsulting/opentelemetry-training) [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
+
+###  Differences between local and remote way of running the lab
+
+Even though the experience with using a local or browser-based VS Code is fairly similar, one thing you need to take care of is the variation in hostnames and ports. In a local environment, you can use the combination of `localhost` and the corresponding port. In a remote environment, this will not work when trying to access endpoints via a browser.
+
+This is the ports tab of a local VS Code environment:
+
+![VS Code ports](tutorial/content/exercises/introduction/images/vscode_ports.png)
+
+This is the ports tab of a GitHub Codespaces environment:
+
+![Codespaces ports](tutorial/content/exercises/introduction/images/codespaces_ports.png)
+
+This is the ports tab of a GitHub Codespaces environment:
+
+![Gitpod ports](tutorial/content/exercises/introduction/images/gitpod_ports.png)
+
+You can see that they look almost identical. In some cases, you might have to hover over the address to reveal a link.
+
+Another difference can be the root path in your terminal and file browser of VS Code.
+
+
+

@@ -44,7 +44,7 @@ In both cases, a VSCode Instance in your browser will be opened automatically an
 
 Normally Codespaces and Gitpod should work in an almost identical way as a local devcontainer setup. However these platforms are subject to change and we can't keep the lab tested continously on all remote platforms.
 
-## Important differences between local and remote way of running the lab
+### Important differences between local and remote way of running the lab
 
 Even though the experience with using a local or browser-based VS Code is fairly similar, one thing you need to take care of is the variation in hostnames and ports. In a local environment, you can use the combination of `localhost` and the corresponding port. In a remote environment, this will not work when trying to access endpoints via a browser.
 
@@ -65,20 +65,3 @@ You can see that they look almost identical. In some cases, you might have to ho
 Another difference can be the root path in your terminal and file browser of VS Code.
 
 
-In Gitpod the path will be:
-
-```
-/workspace/otel-getting-started main $ 
-```
-
-In GitHub codespaces the path will look however like:
-
-```
-workspaces/otel-getting-started $
-```
-
-Whereas in your local VSCode the path is only called:
-
-``` 
-/workspace
-```
