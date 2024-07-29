@@ -21,7 +21,7 @@ When you open this repository with a locally installed VS Code instance, you'll 
 
 Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer/devcontainer.json) specification to set up the IDE. If you missed the prompt hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
 
-After that the [devcontainer spec](.devcontainer.json) will pull all needed dependencies to build and run the devcontainer in which we will work on the lab content. This can take a bit, so be patient.
+After that the [devcontainer spec](.devcontainer/devcontainer.json) will pull all needed dependencies to build and run the devcontainer in which we will work on the lab content. This can take a bit, so be patient.
 <br /><br />
 ![Open the terminal](tutorial/content/exercises/introduction/images/open-terminal.png)
 
