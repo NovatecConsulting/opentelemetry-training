@@ -16,7 +16,7 @@ This will be the default for running this lab. All exercises are described accor
 
 To run the lab on your local machine, you'll need to have [Docker](https://docs.docker.com/engine/install/), [VS Code](https://code.visualstudio.com/download), and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed.
 When you open this repository with a locally installed VS Code instance, you'll see a prompt in the bottom right corner.
-<br /><br />
+<br /><br /><br />
 ![Prompt to open the repo inside a Dev container](tutorial/content/exercises/introduction/images/prompt.png)
 
 Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer/devcontainer.json) specification to set up the IDE. If you missed the prompt hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
