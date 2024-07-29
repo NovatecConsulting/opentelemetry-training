@@ -302,13 +302,13 @@ Now point your browser to `http://localhost:16686/`.
 If you run your application with a local container daemon, `localhost` in your browser will work. If you are using a cloud-based setup like Codespaces or Gitpod , please see the section "How to use this lab".
 
 Especially the section about ports and hostnames is relevant here.
-[Link](/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab)
+[Link](exercises/introduction/#important-differences-between-local-and-remote-way-of-running-the-lab)
 
 The Jaeger UI will come up. Click the button `Find traces`.
 
 Please refer to the chapter "OpenTelemetry in Action" for steps how to navigate within
 
-[Using Jaeger UI](/use_case_scenarios/#using-jaeger-ui)
+[Using Jaeger UI](/exercises/otel_in_action/#using-jaeger-ui)
 
 Click on a trace in the list that shows a certain number of spans,
 e.g. the `POST /todos/` or GET /todos/` one.
