@@ -124,7 +124,7 @@ curl -X POST localhost:8080/todos/NEW
 
 Open the Jaeger Web UI and search for the last trace we just generated. It will look like this:
 
-TODO Screenshot
+{{< figure src="images/jaeger_trace_auto_instrument.png" width=700 caption="Jaeger trace - Auto instrumentation" >}}
 
 Now open the Java source file under `todobackend-springboot/src/main/java/io/novatec/todobackend/TodobackendApplication.java` directly here in the editor.
 
@@ -153,7 +153,7 @@ You will see the two following methods:
 
 The `addTodo` method is the entry point when the REST call arrives at the application. We can see that in the Jaeger trace. This is visible in the entry span called `POST/todos/{todo}`:
 
-screenshot
+{{< figure src="images/jaeger_trace_auto_instrument.png" width=700 caption="Jaeger trace - Auto instrumentation" >}}
 
 With the invocation of `todoRepository.save(new Todo(todo));` the new item will be persisted in the database.
 This is also visible in the Jaeger trace.
@@ -209,7 +209,11 @@ Observe the `POST` call once more.
 
 You will now see that between the entry span `POST/todos/{todo}` and the third span `todoRepository.save` there is one called `todoRepository.someInternalMethod`. This is due to the annotation we did.
 
+{{< figure src="images/jaeger_trace_annotated.png" width=700 caption="Jaeger trace - Auto instrumentation with annotations" >}}
+
 If you expand the line of trace in the Jaeger UI you will get `Tags` and `Process` details. Expand all of it.
+
+{{< figure src="images/jaeger_trace_span_detail.jpg" width=700 caption="Jaeger trace - Span Detail" >}}
 
 Among other details you will be able to see the details of the method and name of the used library.
 
@@ -257,7 +261,7 @@ As the latest entry you should now see
 todo - SMILE
 ```
 
-Screenshot
+{{< figure src="images/jaeger_trace_span_detail_todo.png" width=700 caption="Jaeger trace - Span Detail with value" >}}
 
 This means you can now also see the specific parameter which has been passed and relate it to a slow performing call in case it happens.
 

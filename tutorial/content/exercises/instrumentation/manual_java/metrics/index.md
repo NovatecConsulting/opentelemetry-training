@@ -259,7 +259,6 @@ If there are any errors review the changes and repeat.
 
 ### Generate metrics
 
-{{< figure src="images/tracer_generates_spans.drawio.png" width=650 caption="Tracing signal" >}}
 
 To show a very simple form of metric collection we'll try to define a counter for the amount of invocations of a REST call.
 We need to initialize the counter outside of this method.
