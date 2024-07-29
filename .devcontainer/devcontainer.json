@@ -20,22 +20,25 @@
 	},
 	"portsAttributes": {
 		"5000": {
-			"label": "Manual instrumentation application"
+			"label": "Python Flask app"
 		},
 		"5001": {
-			"label": "Auto instrumentation application"
+			"label": "Python Flask app"
 		},
 		"8080": {
-			"label": "Spring Boot application"
+			"label": "Spring Boot Backend app"
 		},
 		"8090": {
-			"label": "Spring Boot Thymeleaf"
+			"label": "Spring Boot Thymeleaf app"
 		},
 		"9090": {
 			"label": "Prometheus UI"
 		},
 		"16686": {
 			"label": "Jaeger UI"
+		},
+		"5432": {
+			"label": "Postgres DB"
 		}
 	},
 	"customizations": {
