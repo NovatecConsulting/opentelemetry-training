@@ -239,7 +239,7 @@ mvn clean package
 ```
 
 ```sh
-java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 After it has come up, generate some more load:
