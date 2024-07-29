@@ -12,11 +12,13 @@ The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/d
 
 ### Running the lab locally
 
-This will be the default for running this lab. All exercises are described accordig to this way of using the lab.
+This will be the default for running this lab. All exercises are described according to this way of using the lab.
 
 To run the lab on your local machine, you'll need to have [Docker](https://docs.docker.com/engine/install/), [VS Code](https://code.visualstudio.com/download), and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed.
 When you open this repository with a locally installed VS Code instance, you'll see a prompt in the bottom right corner.
 ![Prompt to open the repo inside a Dev container](tutorial/content/exercises/introduction/images/prompt.png)
+
+Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer.json) specification to set up the IDE. If you missed the prompt hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
 
 * Open this repository in [GitHub Codespaces](https://codespaces.new/NovatecConsulting/opentelemetry-training) or in [Gitpod](https://gitpod.io/#https://github.com/NovatecConsulting/opentelemetry-training)
 * Or install [Docker](https://docs.docker.com/engine/install/), [VS Code](https://code.visualstudio.com/download) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
@@ -33,9 +35,7 @@ GitHub Codespaces and Gitpod will automatically run the [devcontainer.json](.dev
 When using this repo with a locally installed VS Code instance you will be greeted by a prompt in the bottom right corner.
 ![Prompt to open the repo inside a Dev container](assets/prompt.png)
 
-Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer.json) specification to set up the IDE. If you missed the prompt hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
-
-After that the [devcontainer spec](.devcontainer.json) will run the [docker-compose.yml](docker-compose.yml) and pull all needed dependencies and build the [Docker Image](Dockerfile) for the application in which we will work on the lab content. To pull all Images and build all containers can take a second, so be patient.
+After that the [devcontainer spec](.devcontainer.json) will pull all needed dependencies to build and run the devcontainer in which we will work on the lab content. This can take a bit, so be patient.
 
 If the terminal is not visible open it under `View/Terminal`
 ![Open the terminal](assets/open-terminal.png)

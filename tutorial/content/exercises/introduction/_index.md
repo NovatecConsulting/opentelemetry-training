@@ -17,7 +17,7 @@ The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/d
 
 ### Running the lab locally
 
-This will be the default for running this lab. All exercises are described accordig to this way of using the lab.
+This will be the default for running this lab. All exercises are described according to this way of using the lab.
 
 To run the lab on your local machine, you'll need to have [Docker](https://docs.docker.com/engine/install/), [VS Code](https://code.visualstudio.com/download), and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed.
 When you open this repository with a locally installed VS Code instance, you'll see a prompt in the bottom right corner.
@@ -25,8 +25,7 @@ When you open this repository with a locally installed VS Code instance, you'll 
 
 Press `Reopen in Container` to allow VS Code to use the [devcontainer.json](.devcontainer.json) specification to set up the IDE. If you missed the prompt, hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (on Mac <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>) and type `Dev Containers: Rebuild and Reopen in Container`.
 
-Once you do that, the [devcontainer spec](https://chat.openai.com/c/.devcontainer.json) will execute the [docker-compose.yml](https://chat.openai.com/c/docker-compose.yml) and pull all necessary dependencies, building the [Docker Image](https://chat.openai.com/c/Dockerfile) for the application you'll be working on in the lab. This process might take a moment, so please be patient.
-If the terminal is not visible, you can open it under `View/Terminal`.
+After that the [devcontainer spec](.devcontainer.json) will pull all needed dependencies to build and run the devcontainer in which we will work on the lab content. This can take a bit, so be patient.
 
 ![Open the terminal](images/open-terminal.png)
 
