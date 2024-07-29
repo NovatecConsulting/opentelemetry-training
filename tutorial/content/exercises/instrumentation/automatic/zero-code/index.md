@@ -366,6 +366,11 @@ Now run the following command to enable the auto-instrumented invocation of Pyth
 opentelemetry-bootstrap --action=install
 ```
 
+For the current version we are facing a bug here and temporarily need to do this step:
+```sh
+pip uninstall opentelemetry-instrumentation-aws-lambda
+```
+
 As a final step we need to set some environment variables - almost identical to the Java part.
 They will configure the behaviour of the instrumented app and make it send only trace metrics to the OpenTelemetry collector.
 
