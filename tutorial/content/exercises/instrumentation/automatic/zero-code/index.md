@@ -106,7 +106,7 @@ This will take a few seconds to complete. It will create an executable `jar` fil
 Run it with the following command:
 
 ```sh
-java -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 This will take the control over your terminal. The output should look like:
@@ -136,7 +136,7 @@ wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releas
 This will download a `jar` file, which you need to attach to the Java process. You don't need to modify any code or dependency in your project, you can simply add it as `javaagent` parameter like this:
 
 ```sh
-java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 Right at the start of the app you should see the following output:
@@ -183,7 +183,7 @@ This basically means that you tell the agent to only export trace information an
 Now let's try again to run the application with the latest settings using:
 
 ```sh
-java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 The errors from the previous run should now disappear and you can see trace information in your console output.
@@ -286,7 +286,7 @@ This is however the default anyway, so we can skip that. Also we don't need to c
 Run the Java application again:
 
 ```sh
-java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 You may already notice that there is less output in the console despite the agent being present.
