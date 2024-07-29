@@ -1,7 +1,8 @@
 ---
 title: "logs"
 date: 2024-01-02T09:26:24+01:00
-draft: false
+draft: true
+hidden: true
 weight: 4
 ---
 ### How to perform the exercise
