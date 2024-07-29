@@ -112,7 +112,7 @@ export OTEL_LOGS_EXPORTER=none
 Now run the newly build jar including the agent:
 
 ```sh
-java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 Let this process run in it's terminal window and switch to a new one.
@@ -192,7 +192,7 @@ mvn clean package
 Run the newly build jar file:
 
 ```sh
-java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -jar target/todobackend-automatic-0.0.1-SNAPSHOT.jar
 ```
 
 After it has come up, switch to another terminal window and generate some more load as you did before:
