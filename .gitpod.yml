@@ -2,12 +2,14 @@
 image: maeddes/gitpod:full
 workspaceLocation: '/workspace/opentelemetry-training/exercises'
 
+init:
+  - name: Set environment variable
+    command: eval $(gp env -e EXERCISES=/workspace/opentelemetry-training/exercises)
+
 tasks:
   - name: Add Python Otel libs
     command: pip3 install requests flask Faker opentelemetry-api opentelemetry-sdk opentelemetry-exporter-prometheus opentelemetry-exporter-otlp
-  - name: Set environment variable
-    env:
-      EXERCISES: '/workspace/opentelemetry-training/exercises'
+
 #  - name: Start httpbin
 #    command: docker run -p 6000:80 ealen/echo-server:0.9.2
 #  - name: Enable httpbin
