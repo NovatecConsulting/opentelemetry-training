@@ -166,7 +166,7 @@ The default configuration will make the agent look for a collector, which is cur
 So we need to overwrite the default settings. The most important one is to tell the agent to not look for a collector,
 but export all the collected information to the console.
 
-TODO: IMAGE OTEL to Console
+{{< figure src="images/otel_to_console.png" width=700 caption="OpenTelemetry export to console" >}}
 
 To achieve this, set the following environment variables:
 
@@ -282,6 +282,8 @@ export OTEL_COLLECTOR_HOST=localhost
 ```
 
 This is however the default anyway, so we can skip that. Also we don't need to configure port as per default `4317` is being used for gRPC and `4318` for HTTP. The agent will try to look for it and of course complain if it can't reach it.
+
+{{< figure src="images/otel_to_jaeger.png" width=700 caption="OpenTelemetry export to Jaeger" >}}
 
 Run the Java application again:
 
