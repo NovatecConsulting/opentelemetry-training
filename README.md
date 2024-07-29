@@ -1,14 +1,21 @@
 # Getting Started with OpenTelemetry
 This repository offers a getting started guide for OpenTelemetry, the framework for vendor-neutral telemetry data collection.
 
+## How to use this repo
+The exercise lab resides in a single Git repository, which contains everything needed to run it across various environments. 
+
+The tutorial is a static website that explains key concepts and guides you through the practical exercises.
+The hands-on exercises provide interactive experiences to help you grasp how to integrate OpenTelemetry into your applications. 
+It's worth noting that these exercises focus on teaching concepts rather than replicating real-world deployment scenarios.
+
+The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) to provide a consistent developer experience across platforms - local and remote.
+
+<br /><br />
+![Overview](tutorial/content/exercises/introduction/images/lab_tutorial_setup.png)
+
 ## Link to exercises
 
 You can find the exercises/tutorial here: https://novatecconsulting.github.io/opentelemetry-training/
-
-## How to use this repo
-This repository consists of two main parts - the tutorial and the hands-on exercises. In the tutorial everything you need to know on how to use OpenTelemetry for the exercises will get explained. The exercises give a hands-on experience on how to use OpenTelemetry in your applications.
-
-The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) to provide a consistent developer experience across platforms - local and remote.
 
 ### Running the lab locally
 

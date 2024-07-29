@@ -6,7 +6,7 @@ weight = 1
 
 ## How to use this lab
 The lab resides in a single Git repository, which contains everything needed to run it across various environments. 
-Within this repository, you'll find two main sections: the tutorial and the hands-on exercises.
+
 The tutorial is a static website that explains key concepts and guides you through the practical exercises.
 The hands-on exercises provide interactive experiences to help you grasp how to integrate OpenTelemetry into your applications. 
 It's worth noting that these exercises focus on teaching concepts rather than replicating real-world deployment scenarios.
@@ -14,6 +14,10 @@ It's worth noting that these exercises focus on teaching concepts rather than re
 {{< figure src="images/lab_tutorial_setup.png" width=700 caption="Lab Architecture" >}}
 
 The repository utilizes VS Code [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) to provide a consistent developer experience across platforms.
+
+## Link to exercises
+
+You can find the exercises/tutorial here: https://novatecconsulting.github.io/opentelemetry-training/
 
 ### Running the lab locally
 
