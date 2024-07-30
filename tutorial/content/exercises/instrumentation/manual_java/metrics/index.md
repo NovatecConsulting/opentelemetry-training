@@ -1,5 +1,5 @@
 ---
-title: "metrics"
+title: "Metrics"
 date: 2023-12-06T09:43:24+01:00
 draft: false
 weight: 3
@@ -23,8 +23,9 @@ The paired `MetricExporter` is responsible for getting the data to the destinati
 
 By the end of this lab, you will be able to:
 
-- use the OpenTelemetry API and configure the SDK to generate metrics
-- understand the basic structure and dimensions of a metric
+- Use the OpenTelemetry API and configure the SDK to generate metrics
+- Understand the basic structure and dimensions of a metric
+- Generate custom metrics from your application and configure the exporting
 <!-- 
 - create and record meassurements with the help of different types of instruments
 - customize metrics are collected by the SDK

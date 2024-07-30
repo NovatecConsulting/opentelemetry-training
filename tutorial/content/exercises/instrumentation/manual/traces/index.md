@@ -1,5 +1,5 @@
 ---
-title: "traces"
+title: "Traces"
 date: 2023-12-06T09:43:24+01:00
 draft: false
 weight: 2
@@ -33,8 +33,6 @@ By the end of this lab, you will be able to:
 - ensure trace context propagation so spans can be connected into a trace
 
 ### How to perform the exercises
-
-
 
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.

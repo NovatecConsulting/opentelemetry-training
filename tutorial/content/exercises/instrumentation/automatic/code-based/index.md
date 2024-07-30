@@ -4,6 +4,18 @@ draft: false
 weight: 3
 ---
 
+## Introduction
+
+This part of the exercise extends the zero-code instrumentation approach, by using instrumentation libraries and manual instrumentation in conjunction with the full automatic approach.
+
+To differentiate from the upcoming manual instrumentation this step can be seen as a hybrid approach.
+
+## Learning Objectives
+
+By the end of this chapter, you should be able to:
+- Understand how to extend zero-code instrumentation with usage of libraries or mixing with manual instrumentation
+- Apply this form of instrumentation to an existing Java and Python application
+- Have an understanding of how much you need to interfere with source code in order to get a certain degree of information depth
 
 ### Background
 <!-- Instrumentation Library -->

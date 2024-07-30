@@ -4,12 +4,6 @@ draft: false
 weight: 10
 ---
 
-## How to perform the exercise
-
-* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
-* All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
-* Initial directory: `otel-in-action`
-
 ## Introduction
 
 This introductory lab exercise will demonstrate capabilities of OpenTelemetry from an end-user perspective. There will be no changes in configuration necessary. It's simply about starting a set of pre-defined containers and walking through usage scenarios.
@@ -27,6 +21,11 @@ By the end of this chapter, you should be able to:
 - Interact with the OpenTelemetry-enabled application and observe results in the various dashboard
 - Observe slow running and failing components
 
+## How to perform the exercise
+
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
+* Initial directory: `otel-in-action`
 
 ## Architecture
 

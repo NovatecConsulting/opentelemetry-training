@@ -1,8 +1,10 @@
 ---
-title: "zero-code instrumentation"
+title: "Zero-code instrumentation"
 draft: false
 weight: 2
 ---
+
+## Introduction
 
 Instrumentation libraries simplify the experience of adopting OpenTelemetry by injecting instrumentation into popular third-party libraries and frameworks.
 This is especially useful in situations where we don't want to write manual instrumentation, but no native instrumentation is available.
@@ -15,7 +17,16 @@ A common way to take advantage of instrumentation libraries is in combination wi
 In contrast to the API and SDK, auto-instrumentation allows us to dynamically inject observability into the application without having to make changes to the source code.
 
 Generally speaking, auto-instrumentation is implemented by some kind of agent or runner.
-In this lab, we'll use a Java application to understand what this could look like.
+In this lab, we'll use both a Java and Python application to understand how this is being done.
+
+## Learning Objectives
+
+By the end of this chapter, you should be able to:
+- Understand the concept of automatic or zero-code instrumentation
+- Apply this form of instrumentation to an existing Java and Python application
+- Use appropriate environment variables to configure the behaviour without touching the source code
+- Have an understanding of both simplicity, but also limitations of this instrumentation type
+
 
 ### Background information - byte code manipulation via Java agent
 

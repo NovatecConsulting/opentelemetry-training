@@ -1,5 +1,5 @@
 ---
-title: "traces"
+title: "Traces"
 date: 2023-12-06T09:43:24+01:00
 draft: false
 weight: 2
@@ -24,12 +24,13 @@ The purpose of the exercises is to learn about the anatomy of spans and OpenTele
 It does not provide a realistic deployment scenario.
 In this lab, we output spans to the local console to keep things simple and export it to [Jaeger](https://github.com/jaegertracing/jaeger) to show multiple ways of exporting.
 
-#### Learning Objectives
+## Learning Objectives
 By the end of this lab, you will be able to:
-- use the OpenTelemetry API and configure the SDK to generate spans
-- understand the basic structure of a span
-- enrich spans with additional metadata
-<!-- - ensure trace context propagation so spans can be connected into a trace -->
+- Apply manual instrumentation for tracing to a Java application 
+- Use the OpenTelemetry API and configure the SDK to generate spans
+- Understand the basic structure of a span
+- Enrich spans with additional metadata
+- Use the appropriate SDK objects to configure exporting to both console and Jaeger/OTLP
 
 ### How to perform the exercises
 
