@@ -44,6 +44,7 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
+				"files.autoSave": "afterDelay",
 				"[python]": {
 					"editor.formatOnSave": true
 				},
