@@ -1,6 +1,6 @@
 +++
-title = "manual instrumentation - Java"
-linkTitle = "manual - Java"
+title = "Manual instrumentation - Java"
+linkTitle = "Manual - Java"
 draft = false
 weight = 3
 +++

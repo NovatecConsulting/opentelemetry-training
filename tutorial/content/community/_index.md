@@ -1,6 +1,6 @@
 +++
 archetype = "chapter"
-title = "community"
+title = "Community"
 weight = 3
 draft = true
 +++

@@ -1,6 +1,6 @@
 +++
-title = "automatic instrumentation"
-linkTitle = "automatic"
+title = "Automatic instrumentation"
+linkTitle = "Automatic"
 draft = false
 weight = 1
 +++

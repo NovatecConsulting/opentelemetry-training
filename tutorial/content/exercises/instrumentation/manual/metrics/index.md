@@ -1,5 +1,5 @@
 ---
-title: "metrics"
+title: "Metrics"
 date: 2023-12-06T09:43:24+01:00
 draft: false
 weight: 3

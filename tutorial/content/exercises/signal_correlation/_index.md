@@ -1,5 +1,5 @@
 ---
-title: "signal correlation (optional)"
+title: "Signal correlation (optional)"
 date: 2023-12-06T09:43:24+01:00
 draft: true
 weight: 40

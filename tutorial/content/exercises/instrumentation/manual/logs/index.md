@@ -1,5 +1,5 @@
 ---
-title: "logs"
+title: "Logs"
 date: 2024-01-02T09:26:24+01:00
 draft: false
 weight: 4

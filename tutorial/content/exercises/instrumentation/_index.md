@@ -1,5 +1,5 @@
 +++
-title = "instrumentation"
+title = "Instrumentation"
 draft = false
 weight = 20
 +++
