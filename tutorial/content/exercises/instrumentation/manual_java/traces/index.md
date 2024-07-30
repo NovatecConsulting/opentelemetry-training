@@ -491,7 +491,7 @@ The interesting part in both spans is the followig part:
 parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000
 ```
 
-The parent span will always be `null` with a new call. However he we have a relation between the two calls, so it is surprising that the child span (or let's say the one we know is the chaild span) has this setting as well. So from the perspective of OpenTelemetry these are two totally independent spans.
+The parent span will always be `null` with a new call. However here we have a relation between the two calls, so it is surprising that the child span (or let's say the one we know is the chaild span) has this setting as well. So from the perspective of OpenTelemetry these are two totally independent spans.
 
 We need to use the OpenTelemetry context scope. Embed the call to the child method `someInternalMethod` with the following block:
 
