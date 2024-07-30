@@ -1,5 +1,5 @@
 ---
-title: "baggage"
+title: "Baggage"
 draft: false
 weight: 2
 ---

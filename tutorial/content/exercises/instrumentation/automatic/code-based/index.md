@@ -1,5 +1,5 @@
 ---
-title: "code-based instrumentation"
+title: "Code-based instrumentation"
 draft: false
 weight: 3
 ---

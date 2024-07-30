@@ -1,5 +1,5 @@
 ---
-title: "exemplar"
+title: "Exemplar"
 draft: false
 weight: 1
 ---

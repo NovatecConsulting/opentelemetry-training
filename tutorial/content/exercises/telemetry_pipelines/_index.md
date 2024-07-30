@@ -1,5 +1,5 @@
 ---
-title: "telemetry pipelines"
+title: "Telemetry pipelines"
 draft: true
 hidden: true
 weight: 30
