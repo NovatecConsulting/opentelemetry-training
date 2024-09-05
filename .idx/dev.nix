@@ -12,8 +12,8 @@
     # pkgs.nodejs_20
     # pkgs.nodePackages.nodemon
     pkgs.temurin-bin-21
-    pkgs.kind
-    pkgs.sudo
+    # pkgs.kind
+    # pkgs.sudo
   ];
 
   services.docker.enable = true;
