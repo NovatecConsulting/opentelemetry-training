@@ -385,7 +385,7 @@ You will also get a list of JVM specific metrics here.
 Select "JVM Thread Count". It will take you to a tabular output of the information collected so far.
 It may look different on your screen depending on the time you  spent collecting.
 
-{{< figure src="images/prometheus_graph_jvm_thread_count.png" width=700 caption="Prometheus Table JVM Thread Count" >}}
+{{< figure src="images/prometheus_table_jvm_thread_count.png" width=700 caption="Prometheus Table JVM Thread Count" >}}
 
 By selecting the tab "Graph" instead of "Table", the data is visualized in a graphical form. You can adjust the time range as well.
 
