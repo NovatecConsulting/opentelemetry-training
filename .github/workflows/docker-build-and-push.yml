@@ -30,9 +30,13 @@ jobs:
           - image: tutorial
             dockerfile: tutorial/Dockerfile
             context: tutorial
-          - platform: [linux/arm64, linux/arm/v7, linux/arm/v6]
+          - platform: linux/arm64
             os: [ubuntu-latest]
           - platform: linux/amd64
+            os: [ubuntu-latest]
+          - platform: linux/arm/v6
+            os: [ubuntu-latest]
+          - platform: linux/arm/v7
             os: [ubuntu-latest]
     permissions:
       contents: read
@@ -141,14 +145,3 @@ jobs:
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}:${{ steps.meta.outputs.version }}
-
-      # - name: Build and Push Digest
-      #   id: build
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ${{ matrix.context }}
-      #     file: ${{ matrix.dockerfile }}
-      #     platforms: linux/amd64, linux/arm64
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-      #     push: true
