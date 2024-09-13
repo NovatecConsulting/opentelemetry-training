@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     name: Build and publish docker image for ${{ matrix.image }} on ${{ matrix.platform }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -30,6 +30,10 @@ jobs:
           - image: tutorial
             dockerfile: tutorial/Dockerfile
             context: tutorial
+          - platform: linux/arm64
+            os: [macos-latest]
+          - platform: linux/amd64
+            os: [ubuntu-latest]
     permissions:
       contents: read
       packages: write
