@@ -1,7 +1,7 @@
 {
 	"name": "otel-getting-started",
 	"workspaceFolder": "/workspaces/opentelemetry-training/exercises",
-	"image": "ghcr.io/novatecconsulting/opentelemetry-training-application:latest",
+	"image": "ghcr.io/novatecconsulting/opentelemetry-training-application:update-gh-action-and-docker-env",
 	"overrideCommand": false,
 	"runArgs": [
 		"--privileged"

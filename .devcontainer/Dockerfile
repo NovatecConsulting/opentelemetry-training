@@ -1,4 +1,4 @@
-FROM maven:3 AS dind
+FROM gradle:8-jdk22 AS dind
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PIP_ROOT_USER_ACTION=ignore
