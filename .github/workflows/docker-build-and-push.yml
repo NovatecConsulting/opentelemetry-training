@@ -76,7 +76,6 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          tags: ${{ steps.meta.outputs.tags }}
           outputs: type=image,name=ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
