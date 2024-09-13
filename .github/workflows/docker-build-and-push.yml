@@ -47,7 +47,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ matrix.image }}
+          images: ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -120,7 +120,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ matrix.image }}
+          images: ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -133,11 +133,11 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ matrix.image }}@sha256:%s ' *)
+            $(printf 'ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ matrix.image }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}:${{ steps.meta.outputs.version }}
 
       # - name: Build and Push Digest
       #   id: build
