@@ -10,24 +10,24 @@ env:
 
 jobs:
   build:
-    name: Build and publish docker images
+    name: Build and publish docker image for ${{ matrix.image }} on ${{ matrix.platform }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         image:
-          - ghcr.io/novatecconsulting/opentelemetry-training-application
-          - ghcr.io/novatecconsulting/opentelemetry-training-tutorial
+          - application
+          - tutorial
         platform:
           - linux/amd64
           # - linux/arm/v6
           # - linux/arm/v7
           - linux/arm64
         include:
-          - image: ghcr.io/novatecconsulting/opentelemetry-training-application
+          - image: application
             dockerfile: .devcontainer/Dockerfile
             context: .devcontainer/
-          - image: ghcr.io/novatecconsulting/opentelemetry-training-tutorial
+          - image: tutorial
             dockerfile: tutorial/Dockerfile
             context: tutorial
     permissions:
@@ -76,11 +76,12 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ matrix.image }},push-by-digest=true,name-canonical=true,push=true
+          tags: ${{ steps.meta.outputs.tags }}
+          outputs: type=image,name=ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
 
-      - name: Export digest for ${{ matrix.image }}
+      - name: Export digest for ${{ matrix.image }} on ${{ matrix.platform }}
         run: |
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
@@ -101,15 +102,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - image: ghcr.io/${{ github.repository }}-application
-          - image: ghcr.io/${{ github.repository }}-tutorial
+        image:
+          - application
+          - tutorial
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests
-          pattern: digests-*
+          pattern: digests-${{ matrix.image }}*
           merge-multiple: true
 
       - name: Set up Docker Buildx
