@@ -15,35 +15,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # This matrix will execute the job 8 times, with each iteration building
-        # and pushing a different Docker image. The images are:
-        #
-        # - ghcr.io/${{ github.repository }}-application:linux/amd64
-        # - ghcr.io/${{ github.repository }}-application:linux/arm/v6
-        # - ghcr.io/${{ github.repository }}-application:linux/arm/v7
-        # - ghcr.io/${{ github.repository }}-application:linux/arm64
-        # - ghcr.io/${{ github.repository }}-tutorial:linux/amd64
-        # - ghcr.io/${{ github.repository }}-tutorial:linux/arm/v6
-        # - ghcr.io/${{ github.repository }}-tutorial:linux/arm/v7
-        # - ghcr.io/${{ github.repository }}-tutorial:linux/arm64
-        #
-        # The `include` section lists the different Dockerfiles to use for each
-        # image. The `dockerfile` field specifies the path to the Dockerfile,
-        # and the `image` field specifies the name of the image to build.
-        # The `context` field specifies the directory containing the Dockerfile.
+        image:
+          - ghcr.io/novatecconsulting/opentelemetry-training-application
+          - ghcr.io/novatecconsulting/opentelemetry-training-tutorial
         platform:
           - linux/amd64
           # - linux/arm/v6
           # - linux/arm/v7
           - linux/arm64
-        image:
-          - ghcr.io/novatecconsulting/opentelemetry-training-application
-          - ghcr.io/novatecconsulting/opentelemetry-training-tutorial
         include:
           - image: ghcr.io/novatecconsulting/opentelemetry-training-application
             dockerfile: .devcontainer/Dockerfile
             context: .devcontainer/
-          - image: ghcr.io/novatecconsulting/opentelemetry-training-application
+          - image: ghcr.io/novatecconsulting/opentelemetry-training-tutorial
             dockerfile: tutorial/Dockerfile
             context: tutorial
     permissions:
