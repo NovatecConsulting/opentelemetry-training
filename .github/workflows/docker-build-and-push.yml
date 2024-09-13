@@ -20,7 +20,6 @@ jobs:
           - tutorial
         platform:
           - linux/amd64
-          - linux/arm/v6
           - linux/arm/v7
           - linux/arm64
         include:
@@ -33,8 +32,6 @@ jobs:
           - platform: linux/arm64
             os: [ubuntu-latest]
           - platform: linux/amd64
-            os: [ubuntu-latest]
-          - platform: linux/arm/v6
             os: [ubuntu-latest]
           - platform: linux/arm/v7
             os: [ubuntu-latest]
