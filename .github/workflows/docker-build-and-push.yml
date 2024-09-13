@@ -20,8 +20,8 @@ jobs:
           - tutorial
         platform:
           - linux/amd64
-          # - linux/arm/v6
-          # - linux/arm/v7
+          - linux/arm/v6
+          - linux/arm/v7
           - linux/arm64
         include:
           - image: application
@@ -30,8 +30,8 @@ jobs:
           - image: tutorial
             dockerfile: tutorial/Dockerfile
             context: tutorial
-          - platform: linux/arm64
-            os: [macos-latest]
+          - platform: [linux/arm64, linux/arm/v7, linux/arm/v6]
+            os: [ubuntu-latest]
           - platform: linux/amd64
             os: [ubuntu-latest]
     permissions:
