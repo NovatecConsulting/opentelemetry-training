@@ -5,6 +5,9 @@ on:
     branches: ["**"] # run for any commit or tag push on any branch
     tags-ignore: ["v**"] # reserve v* tags for releases
 
+env:
+  REGISTRY_IMAGE: novatecconsulting/opentelemetry-training
+
 jobs:
   build:
     name: Build and publish docker images
@@ -33,12 +36,15 @@ jobs:
           # - linux/arm/v6
           # - linux/arm/v7
           - linux/arm64
+        image:
+          - ghcr.io/novatecconsulting/opentelemetry-training-application
+          - ghcr.io/novatecconsulting/opentelemetry-training-tutorial
         include:
-          - dockerfile: .devcontainer/Dockerfile
-            image: ghcr.io/${{ github.repository }}-application
+          - image: ghcr.io/novatecconsulting/opentelemetry-training-application
+            dockerfile: .devcontainer/Dockerfile
             context: .devcontainer/
-          - dockerfile: tutorial/Dockerfile
-            image: ghcr.io/${{ github.repository }}-tutorial
+          - image: ghcr.io/novatecconsulting/opentelemetry-training-application
+            dockerfile: tutorial/Dockerfile
             context: tutorial
     permissions:
       contents: read
