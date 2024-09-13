@@ -6,7 +6,7 @@ on:
     tags-ignore: ["v**"] # reserve v* tags for releases
 
 env:
-  REGISTRY_IMAGE: novatecconsulting/opentelemetry-training
+  REGISTRY_IMAGE: ghcr.io/novatecconsulting/opentelemetry-training
 
 jobs:
   build:
@@ -20,7 +20,6 @@ jobs:
           - tutorial
         platform:
           - linux/amd64
-          - linux/arm/v7
           - linux/arm64
         include:
           - image: application
@@ -32,8 +31,6 @@ jobs:
           - platform: linux/arm64
             os: [ubuntu-latest]
           - platform: linux/amd64
-            os: [ubuntu-latest]
-          - platform: linux/arm/v7
             os: [ubuntu-latest]
     permissions:
       contents: read
@@ -52,7 +49,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}
+          images: ${{ env.REGISTRY_IMAGE }}-${{ matrix.image }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -81,7 +78,7 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }},push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }}-${{ matrix.image }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
           cache-to: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
 
@@ -124,7 +121,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}
+          images: ${{ env.REGISTRY_IMAGE }}-${{ matrix.image }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -137,8 +134,8 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf 'ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}@sha256:%s ' *)
+            $(printf '${{ env.REGISTRY_IMAGE }}-${{ matrix.image }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ghcr.io/novatecconsulting/opentelemetry-training-${{ matrix.image }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}-${{ matrix.image }}:${{ steps.meta.outputs.version }}
