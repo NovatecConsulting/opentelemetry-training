@@ -1,6 +1,6 @@
 services:
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.97.0
+    image: otel/opentelemetry-collector-contrib:0.109.0
     restart: unless-stopped
     command: ["--config=/etc/otel-collector-config.yml", "${OTELCOL_ARGS}"]
     volumes:

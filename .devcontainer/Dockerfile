@@ -3,8 +3,8 @@ FROM maven:3-eclipse-temurin-21  AS dind
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PIP_ROOT_USER_ACTION=ignore
 
-RUN set -eux; \
-    apt-get update; \
+RUN set -eux && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
     sudo \
     ca-certificates \
@@ -27,20 +27,20 @@ RUN update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
 VOLUME /var/lib/docker
 
-RUN apt-get update; \
+RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
     sudo \
     bash \
     curl \
     build-essential \
-    python3 \
+    python3.12 \
     python-is-python3 \
     python3-dev \
     python3-pip \
     python3-setuptools \
     python3-wheel \
-    python3-psutil; \
-    apt clean; \
+    python3-psutil && \
+    apt clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN rm -rf /usr/lib/python3*/EXTERNALLY-MANAGED
