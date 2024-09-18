@@ -8,9 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install flask
-RUN pip install opentelemetry-distro
-RUN pip install opentelemetry-exporter-otlp
+RUN pip install -r requirements.txt
 
 RUN opentelemetry-bootstrap --action=install
 
