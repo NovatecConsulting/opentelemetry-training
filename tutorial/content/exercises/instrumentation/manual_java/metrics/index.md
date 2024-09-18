@@ -27,7 +27,7 @@ By the end of this lab, you will be able to:
 - Understand the basic structure and dimensions of a metric
 - Generate custom metrics from your application and configure the exporting
 <!-- 
-- create and record meassurements with the help of different types of instruments
+- create and record measurements with the help of different types of instruments
 - customize metrics are collected by the SDK
 -->
 

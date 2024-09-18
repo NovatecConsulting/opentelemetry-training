@@ -109,7 +109,7 @@ If you get stuck, you can find the solution in the `exercises/manual-instrumenta
 
 ### Configure the tracing pipeline and obtain a tracer
 Inside the `src` directory, create a new file `trace_utils.py`.
-We'll use it to separate tracing-related configuration from the main application.
+We'll use it to separate tracing-related configuration from the main application `app.py`, which already exists.
 At the top of the file, specify the imports and create a new function `create_tracing_pipeline` as displayed below:
 
 ```py { title="trace_utils.py" }
@@ -122,8 +122,8 @@ def create_tracing_pipeline() -> BatchSpanProcessor:
     return span_processor
 ```
 
-For debugging purposes, we'll instantiate a `ConsoleSpanExporter` to output spans to the local console.
-Next, we have to create a `SpanProcessor` to push generated spans to the SpanExporter.
+For debugging purposes, we'll instantiate a `ConsoleSpanExporter` to write spans to the local console.
+Next, we have to create a `SpanProcessor` that sits at the end of our pipeline. Its main responsibility is to push spans to one (or more) `SpanExporter`.
 Here, we can choose between two categories:
 - synchronous (i.e. [SimpleSpanProcessor](https://opentelemetry-python.readthedocs.io/en/latest/sdk/trace.export.html#opentelemetry.sdk.trace.export.SimpleSpanProcessor))
     - blocks the program execution to forward spans as soon as they are generated
@@ -137,7 +137,7 @@ We created a `BatchSpanProcessor` and pass the exporter to the constructor to co
 
 Let’s begin by importing OpenTelemetry’s tracing API and the TracerProvider from the SDK as shown below. 
 With a basic pipeline in place, let's focus on instrumentation.
-Import the tracing API and the TracerProvider as shown above.
+Import the tracing API and the TracerProvider as shown below.
 Create a new function `create_tracer` and instantiate a `TracerProvider` with the help of the SDK package.
 Next, call the `add_span_processor` method and connect it to the tracing pipeline.
 
@@ -193,6 +193,7 @@ On a high level, we must add instrumentation to our code that creates and finish
 OpenTelemetry's Python implementation provides multiple ways to do this.
 Some aim to be simple and non-intrusive, while others are explicit but offer greater control.
 For brevity, we'll stick to a decorator-based approach.
+
 Add the `start_as_current_span` decorator to the `index` function.
 Notice that this decorator is a convenience function that abstracts away the details of trace context management from us.
 It handles the creation of a new span object, attaches it to the current context, and ends the span once the method returns.
@@ -398,7 +399,7 @@ Make sure the application is still running after the changes. Otherwise restart 
 curl -XGET localhost:5000; echo
 ```
 
-The response will onw contain span attributes.
+The response will now contain span attributes.
 
 ```json
 "attributes": {
@@ -533,6 +534,9 @@ def do_stuff():
     # ...
 ```
 
+Re-run our previous experiment with the `echo` server and look at the output of the print statement.
+You should see that the outgoing request now contains a header called `traceparent`.
+
 ```bash
 Headers included in outbound request:
 {
@@ -541,8 +545,7 @@ Headers included in outbound request:
 }
 ```
 
-Re-run our previous experiment with the `echo` server and look at the output of the print statement.
-You should see that the outgoing request now contains a header called `traceparent`.
+
 If you have prior experience with distributed tracing, you might already know that different tracing systems use different formats (such as [b3 propagation](https://github.com/openzipkin/b3-propagation) used by Zipkin).
 
 {{< figure src="images/doordash_traceparent_header.png" width=650 caption="format used by the traceparent header [Gud21](https://doordash.engineering/2021/06/17/leveraging-opentelemetry-for-custom-context-propagation/)" >}}

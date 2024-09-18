@@ -25,7 +25,7 @@ By the end of this lab, you will be able to:
 
 - use the OpenTelemetry API and configure the SDK to generate metrics
 - understand the basic structure and dimensions of a metric
-- create and record meassurements with the help of different types of instruments
+- create and record measurements with the help of different types of instruments
 - customize metrics are collected by the SDK
 
 #### How to perform the exercises
