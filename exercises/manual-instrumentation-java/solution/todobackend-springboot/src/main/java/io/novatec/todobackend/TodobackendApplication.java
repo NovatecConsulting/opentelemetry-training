@@ -1,5 +1,7 @@
 package io.novatec.todobackend;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,18 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.opentelemetry.api.OpenTelemetry;
-
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
-
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,8 +57,8 @@ public class TodobackendApplication {
 
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 		this.openTelemetry = openTelemetry;
-		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
+		tracer = this.openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+		meter = this.openTelemetry.getMeter(TodobackendApplication.class.getName());
 
 		counter = meter.counterBuilder("todobackend.requests.counter")
 				.setDescription("How many times the GET call has been invoked.")
