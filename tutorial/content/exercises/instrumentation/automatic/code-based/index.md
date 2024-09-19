@@ -437,11 +437,11 @@ If you analyse an individual trace of `todoui-flask` with a `POST` operation, yo
 
 This part will show up as 2nd in the list an is called `todoui-flask add`.
 
-Screenshot
+{{< figure src="images/jaeger_trace_custom_span.png" width=700 caption="Jaeger trace - Custom span" >}}
 
 Once you expand the details of this trace you will also see the value of the passed variable. Under the section of tags you see the `todo.value`.
 
-Screenshot
+{{< figure src="images/jaeger_trace_custom_span_details.png" width=700 caption="Jaeger trace - Custom span" >}}
 
 ### Summary - What you have learned.
 
