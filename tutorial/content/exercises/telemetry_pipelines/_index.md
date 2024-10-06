@@ -1,7 +1,6 @@
 ---
 title: "Telemetry pipelines"
 draft: true
-hidden: false
 weight: 30
 ---
 
