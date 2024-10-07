@@ -66,7 +66,7 @@ The data model of OpenTelemetry logging is designed in such a way that existing 
 
 ### Hands-on
 
-Now let's start with some hand-on experience. The goal of this little demo-app is to show how to incorporate OpenTelemetry Logging into applications. To follow along the following steps, please open the course repository on the side and checkout to the tag `log-lab-initial`. The session will start from there.
+Now let's start with some hand-on experience. The goal of this little demo-app is to show how to incorporate OpenTelemetry Logging into applications. To follow along the following steps, please open the course repository on the side and change the directory to `exercises/manual-instrumentation-logs/initial`. The session will start from there.
 
 The starting point is the same app that was used in the metrics and traces lab.
 
