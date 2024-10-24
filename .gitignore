@@ -4,3 +4,7 @@
 *.jar
 
 settings.json
+
+.direnv
+.devenv
+.envrc

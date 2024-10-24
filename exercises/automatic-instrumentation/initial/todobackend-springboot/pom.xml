@@ -11,11 +11,11 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>io.novatec</groupId>
+	<groupId>com.example</groupId>
 	<artifactId>todobackend-automatic</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>todobackend-automatic</name>
-	<description>Novatec Demo Application</description>
+	<description>Demo Application</description>
 
 	<properties>
 		<java.version>21</java.version>
