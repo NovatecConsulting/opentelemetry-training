@@ -9,15 +9,23 @@ env:
 
 jobs:
   retag_and_push:
-    name: Provide docker image ${{ matrix.image }} on ghcr.io
+    name: Provide docker image ${{ matrix.image.namespace }}/${{ matrix.image.name }}:${{ matrix.image.tag }} on ghcr.io
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
         image:
-          - maeddes/todobackend-springboot:v2404
-          - maeddes/todoui-thymeleaf:v2404
-          - maeddes/todoui-flask:v2404
-          - maeddes/simple-generator:v2404
+          - name: todobackend-springboot
+            tag: v2404
+            namespace: maeddes
+          - name: todoui-thymeleaf
+            tag: v2404
+            namespace: maeddes
+          - name: todoui-flask
+            tag: v2404
+            namespace: maeddes
+          - name: simple-generator
+            tag: v2404
+            namespace: maeddes
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,12 +39,12 @@ jobs:
 
       - name: Pull image from Docker Hub
         run: |
-            docker pull docker.io/${{ matrix.image }}
+            docker pull docker.io/${{ matrix.image.namespace }}/${{ matrix.image.name }}:${{ matrix.image.tag }}
 
       - name: Retag the image for GitHub Container Registry
         run: |
-          docker tag ${{ matrix.image }} ${{ env.REGISTRY_IMAGE }}-${{ matrix.image }}
+          docker tag ${{ matrix.image.namespace }}/${{ matrix.image.name }}:${{ matrix.image.tag }} ${{ env.REGISTRY_IMAGE }}-${{ matrix.image.name }}:${{ matrix.image.tag }}
 
       - name: Push image to GitHub Container Registry
         run: |
-          docker push ${{ env.REGISTRY_IMAGE }}-${{ matrix.image }}
+          docker push ${{ env.REGISTRY_IMAGE }}-${{ matrix.image.name }}:${{ matrix.image.tag }}
