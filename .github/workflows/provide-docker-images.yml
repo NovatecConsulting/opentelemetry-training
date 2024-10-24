@@ -13,10 +13,10 @@ jobs:
     strategy:
       matrix:
         image:
-          - ghcr.io/novatecconsulting/openteleemetry-training-todobackend-springboot:v2404
-          - ghcr.io/novatecconsulting/openteleemetry-training-todoui-thymeleaf:v2404
-          - ghcr.io/novatecconsulting/openteleemetry-training-todoui-flask:v2404
-          - ghcr.io/novatecconsulting/openteleemetry-training-simple-generator:v2404
+          - maeddes/todobackend-springboot:v2404
+          - maeddes/todoui-thymeleaf:v2404
+          - maeddes/todoui-flask:v2404
+          - maeddes/simple-generator:v2404
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
