@@ -2,6 +2,7 @@ name: Provide needed docker images in ghcr.io
 
 on:
   workflow_dispatch:
+  push:
 
 env:
   REGISTRY_IMAGE: ghcr.io/novatecconsulting/opentelemetry-training

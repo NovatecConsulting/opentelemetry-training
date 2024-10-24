@@ -1,10 +1,10 @@
-FROM golang:1.21-alpine as base
+FROM golang:1.21-alpine AS base
 
 RUN apk add --update --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
     bash \
     hugo
 
-FROM base as rt-dev
+FROM base AS rt-dev
 
 WORKDIR /workspace
 
@@ -13,7 +13,7 @@ COPY --chmod=0755 entrypoint.sh /tmp
 CMD [ "sh", "-c", "/tmp/entrypoint.sh" ]
 
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /opt/app
 
@@ -24,7 +24,7 @@ RUN wget -qO- https://github.com/McShelby/hugo-theme-relearn/archive/main.zip | 
 RUN hugo
 
 
-FROM nginx:1.25-alpine as rt
+FROM nginx:1.25-alpine AS rt
 
 ARG USER=otel
 
