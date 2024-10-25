@@ -1,4 +1,4 @@
-package io.novatec.todobackend;
+package info.novatec.todobackend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -26,7 +26,7 @@ In this lab, we output spans to the local console to keep things simple and expo
 
 ## Learning Objectives
 By the end of this lab, you will be able to:
-- Apply manual instrumentation for tracing to a Java application 
+- Apply manual instrumentation for tracing to a Java application
 - Use the OpenTelemetry API and configure the SDK to generate spans
 - Understand the basic structure of a span
 - Enrich spans with additional metadata
@@ -34,7 +34,7 @@ By the end of this lab, you will be able to:
 
 ### How to perform the exercises
 
-* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/)
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
 * Initial directory: `manual-instrumentation-java/initial`
 * Solution directory: `manual-instrumentation-java/solution`
@@ -50,7 +50,7 @@ The environment consists of one component:
 To start with this lab, open **two terminals**.
 1. Terminal to run the echo server
 
-Navigate to 
+Navigate to
 
 ```sh
 cd $EXERCISES
@@ -60,7 +60,7 @@ cd manual-instrumentation-java/initial/todobackend-springboot
 Run:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 
@@ -87,7 +87,7 @@ If you get stuck, you can find the solution in the `exercises/manual-instrumenta
 The application has not been modified for OpenTelemetry, so we start entirely from scratch.
 Before we can make changes to the Java code we need to add some necessary dependencies.
 
-In the first window stop the app using `Ctrl+C` and edit the `pom.xml` file. 
+In the first window stop the app using `Ctrl+C` and edit the `pom.xml` file.
 Add the following dependencies. Do not add the dots (...). Just embed the dependencies.
 
 
@@ -146,7 +146,7 @@ We'll use it to separate tracing-related configuration from the main application
 Add the following content to this file:
 
 ```java { title="OpenTelemetryConfiguration.java" }
-package io.novatec.todobackend;
+package info.novatec.todobackend;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -175,7 +175,7 @@ public class OpenTelemetryConfiguration {
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
 			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
 			.setResource(resource)
-			.build();	
+			.build();
 
 		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
 			.setTracerProvider(sdkTracerProvider)
@@ -188,7 +188,7 @@ public class OpenTelemetryConfiguration {
 ```
 Explanation about the contents of this file:
 
-This Configuration class will create a Bean to access OpenTelemetry API functionality. 
+This Configuration class will create a Bean to access OpenTelemetry API functionality.
 It is an initial configuration for tracing properties only.
 
 For easy debugging purposes, we'll instantiate a `LoggingSpanExporter` to output spans to the local console.
@@ -207,7 +207,7 @@ We created a `SimpleSpanProcessor` and pass the exporter to the `create` method 
 It is recommended to keep this file open in the editor as there will be addition to it over the course of this exercise.
 
 
-Let’s begin by importing OpenTelemetry’s tracing API and the TracerProvider from the SDK in our main Java application as shown below. 
+Let’s begin by importing OpenTelemetry’s tracing API and the TracerProvider from the SDK in our main Java application as shown below.
 Open `TodobackendApplication.java` in your editor and tart by addind the following import statements. Place them below the already existing ones:
 
 ```java { title="TodobackendApplication.java" }
@@ -243,7 +243,7 @@ In this constuctor we instantiate the OpenTelemetry and Tracer object and make t
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 		this.openTelemetry = openTelemetry;
 		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-		
+
 	}
 ```
 
@@ -252,7 +252,7 @@ At this point it is recommended to rebuild and run the application to verify if 
 In your main terminal window run:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 If there are any errors review the changes and repeat.
@@ -289,11 +289,11 @@ The resulting code is supposed to look like this:
 	String addTodo(@PathVariable String todo){
 
 		Span span = tracer.spanBuilder("addTodo").startSpan();
-		
+
 		this.someInternalMethod(todo);
 		logger.info("POST /todos/ "+todo.toString());
 
-		span.end();        
+		span.end();
 
 		return todo;
 
@@ -305,7 +305,7 @@ As you can see we referenced the `tracer` object which was initialized in the co
 Stop, rebuild and restart the application:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 Switch to your other terminal and use the following command to send a request to the `/` endpoint:
@@ -319,7 +319,7 @@ Take a look at the terminal where you application is running.
 You should see a log statement similar to the one shown below.
 
 ```log
-2024-07-21T12:58:04.842Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : ba6c894e6774d02d78fe2d48acbdfcc6 72cba2d03eab76a8 INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
+2024-07-21T12:58:04.842Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : ba6c894e6774d02d78fe2d48acbdfcc6 72cba2d03eab76a8 INTERNAL [tracer: info.novatec.todobackend.TodobackendApplication:0.1.0] {}
 ```
 
 This shows that it actually works, however the output is still a bit cryptic.
@@ -339,7 +339,7 @@ Add the following log statement between the `span.end()` call and the return sta
 Stop, rebuild and restart the application:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 Switch to your other terminal and use the following command to send a request to the `/` endpoint:
@@ -351,7 +351,7 @@ curl -XPOST localhost:8080/todos/NEW; echo
 Below the logging statement from the `LoggingExporter` you should now see more descriptive details:
 
 ```log
-2024-07-21T13:05:27.650Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 49fa6e942dd137fdc11ef1178f938078 eeda77d2bfd15a0c INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
+2024-07-21T13:05:27.650Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 49fa6e942dd137fdc11ef1178f938078 eeda77d2bfd15a0c INTERNAL [tracer: info.novatec.todobackend.TodobackendApplication:0.1.0] {}
 2024-07-21T13:05:27.651Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=49fa6e942dd137fdc11ef1178f938078, spanId=eeda77d2bfd15a0c, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=INTERNAL, attributes=null, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721567127643127423, endEpochNanos=1721567127650834923}
 ```
 
@@ -361,7 +361,7 @@ A span in OpenTelemetry represents a single operation within a trace and carries
  This is also tells us a bit more about the output of the LoggingSpanExporter:
 
  ```log
-2024-07-21T13:05:27.650Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 49fa6e942dd137fdc11ef1178f938078 eeda77d2bfd15a0c INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
+2024-07-21T13:05:27.650Z  INFO 23816 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 49fa6e942dd137fdc11ef1178f938078 eeda77d2bfd15a0c INTERNAL [tracer: info.novatec.todobackend.TodobackendApplication:0.1.0] {}
  ```
 
 The first identifier is the `traceId`, the second one is `spandId` followed by `SpanKind`.
@@ -381,7 +381,7 @@ And specify two attributes:
 
 ```java { title="TodobackendApplication.java" }
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
-		
+
 		span.setAttribute("http.method", "POST");
 		span.setAttribute("http.url", "/todos/{todo}");
 ```
@@ -389,7 +389,7 @@ And specify two attributes:
 Stop, rebuild and restart the application:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 Switch to your other terminal and use the following command to send a request to the `/` endpoint:
@@ -401,7 +401,7 @@ curl -XPOST localhost:8080/todos/NEW; echo
 The resulting output will look like:
 
  ```log
-2024-07-24T09:22:07.460Z  INFO 7977 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : f150c6404cf8c58398d94bbecb094fdb cd93535232b8d8ca SERVER [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={http.url=/todos/{todo}, http.method=POST}, capacity=128, totalAddedValues=2}
+2024-07-24T09:22:07.460Z  INFO 7977 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : f150c6404cf8c58398d94bbecb094fdb cd93535232b8d8ca SERVER [tracer: info.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={http.url=/todos/{todo}, http.method=POST}, capacity=128, totalAddedValues=2}
 2024-07-24T09:22:07.461Z  INFO 7977 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=f150c6404cf8c58398d94bbecb094fdb, spanId=cd93535232b8d8ca, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={http.url=/todos/{todo}, http.method=POST}, capacity=128, totalAddedValues=2}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721812927453408887, endEpochNanos=1721812927460726137}
 ```
 
@@ -420,7 +420,7 @@ Modify the entire method to look like this:
 		span.setAttribute("http.url", request.getRequestURL().toString());
 		span.setAttribute("client.address", request.getRemoteAddr());
 		span.setAttribute("user.agent",request.getHeader("User-Agent"));
-		
+
 		this.someInternalMethod(todo);
 		logger.info("POST /todos/ "+todo.toString());
 
@@ -433,7 +433,7 @@ Modify the entire method to look like this:
 
 		return todo;
 	}
-``` 
+```
 
 If your editor does not automatically add the import statements, you need to do this manually.
 Make sure the following import statements are in place:
@@ -441,14 +441,14 @@ Make sure the following import statements are in place:
 ```java { title="TodobackendApplication.java" }
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-``` 
+```
 
 Restart the app and repeat the curl call.
 
 The resulting output will look like:
 
  ```log
-2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 21d97f2813576a1a2942457e9f0c671b 7474ed21e4081af8 SERVER [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}
+2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.o.e.logging.LoggingSpanExporter        : 'addTodo' : 21d97f2813576a1a2942457e9f0c671b 7474ed21e4081af8 SERVER [tracer: info.novatec.todobackend.TodobackendApplication:0.1.0] AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}
 2024-07-21T13:46:08.336Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=21d97f2813576a1a2942457e9f0c671b, spanId=7474ed21e4081af8, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721569568329729512, endEpochNanos=1721569568336094221}
 ```
 
@@ -531,15 +531,15 @@ The OpenTelemetry API offers also an automated way to propagate the parent span 
 
 ### Handling an error
 
-The `someInternalMethod` can simulate an error behaviour and throw an exception, if somebody uses the todo with name `fail`. 
+The `someInternalMethod` can simulate an error behaviour and throw an exception, if somebody uses the todo with name `fail`.
 
 ```java { title="TodobackendApplication.java" }
 		if(todo.equals("fail")){
 
 			System.out.println("Failing ...");
 			throw new RuntimeException();
-			
-		} 
+
+		}
 ```
 
 We can catch this exception in the `addTodo` method.
@@ -561,7 +561,7 @@ Extend the `try{}` block we created in the previous step with the following code
 		}
 ```
 
-Restart the app. 
+Restart the app.
 
 This time execute the curl call with the todo triggering a failure.
 
@@ -603,7 +603,7 @@ Modify the beginning of the class to the code shown below:
 			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
 			.addSpanProcessor(SimpleSpanProcessor.create(jaegerOtlpExporter))
 			.setResource(resource)
-			.build();	
+			.build();
 ```
 
 Also make sure the following import exists:
@@ -618,10 +618,10 @@ As you can see we created an instance of `OtlpGrpcSpanExporter` called `jaegerOt
 
 In the Tracer Provider we just added another `addSpanProcessor` call to the already existing one. OpenTelemetry is able to handle mulitple different and parallel processors.
 
-Rebuild, restart and issue a curl call. 
+Rebuild, restart and issue a curl call.
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 ```bash
@@ -635,7 +635,7 @@ Besides the familiar logging statements, you will see two errors in the logs now
 2024-07-21T16:18:20.179Z  WARN 70461 --- [springboot-backend ] [alhost:4317/...] i.o.exporter.internal.grpc.GrpcExporter  : Failed to export spans. Server responded with gRPC status code 2. Error message: Failed to connect to localhost/[0:0:0:0:0:0:0:1]:4317
 ```
 
-This is because there is nothing listening on `http://localhost:4317`. 
+This is because there is nothing listening on `http://localhost:4317`.
 
 Open another terminal window and start a docker container like this:
 
@@ -652,7 +652,7 @@ After this container has started, execute a couple of traces and investigate the
 The exercise completes with this step.
 
 
-<!--  
+<!--
 #### Semantic conventions
 
 Looking at the previous example, nothing prevents a developer from using arbitrary keys for resource attributes (e.g. `version` instead of `service.version`).
@@ -738,7 +738,7 @@ To access information like request method, headers, and more, we import `request
 Flask creates a [request context](https://flask.palletsprojects.com/en/2.3.x/reqcontext/) for each incoming HTTP request and tears it down after the request is processed.
 -->
 
-<!--  
+<!--
 
 ### Context propagation
 
