@@ -83,7 +83,7 @@ Therefore, not all languages come with support for auto-instrumentation.
 ## Exercise
 
 ### How to perform the exercise
-* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/)
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
 * Initial directory: `automatic-instrumentation/initial`
 * Solution directory: `automatic-instrumentation/solution`
@@ -227,9 +227,9 @@ If you switch back to the terminal of the Java application process you should se
 
 ```
 [otel.javaagent 2024-04-17 07:04:57:384 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'SELECT testdb.todo' : 22571b7a308941882c3d203a2c1b2179 fcabde9f56343650 CLIENT [tracer: io.opentelemetry.jdbc:2.3.0-alpha] AttributesMap{data={db.operation=SELECT, db.sql.table=todo, db.name=testdb, thread.name=http-nio-8080-exec-1, thread.id=44, db.user=sa, db.connection_string=h2:mem:, db.system=h2, db.statement=select t1_0.todo from todo t1_0}, capacity=128, totalAddedValues=9}
-[otel.javaagent 2024-04-17 07:04:57:387 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'SELECT io.novatec.todobackend.Todo' : 22571b7a308941882c3d203a2c1b2179 8a64843c1fb5217d INTERNAL [tracer: io.opentelemetry.hibernate-6.0:2.3.0-alpha] AttributesMap{data={thread.name=http-nio-8080-exec-1, thread.id=44}, capacity=128, totalAddedValues=2}
+[otel.javaagent 2024-04-17 07:04:57:387 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'SELECT info.novatec.todobackend.Todo' : 22571b7a308941882c3d203a2c1b2179 8a64843c1fb5217d INTERNAL [tracer: io.opentelemetry.hibernate-6.0:2.3.0-alpha] AttributesMap{data={thread.name=http-nio-8080-exec-1, thread.id=44}, capacity=128, totalAddedValues=2}
 [otel.javaagent 2024-04-17 07:04:57:397 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'Transaction.commit' : 22571b7a308941882c3d203a2c1b2179 a5b7712f0edab44e INTERNAL [tracer: io.opentelemetry.hibernate-6.0:2.3.0-alpha] AttributesMap{data={thread.name=http-nio-8080-exec-1, thread.id=44}, capacity=128, totalAddedValues=2}
-[otel.javaagent 2024-04-17 07:04:57:397 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'TodoRepository.findAll' : 22571b7a308941882c3d203a2c1b2179 0463a11569155a8d INTERNAL [tracer: io.opentelemetry.spring-data-1.8:2.3.0-alpha] AttributesMap{data={thread.name=http-nio-8080-exec-1, code.namespace=io.novatec.todobackend.TodoRepository, thread.id=44, code.function=findAll}, capacity=128, totalAddedValues=4}
+[otel.javaagent 2024-04-17 07:04:57:397 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'TodoRepository.findAll' : 22571b7a308941882c3d203a2c1b2179 0463a11569155a8d INTERNAL [tracer: io.opentelemetry.spring-data-1.8:2.3.0-alpha] AttributesMap{data={thread.name=http-nio-8080-exec-1, code.namespace=info.novatec.todobackend.TodoRepository, thread.id=44, code.function=findAll}, capacity=128, totalAddedValues=4}
 2024-04-17T07:04:57.397+02:00  INFO 79699 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : GET /todos/ []
 [otel.javaagent 2024-04-17 07:04:57:422 +0200] [http-nio-8080-exec-1] INFO io.opentelemetry.exporter.logging.LoggingSpanExporter - 'GET /todos/' : 22571b7a308941882c3d203a2c1b2179 61a3089ef357ce36 SERVER [tracer: io.opentelemetry.tomcat-10.0:2.3.0-alpha] AttributesMap{data={url.path=/todos/, thread.id=44, network.peer.address=0:0:0:0:0:0:0:1, server.address=localhost, client.address=0:0:0:0:0:0:0:1, http.response.status_code=200, http.route=/todos/, server.port=8080, http.request.method=GET, url.scheme=http, thread.name=http-nio-8080-exec-1, user_agent.original=curl/8.4.0, network.protocol.version=1.1, network.peer.port=52219}, capacity=128, totalAddedValues=14}
 ```

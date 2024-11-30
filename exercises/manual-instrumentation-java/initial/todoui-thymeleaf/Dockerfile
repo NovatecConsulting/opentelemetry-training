@@ -1,4 +1,4 @@
-FROM docker.io/maven:3-eclipse-temurin-21 as build
+FROM docker.io/maven:3-eclipse-temurin-21 AS build
 WORKDIR /workspace/app
 
 COPY pom.xml .
@@ -21,6 +21,6 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /opt/todoui/app
 
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.8.0/opentelemetry-javaagent.jar /opt/todoui
 
-ENTRYPOINT ["java","-cp","/opt/todoui/app:/opt/todoui/app/lib/*", "-javaagent:/opt/todoui/opentelemetry-javaagent.jar", "io.novatec.todoui.TodouiApplication"]
-#ENTRYPOINT ["java", "-cp", "/opt/todobackend/app:/opt/todobackend/app/lib/*",  "-javaagent:/opt/todobackend/opentelemetry-javaagent.jar","io.novatec.todobackend.TodobackendApplication"]
+ENTRYPOINT ["java","-cp","/opt/todoui/app:/opt/todoui/app/lib/*", "-javaagent:/opt/todoui/opentelemetry-javaagent.jar", "info.novatec.todoui.TodouiApplication"]
+#ENTRYPOINT ["java", "-cp", "/opt/todobackend/app:/opt/todobackend/app/lib/*",  "-javaagent:/opt/todobackend/opentelemetry-javaagent.jar","info.novatec.todobackend.TodobackendApplication"]
 

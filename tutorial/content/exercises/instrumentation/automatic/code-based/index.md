@@ -32,7 +32,7 @@ While instrumentation libraries offer a valuable solution for enhancing observab
 
 ### How to perform the exercise
 
-* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/)
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
 * Initial directory: `automatic-instrumentation/initial`
 * Solution directory: `automatic-instrumentation/solution`
@@ -51,7 +51,7 @@ Developers often encapsulate related logic in dedicated functions to improve cod
 The OpenTelemetry agent may lack awareness of these custom functions.
 It has no way of knowing whether they are important and what telemetry data to capture from them.
 
-To apply a more granular configuration to the already existing agent you can use the `opentelemetry-instrumentation-annotations` library. 
+To apply a more granular configuration to the already existing agent you can use the `opentelemetry-instrumentation-annotations` library.
 
 If the Java part of the application is still running from this exercise, stop it using `Ctrl+C` in the corresponding terminal window.
 
@@ -87,7 +87,7 @@ Add the following dependency to it and make sure to align/indent with the alread
 
 and save the file.
 
-Now re-run the build command 
+Now re-run the build command
 
 ```sh
 mvn clean package
@@ -231,7 +231,7 @@ Among other details you will be able to see the details of the method and name o
 
 ```
 code.function - someInternalMethod
-code.namespace - io.novatec.todobackend.TodobackendApplication
+code.namespace - info.novatec.todobackend.TodobackendApplication
 
 otel.library.name - io.opentelemetry.opentelemetry-instrumentation-annotations-1.16
 otel.library.version - 2.5.0-alpha
@@ -279,7 +279,7 @@ This means you can now also see the specific parameter which has been passed and
 
 Leave the Java application running, you will need it for the Python part as well.
 
-### Alternative approach 
+### Alternative approach
 
 These are no exercise steps, this is just supporting information.
 
@@ -293,13 +293,13 @@ As the name already implies they configure methods to be included as spans or ex
 In our example the corresponding environment setting to include the `someInternalMethod` to the spans without using the `@WithSpan` annotation in code would be:
 
 ```
-export OTEL_INSTRUMENTATION_METHODS_INCLUDE=io.novatec.todobackend.TodobackendApplication[someInternalMethod]
+export OTEL_INSTRUMENTATION_METHODS_INCLUDE=info.novatec.todobackend.TodobackendApplication[someInternalMethod]
 ```
 
 In case the `@WithSpan` annotation was already present in the compiled jar and you want to exclude it without rebuild you have to set:
 
 ```
-export OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS=io.novatec.todobackend.TodobackendApplication[someInternalMethod]
+export OTEL_INSTRUMENTATION_OPENTELEMETRY_INSTRUMENTATION_ANNOTATIONS_EXCLUDE_METHODS=info.novatec.todobackend.TodobackendApplication[someInternalMethod]
 ```
 
 Both environment variables only correspond with the `@WithSpan` annotation. There is no possibility (yet) to configure span attributes through environment setting. This only works on code level.
@@ -308,7 +308,7 @@ The part of the Java library exercise completes with this step.
 
 ---
 
-### exercise - Python mixed automatic and manual instrumentation 
+### exercise - Python mixed automatic and manual instrumentation
 
 Change to the directory within to `exercises/automatic-instrumentation/initial/todoui-flask` path, if you are in the project root directory it is:
 
@@ -457,7 +457,7 @@ The following chapter `manual instrumentatoin` will do this in full depth.
 
 Please stop all Java, Python and docker processes.
 
-<!-- 
+<!--
 We want to follow the previous software stack and use Python flask to show how instrumentation libraries are used. To find an appropriate library we search the registry and find the `opentelemetry-flask-instrumentation` library. We can install the library using `pip` with the command `pip install opentelemetry-flask-instrumentation`. This package provides the necessary hooks to automatically instrument your Flask application with OpenTelemetry. Next, you need to configure OpenTelemetry to use the appropriate exporters and processors. This usually involves setting up an exporter to send telemetry data to a backend service like Jaeger, Zipkin, or another OpenTelemetry-compatible service, or in this case the OpenTelemetry collector. With the library installed and OpenTelemetry configured, you can now instrument your Flask application. This involves initializing the OpenTelemetry Flask instrumentation at the start of your application and ensuring that it wraps your Flask app instance. Finally, run your Flask application as you normally would. The instrumentation will automatically capture telemetry data from incoming requests, outgoing responses, and any exceptions that occur.
 
 When using the `opentelemetry-flask-instrumentation` library with a Python Flask application, a span is automatically created for each incoming HTTP request. The span represents the execution of a single operation within the context of a trace, such as handling an HTTP request. To instrument Flask we need to wrap the flask application inside the `FlaskInstrumentor` which is provided by the pip package.
@@ -647,6 +647,6 @@ If OpenTelemetry doesn't support tracing your network client, you can use logs w
 - **Instrumentation Libraries**: They are tools to add OpenTelemetry support to libraries without native support.
 - **Example with Flask**: A Python Flask app can be instrumented using `opentelemetry-flask-instrumentation`.
 - **Developing Libraries**: It's important to follow OpenTelemetry conventions and focus on user-facing operations.
-- **Instrumentation Decisions**: Decide based on the complexity and necessity, considering logs or span events for unsupported clients. 
+- **Instrumentation Decisions**: Decide based on the complexity and necessity, considering logs or span events for unsupported clients.
 
 -->

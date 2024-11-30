@@ -26,7 +26,7 @@ By the end of this lab, you will be able to:
 - Use the OpenTelemetry API and configure the SDK to generate metrics
 - Understand the basic structure and dimensions of a metric
 - Generate custom metrics from your application and configure the exporting
-<!-- 
+<!--
 - create and record measurements with the help of different types of instruments
 - customize metrics are collected by the SDK
 -->
@@ -43,7 +43,7 @@ In this lab, we output metrics to the local console to keep things simple.
 The environment consists of a Java service that we want to instrument.
 
 
-* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
+* This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/)
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
 * Initial directory: `manual-instrumentation-java/initial`
 * Solution directory: `manual-instrumentation-java/solution`
@@ -62,7 +62,7 @@ The environment consists of one component:
 To start with this lab, open **two terminals**.
 1. Terminal to run the echo server
 
-Navigate to 
+Navigate to
 
 ```sh
 cd $EXERCISES
@@ -72,7 +72,7 @@ cd manual-instrumentation-java/initial/todobackend-springboot
 Run:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 
@@ -99,7 +99,7 @@ If you get stuck, you can find the solution in the `exercises/manual-instrumenta
 
 Before we can make changes to the Java code we need to make sure some necessary dependencies are in place.
 
-In the first window stop the app using `Ctrl+C` and edit the `pom.xml` file. 
+In the first window stop the app using `Ctrl+C` and edit the `pom.xml` file.
 Add the following dependencies. Do not add the dots (...). Just embed the dependencies.
 
 
@@ -158,7 +158,7 @@ We'll use it to separate tracing-related configuration from the main application
 Add the following content to this file:
 
 ```java { title="OpenTelemetryConfiguration.java" }
-package io.novatec.todobackend;
+package info.novatec.todobackend;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -210,7 +210,7 @@ Your integrated code will look like this then:
 				.build();
 ```
 
-Let’s begin by importing OpenTelemetry’s meter API and the MeterProvider from the SDK in our main Java application as shown below. 
+Let’s begin by importing OpenTelemetry’s meter API and the MeterProvider from the SDK in our main Java application as shown below.
 Open `TodobackendApplication.java` in your editor and tart by addind the following import statements. Place them below the already existing ones:
 
 ```java { title="TodobackendApplication.java" }
@@ -253,7 +253,7 @@ At this point it is recommended to rebuild and run the application to verify if 
 In your main terminal window run:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 If there are any errors review the changes and repeat.
@@ -325,7 +325,7 @@ Let's test the behaviour. Go back to your terminal and execute the following com
 In case your application is not running any more, start it in the first terminal:
 
 ```sh
-mvn spring-boot:run    
+mvn spring-boot:run
 ```
 
 In your second terminal issue the REST request again.
@@ -339,7 +339,7 @@ Observe the logs in your main terminal, this should display something like:
 ```sh
 2024-07-25T12:23:47.929Z  INFO 20323 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : GET /todos/ []
 2024-07-25T12:23:54.267Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : Received a collection of 1 metrics for export.
-2024-07-25T12:23:54.267Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=io.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1721910224265851430, epochNanos=1721910234267050129, attributes={}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
+2024-07-25T12:23:54.267Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=info.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1721910224265851430, epochNanos=1721910234267050129, attributes={}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
 ```
 
 The second line of logs written by the `LoggingMetricExporter` contains the information we just generated: `value=1`.
@@ -357,7 +357,7 @@ This because we specified this behaviour in the configuration class:
 						.build())
 				.setResource(resource)
 				.build();
-        
+
 ```
 
 The standard interval is 60 seconds. We apply 10 seconds here for demo purposes.
@@ -391,7 +391,7 @@ Change the counter statement in the following way:
 After generating some more traffic, you will see that the logging statement has changed to this:
 
 ```sh
-2024-07-25T12:50:09.567Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=io.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1721911669561139043, epochNanos=1721911809567179469, attributes={http.method="GET"}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
+2024-07-25T12:50:09.567Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=info.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1721911669561139043, epochNanos=1721911809567179469, attributes={http.method="GET"}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
 ```
 
 The attributes are now listed, too:
@@ -452,7 +452,7 @@ def create_meter(name: str, version: str) -> metric_api.Meter:
     return meter
 ```
 
-- TODO re-use resource_utils 
+- TODO re-use resource_utils
 
 Finally, open `app.py` and import `create_meter`.
 Invoke the function and assign the return value to a global variable `meter`.
@@ -528,12 +528,12 @@ if __name__ == "__main__":
     # ...
 ```
 
-Start the web server using 
+Start the web server using
 ```sh
 python app.py
 ```
 
-Use the second terminal to send a request to `/` via 
+Use the second terminal to send a request to `/` via
 
 ```bash
 curl -XGET localhost:5000; echo
@@ -614,7 +614,7 @@ def index():
     )
 ```
 
-Send a couple of POST and GET requests to `/` via 
+Send a couple of POST and GET requests to `/` via
 
 ```bash
 curl -XPOST localhost:5000; echo
@@ -713,7 +713,7 @@ def index():
     do_stuff()
     current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime())
     return f"Hello, World! It's currently {current_time}"
-```  
+```
 
 Instead, let's create a custom function `before_request_func` and annotate it with Flask's `@app.before_request` decorator.
 Thereby, the function is executed on incoming requests before they are handled by the view serving a route.
@@ -726,7 +726,7 @@ def before_request_func():
     )
 ```
 
-Send a couple of POST and GET requests to `/` via 
+Send a couple of POST and GET requests to `/` via
 
 ```bash
 curl -XPOST localhost:5000; echo
