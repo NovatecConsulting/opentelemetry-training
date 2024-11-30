@@ -141,7 +141,7 @@ At this point there is no OpenTelemetry instrumentation present. It's just a sta
 To add this download the OpenTelemetry agent from GitHub with the following command. Make sure you are still in the same directory where you successfully executed the `maven` command.
 
 ```sh
-wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.9.0/opentelemetry-javaagent.jar
 ```
 
 This will download a `jar` file, which you need to attach to the Java process. You don't need to modify any code or dependency in your project, you can simply add it as `javaagent` parameter like this:
