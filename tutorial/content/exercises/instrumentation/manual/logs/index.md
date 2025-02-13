@@ -113,7 +113,7 @@ def get_user():
     logging.info(f"Found user {user!s} with status {status}")
 ```
 
-In this example, a log entry with the severity level `info` will be printed to the terminal with the message and the user and status embedded. A log entry now looks like this:
+In this example, a log entry with the severity level `info` will be printed to the terminal with the message and the user and status embedded. When navigating to http:‌//localhost:5000/users the log entry will look like this:
 
 ```
 2024-02-07 09:18:51,864 - root - 47799 - INFO - Found user id: 77, name: Aaron Mcbride, address: 177 Cooper Branch
@@ -162,6 +162,8 @@ handler = LoggingHandler(logger_provider=logger_provider)
 This `LoggingHandler` then needs to be attached to the logging module of Python. This can be done in `app.py` with:
 
 ```
+from logging_utils import handler
+
 logger = logging.getLogger()
 logger.addHandler(handler)
 ```

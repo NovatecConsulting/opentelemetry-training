@@ -56,7 +56,7 @@ def do_stuff():
 
     return response
 
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 @tracer.start_as_current_span("index")
 def index():
     span = get_current_span()

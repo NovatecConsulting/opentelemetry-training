@@ -128,6 +128,7 @@ def create_metrics_pipeline(export_interval: int) -> MetricReader:
 Then, define a new function `create_meter`.
 To obtain a `Meter` we must first create a `MeterProvider`.
 To connect the MeterProvider to our metrics pipeline, pass the `PeriodicExportingMetricReader` to the constructor.
+As before with Traces, we will connect resource attributes with the MeterProvider, so they will be written into metric signals as well.
 Use the metrics API to register the global MeterProvider and retrieve the meter. Extend the file with the following code:
 
 ```py { title="metric_utils.py" }
@@ -137,11 +138,16 @@ from opentelemetry import metrics as metric_api
 # OTel SDK
 from opentelemetry.sdk.metrics import MeterProvider
 
+# Resource Util
+from resource_utils import create_resource
+
 def create_meter(name: str, version: str) -> metric_api.Meter:
     # configure provider
     metric_reader = create_metrics_pipeline(5000)
+    rc = create_resource(name, version)
     provider = MeterProvider(
         metric_readers=[metric_reader],
+        resource=rc
     )
 
     # obtain meter
@@ -353,7 +359,7 @@ The number of attributes and the range of values can quickly lead to many unique
 High cardinality means we have to keep track of numerous distinct time series, which leads to increased storage requirements, network traffic, and processing overhead.
 Moreover, specific metrics may have less aggregative quality, which can make it harder to derive meaningful insights.
 
-In conclusion, the selection of metric dimensions is a delicate balancing act. Metrics with high cardinality, which result from introducing many attributes or a wide range of values, can lead to numerous unique combinations. This can increase storage requirements, network traffic, and processing overhead, as each unique combination of attributes represents a distinct time series that must be tracked. Moreover, metrics with low aggregative quality may be less useful when aggregated, making it more challenging to derive meaningful insights from the data. Therefore, it is essential to carefully consider the dimensions of the metrics to ensure that they are both informative and manageable within the constraints of the monitoring system.
+In conclusion, the selection of metric dimensions is a delicate balancing act. Metrics with high cardinality can lead to numerous unique combinations. They result from introducing many attributes or a wide range of values, like IDs or error messages. This can increase storage requirements, network traffic, and processing overhead, as each unique combination of attributes represents a distinct time series that must be tracked. Moreover, metrics with low aggregative quality may be less useful when aggregated, making it more challenging to derive meaningful insights from the data. Therefore, it is essential to carefully consider the dimensions of the metrics to ensure that they are both informative and manageable within the constraints of the monitoring system.
 
 ### Instruments to measure golden signals
 
@@ -388,9 +394,7 @@ Incrementing a counter on every route we serve would lead to a lot of code dupli
 Modify the 2 source files to look like this:
 
 ```py { title="metric_utils.py" }
-from opentelemetry import metrics
-
-def create_request_instruments(meter: metrics.Meter) -> dict:
+def create_request_instruments(meter: metric_api.Meter) -> dict:
     traffic_volume = meter.create_counter(
         name="traffic_volume",
         unit="request",
@@ -445,7 +449,7 @@ In this example, we'll simply refer to the status code of the response.
 Add `error_rate` to `metric_utils.py` as described here:
 
 ```py { title="metric_utils.py" }
-def create_request_instruments(meter: metrics.Meter) -> dict:
+def create_request_instruments(meter: metric_api.Meter) -> dict:
     error_rate = meter.create_counter(
         name="error_rate",
         unit="request",
@@ -468,11 +472,12 @@ from flask import Flask, make_response, request, Response
 @app.after_request
 def after_request_func(response: Response) -> Response:
     # ...
-    request_instruments["error_rate"].add(1, {
-            "http.route": request.path
-            "state": "success" if response.status_code < 400 else "fail",
-        }
-    )
+    if response.status_code >= 400:
+        request_instruments["error_rate"].add(1, {
+                "http.route": request.path,
+                "http.response.status_code": response.status_code
+            }
+        )
     return response
 ```
 
@@ -507,7 +512,7 @@ For example, a service's latency number might indicate fast replies.
 Add `request_latency` to `metric_utils.py` as described here:
 
 ```py { title="metric_utils.py" }
-def create_request_instruments(meter: metrics.Meter) -> dict:
+def create_request_instruments(meter: metric_api.Meter) -> dict:
     request_latency = meter.create_histogram(
         name="http.server.request.duration",
         unit="s",
@@ -534,7 +539,7 @@ def before_request_func():
 def after_request_func(response: Response) -> Response:
     request_end = time.time_ns()
     duration = (request_end - request.environ["request_start"]) / 1_000_000_000 # convert ns to s
-    request_instruments["http.server.request.duration"].record(
+    request_instruments["request_latency"].record(
         duration,
         attributes = {
             "http.request.method": request.method,
@@ -705,8 +710,11 @@ def create_views() -> list[View]:
     # ...
     return views
 
-def create_meter(name: str, version: str) -> metrics.Meter:
+def create_meter(name: str, version: str) -> metric_api.Meter:
+    metric_reader = create_metrics_pipeline(5000)
+    rc = create_resource(name, version)
     views = create_views()
+
     provider = MeterProvider(
         metric_readers=[metric_reader],
         resource=rc,
@@ -721,6 +729,9 @@ Let's look at some examples to illustrate why Views can be useful.
 
 Modify the code as shown below:
 ```py { title="app.py" }
+# import instrument types
+from opentelemetry.metrics import Histogram
+
 # adjust aggregation of an instrument
 histrogram_explicit_buckets = View(
     instrument_type=Histogram,
@@ -754,6 +765,9 @@ You have now seen some basic examples of how Views let us match instruments and 
 Add these code snippets to `create_views` and observe the changes in the output.
 
 ```py { title="metric_utils.py" }
+# import instrument types
+from opentelemetry.metrics import Histogram, Counter, ObservableGauge
+
 # change what attributes to report
 traffic_volume_drop_attributes = View(
     instrument_type=Counter,
