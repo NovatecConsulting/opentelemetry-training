@@ -199,7 +199,7 @@ Notice that this decorator is a convenience function that abstracts away the det
 It handles the creation of a new span object, attaches it to the current context, and ends the span once the method returns.
 
 ```py { title="app.py" }
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 @tracer.start_as_current_span("index")
 def index():
     # ...
@@ -349,13 +349,13 @@ Start by specifying imports at the top of the file and use `ResourceAttributes` 
 from opentelemetry.semconv.resource import ResourceAttributes
 
 def create_resource(name: str, version: str) -> Resource:
-    svc_rc = Resource.create(
+    svc_resource = Resource.create(
         {
             ResourceAttributes.SERVICE_NAME: name,
             ResourceAttributes.SERVICE_VERSION: version,
         }
     )
-    return svc_rc
+    return svc_resource
 ```
 
 Explore the [documentation](https://opentelemetry.io/docs/specs/semconv) to look for a convention that matches the metadata we want to record.
@@ -379,7 +379,7 @@ from flask import Flask, make_response, request
 from opentelemetry import trace as trace_api
 from opentelemetry.semconv.trace import SpanAttributes
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 @tracer.start_as_current_span("index")
 def index():
     span = trace_api.get_current_span()
