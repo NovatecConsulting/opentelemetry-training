@@ -218,7 +218,7 @@ curl localhost:8080/todos/
 You should simply see an output like:
 
 ```sh
-[]%
+[]
 ```
 
 This is just because there are no items stored in your application.

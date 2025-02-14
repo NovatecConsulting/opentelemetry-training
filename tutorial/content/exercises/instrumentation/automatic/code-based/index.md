@@ -453,7 +453,7 @@ To overcome these limitations you have seen two different approaches. Adding cus
 
 It becomes clear that the more granular details you want to get out of your application the more you have to put instrumentation code into it.
 
-The following chapter `manual instrumentatoin` will do this in full depth.
+The following chapter `manual instrumentation` will do this in full depth.
 
 Please stop all Java, Python and docker processes.
 

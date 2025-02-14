@@ -77,7 +77,7 @@ Let's start by adding the logging module into our main module. To do so, open `a
 The function should look something like this:
 
 ```python
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     logging.info("Info from the index function")
     do_stuff()
