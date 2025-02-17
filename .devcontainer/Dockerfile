@@ -39,7 +39,9 @@ RUN apt-get update && \
     python3-pip \
     python3-setuptools \
     python3-wheel \
-    python3-psutil && \
+    python3-psutil \
+    jq \
+    apache2-utils && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 

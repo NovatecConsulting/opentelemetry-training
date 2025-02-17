@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 @app.before_request
 def before_request():
-    workload_instruments["traffic_volume"].add(
+    request_instruments["traffic_volume"].add(
         1, attributes={"http.route": request.path}
     )
     request.environ["request_start"] = time.time_ns()
@@ -23,13 +23,21 @@ def before_request():
 
 @app.after_request
 def after_request(response: Response) -> Response:
-    workload_instruments["request_latency"].record(
-        amount=(time.time_ns() - request.environ["request_start"]) / 1_000_000_000,
+    if response.status_code >= 400:
+        request_instruments["error_rate"].add(1, {
+                "http.route": request.path,
+                "http.response.status_code": response.status_code
+            }
+        )
+    request_end = time.time_ns()
+    duration = (request_end - request.environ["request_start"]) / 1_000_000_000 # convert ns to s
+    request_instruments["request_latency"].record(
+        duration,
         attributes={
             "http.request.method": request.method,
             "http.route": request.path,
             "http.response.status_code": response.status_code,
-        },
+        }
     )
     return response
 
@@ -51,7 +59,7 @@ def do_stuff():
     return response
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     do_stuff()
     current_time = time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime())
@@ -62,7 +70,7 @@ def index():
 if __name__ == "__main__":
     # setup metrics
     meter = create_meter("app.py", "0.1")
-    workload_instruments = create_request_instruments(meter)
+    request_instruments = create_request_instruments(meter)
     rc_instruments = create_resource_instruments(meter)
 
     db = ChaosClient(client=FakerClient())

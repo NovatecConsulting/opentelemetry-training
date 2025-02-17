@@ -37,7 +37,7 @@ def do_stuff():
     return response
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     do_stuff()
     logging.info("Info from the index function")

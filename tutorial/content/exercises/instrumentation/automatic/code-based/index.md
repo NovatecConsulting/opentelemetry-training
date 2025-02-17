@@ -81,7 +81,7 @@ Add the following dependency to it and make sure to align/indent with the alread
 		<dependency>
 			<groupId>io.opentelemetry.instrumentation</groupId>
 			<artifactId>opentelemetry-instrumentation-annotations</artifactId>
-			<version>2.4.0</version>
+			<version>2.8.0</version>
 		</dependency>
 ```
 
@@ -110,7 +110,7 @@ docker run -d --name jaeger \
 Download the agent jar file, if it is not there yet.
 
 ```sh
-wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.8.0/opentelemetry-javaagent.jar
 ```
 
 And make sure the environment variables are set appropriately:
@@ -453,7 +453,7 @@ To overcome these limitations you have seen two different approaches. Adding cus
 
 It becomes clear that the more granular details you want to get out of your application the more you have to put instrumentation code into it.
 
-The following chapter `manual instrumentatoin` will do this in full depth.
+The following chapter `manual instrumentation` will do this in full depth.
 
 Please stop all Java, Python and docker processes.
 
