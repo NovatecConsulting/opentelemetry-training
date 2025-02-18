@@ -155,7 +155,7 @@ import org.springframework.context.annotation.Configuration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.semconv.ResourceAttributes;
+import io.opentelemetry.semconv.ServiceAttributes;
 
 //Tracing and Spans
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
@@ -163,14 +163,16 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 
-@SuppressWarnings("deprecation")
 @Configuration
 public class OpenTelemetryConfiguration {
 
     @Bean
-	public OpenTelemetry openTelemetry(){
+	public OpenTelemetry openTelemetry() {
 
-		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+		Resource resource = Resource.getDefault().toBuilder()
+                .put(ServiceAttributes.SERVICE_NAME, "todobackend")
+                .put(ServiceAttributes.SERVICE_VERSION, "0.1.0")
+                .build();
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
 			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
@@ -385,7 +387,7 @@ And specify two attributes:
 ```java { title="TodobackendApplication.java" }
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 		
-		span.setAttribute("http.method", "POST");
+		span.setAttribute("http.request.method", "POST");
 		span.setAttribute("http.url", "/todos/{todo}");
 ```
 
@@ -419,7 +421,7 @@ Modify the entire method to look like this:
 
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 
-		span.setAttribute("http.method", request.getMethod());
+		span.setAttribute("http.request.method", request.getMethod());
 		span.setAttribute("http.url", request.getRequestURL().toString());
 		span.setAttribute("client.address", request.getRemoteAddr());
 		span.setAttribute("user.agent",request.getHeader("User-Agent"));
@@ -606,7 +608,58 @@ Take a look at the value of `totalRecordedEvents` in the output log of the span.
 
 ### Semantic conventions
 
-TODO
+> There are only two hard things in Computer Science: cache invalidation and naming things.
+> -- Phil Karlton
+
+Consistency is a hallmark of high-quality telemetry.
+Looking at the current code, nothing prevents a developer from using arbitrary keys for attributes 
+(e.g. `method` instead of `http.request.method`).
+While human intuition allows us to conclude that both refer to the same thing, machines are (luckily) not that smart.
+Inconsistencies in the definition of telemetry make it harder to analyze the data down the line.
+This is why OpenTelemetry's specification includes [semantic conventions](https://opentelemetry.io/docs/specs/semconv/).
+This standardization effort helps to improve consistency, prevents us from making typos, and avoids ambiguity due to 
+differences in spelling.
+OpenTelemetry provides a Java dependency `io.opentelemetry.semconv:opentelemetry-semconv` that we have already 
+included earlier.
+
+Let's refactor our code.
+First you have to import the following classes:
+
+```java { title="TodobackendApplication.java" }
+
+        import io.opentelemetry.semconv.ClientAttributes;
+        import io.opentelemetry.semconv.HttpAttributes;
+        import io.opentelemetry.semconv.UserAgentAttributes;
+```
+
+Then use the imported classes for the attributes keys:
+
+```java { title="TodobackendApplication.java" }
+
+        // ...
+        span.setAttribute(HttpAttributes.HTTP_REQUEST_METHOD, request.getMethod());
+        span.setAttribute(HttpAttributes.HTTP_ROUTE, request.getRequestURL().toString());
+        span.setAttribute(ClientAttributes.CLIENT_ADDRESS, request.getRemoteAddr());
+        span.setAttribute(UserAgentAttributes.USER_AGENT_ORIGINAL, request.getHeader("User-Agent"));
+        // ...
+        span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, HttpServletResponse.SC_CREATED);
+        // ...
+        span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        // ...
+```
+
+Explore the [documentation](https://opentelemetry.io/docs/specs/semconv) to look for a convention that matches the 
+metadata we want to record.
+The specification defines conventions for various aspects of a telemetry system (e.g. different telemetry signals, 
+runtime environments, etc.).
+Due to the challenges of standardization and OpenTelemetry's strong commitment to long-term API stability, 
+many conventions are still marked as experimental.
+For now, we'll use [this](https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server) as an example.
+Instead of specifying the attributes keys (and sometimes values) by typing their string by hand, we reference 
+objects provided by OpenTelemetry's `opentelemetry-semconv` dependency.
+
+
+You may restart the app and repeat the curl call to view the attribute names.
 
 
 ### Exporting traces via OTLP
