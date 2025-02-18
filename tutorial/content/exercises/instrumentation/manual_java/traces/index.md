@@ -36,14 +36,14 @@ By the end of this lab, you will be able to:
 
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
-* Initial directory: `manual-instrumentation-java/initial`
-* Solution directory: `manual-instrumentation-java/solution`
-* Java/Spring Boot backend component: `manual-instrumentation-java/initial/todobackend-springboot`
+* Initial directory: `manual-instrumentation-traces-java/initial`
+* Solution directory: `manual-instrumentation-traces-java/solution`
+* Java/Spring Boot backend component: `manual-instrumentation-traces-java/initial/todobackend-springboot`
 
 The environment consists of one component:
-1. a Spring Boot REST API service
+- Spring Boot REST API service
     - uses [Spring Boot ](https://www.spring.io) framework
-    - listens on port 8080 and serves serveral CRUD style HTTP endpoints
+    - listens on port 8080 and serves several CRUD style HTTP endpoints
     - simulates an application we want to instrument
 
 
@@ -54,7 +54,7 @@ Navigate to
 
 ```sh
 cd $EXERCISES
-cd manual-instrumentation-java/initial/todobackend-springboot
+cd manual-instrumentation-traces-java/initial/todobackend-springboot
 ```
 
 Run:
@@ -79,7 +79,7 @@ You should see a response of the following type:
 ```
 
 To keep things concise, code snippets only contain what's relevant to that step.
-If you get stuck, you can find the solution in the `exercises/manual-instrumentation-java/solution`
+If you get stuck, you can find the solution in the `exercises/manual-instrumentation-traces-java/solution`
 
 ---
 
@@ -141,7 +141,8 @@ Within the same file add the following code snippet
 ```
 
 Within the folder of the main application file `TodobackendApplication.java` add a new file called `OpenTelemetryConfiguration.java`.
-We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. It is recommended to edit the file not via command line, but to use your built-in editor.
+We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-traces-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. 
+It is recommended to edit the file not via command line, but to use your built-in editor.
 
 Add the following content to this file:
 
