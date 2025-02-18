@@ -74,9 +74,9 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
-		logger.info("POST /todos/ "+todo.toString());
-
 		this.someInternalMethod(todo);
+
+		logger.info("POST /todos/ "+todo.toString());
 
 		return todo;
 	} 

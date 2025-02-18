@@ -3,6 +3,10 @@ package io.novatec.todobackend;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.api.common.Attributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,8 @@ import jakarta.persistence.Id;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+
 @SpringBootApplication
 @RestController
 @CrossOrigin(origins = "*")
@@ -29,6 +35,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
+
+	private OpenTelemetry openTelemetry;
+	private Meter meter;
+	private LongCounter counter;
 
 	@Value("${HOSTNAME:not_set}")
 	String hostname;
@@ -39,6 +49,16 @@ public class TodobackendApplication {
 	@Autowired
 	TodoRepository todoRepository;
 
+	public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+		this.openTelemetry = openTelemetry;
+		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
+
+		counter = meter.counterBuilder("todobackend.requests.counter")
+				.setDescription("How many times the GET call has been invoked.")
+				.setUnit("requests")
+				.build();
+	}
 
 	private String getInstanceId() {
 
@@ -74,9 +94,10 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
-		logger.info("POST /todos/ "+todo.toString());
-
+		counter.add(1, Attributes.of(stringKey("todo"), todo));
 		this.someInternalMethod(todo);
+
+		logger.info("POST /todos/ "+todo.toString());
 
 		return todo;
 	} 

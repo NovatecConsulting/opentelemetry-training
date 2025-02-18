@@ -275,6 +275,7 @@ Locate the `addTodo` method which initially looks like this:
 	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
 		this.someInternalMethod(todo);
+        
 		logger.info("POST /todos/ "+todo.toString());
 
 		return todo;
