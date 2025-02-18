@@ -1,6 +1,6 @@
 package io.novatec.todobackend;
 
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static io.opentelemetry.api.common.AttributeKey.booleanKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
-import io.opentelemetry.api.metrics.LongCounter;
-import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.semconv.ClientAttributes;
+import io.opentelemetry.semconv.HttpAttributes;
+import io.opentelemetry.semconv.UserAgentAttributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
@@ -43,8 +44,6 @@ public class TodobackendApplication {
 
 	private OpenTelemetry openTelemetry;
 	private Tracer tracer;
-	private Meter meter;
-	private LongCounter counter;
 
 	@Value("${HOSTNAME:not_set}")
 	String hostname;
@@ -58,13 +57,6 @@ public class TodobackendApplication {
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 		this.openTelemetry = openTelemetry;
 		tracer = this.openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-		meter = this.openTelemetry.getMeter(TodobackendApplication.class.getName());
-
-		counter = meter.counterBuilder("todobackend.requests.counter")
-				.setDescription("How many times the GET call has been invoked.")
-				.setUnit("requests")
-				.build();
-
 	}
 
 	private String getInstanceId() {
@@ -79,7 +71,6 @@ public class TodobackendApplication {
 	String hello() {
 
 		return getInstanceId() + " Hallo, Welt ! ";
-
 	}
 
 	@GetMapping("/fail")
@@ -96,7 +87,6 @@ public class TodobackendApplication {
 
 		todoRepository.findAll().forEach(todo -> todos.add(todo.getTodo()));
 		logger.info("GET /todos/ " + todos.toString());
-		counter.add(1,Attributes.of(stringKey("http.method"), "GET"));
 
 		return todos;
 	}
@@ -104,31 +94,33 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo) {
 
-		logger.info("POST /todos/ " + todo.toString());
-
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 
-		span.setAttribute("http.method", request.getMethod());
-		span.setAttribute("http.url", request.getRequestURL().toString());
-		span.setAttribute("client.address", request.getRemoteAddr());
-		span.setAttribute("user.agent", request.getHeader("User-Agent"));
+		boolean valid = this.isValid(todo);
+		span.addEvent("todo validated", Attributes.of(booleanKey("valid"), valid));
+
+		span.setAttribute(HttpAttributes.HTTP_REQUEST_METHOD, request.getMethod());
+		span.setAttribute(HttpAttributes.HTTP_ROUTE, request.getRequestURL().toString());
+		span.setAttribute(ClientAttributes.CLIENT_ADDRESS, request.getRemoteAddr());
+		span.setAttribute(UserAgentAttributes.USER_AGENT_ORIGINAL, request.getHeader("User-Agent"));
 
 		try (Scope scope = span.makeCurrent()) {
 			this.someInternalMethod(todo);
 			response.setStatus(HttpServletResponse.SC_CREATED);
-			span.setAttribute("response.status", HttpServletResponse.SC_CREATED);
+			span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, HttpServletResponse.SC_CREATED);
 		} catch (Throwable t) {
 			span.setStatus(StatusCode.ERROR, "Error on server side!");
 			span.recordException(t);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			span.setAttribute("response.status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			span.end();
 		}
 
-		logger.info("Span.toString():" + span.toString());
-		return todo;
+		logger.info("POST /todos/ "+todo.toString());
+		logger.info("Span.toString():"+span.toString());
 
+		return todo;
 	}
 
 	String someInternalMethod(String todo) {
@@ -155,6 +147,10 @@ public class TodobackendApplication {
 		childSpan.end();
 		return todo;
 
+	}
+
+	boolean isValid(String todo) {
+		return todo != null && !todo.isBlank();
 	}
 
 	@DeleteMapping("/todos/{todo}")
