@@ -45,14 +45,12 @@ public class TodobackendApplication {
 		if (!hostname.equals("not_set"))
 			return hostname;
 		return "probably localhost";
-
 	}
 
 	@GetMapping("/hello")
 	String hello() {
 
 		return getInstanceId() + " Hallo, Welt ! ";
-
 	}
 
 	@GetMapping("/fail")
@@ -81,7 +79,6 @@ public class TodobackendApplication {
 		this.someInternalMethod(todo);
 
 		return todo;
-
 	} 
 
 	String someInternalMethod(String todo){
@@ -103,7 +100,10 @@ public class TodobackendApplication {
 		} 
 
 		return todo;
+	}
 
+	boolean isValid(String todo) {
+		return todo != null && !todo.isBlank();
 	}
 
 	@DeleteMapping("/todos/{todo}")
@@ -112,7 +112,6 @@ public class TodobackendApplication {
 		todoRepository.deleteById(todo);
 		logger.info("DELETE /todos/ " + todo.toString());
 		return "removed " + todo;
-
 	}
 
 	public static void main(String[] args) {

@@ -218,8 +218,11 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+
+import static io.opentelemetry.api.common.AttributeKey.booleanKey;
 
 ```
 
@@ -516,7 +519,7 @@ Build, run and curl again.
 2024-07-21T15:11:10.327Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, http.method=POST}, capacity=128, totalAddedValues=4}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721574670300677293, endEpochNanos=1721574670327453585}
 ```
 
-If you look at the `someInternalMethod`  span first and focus on the parent span context, you will see:
+If you look at the `someInternalMethod` span first and focus on the parent span context, you will see:
 
 ```log
 parentSpanContext=ImmutableSpanContext{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c
@@ -524,7 +527,8 @@ parentSpanContext=ImmutableSpanContext{traceId=4c561f212ee8a152663f960490dac269,
 
 which is exactly the trace and span id of the `addTodo` method.
 
-The OpenTelemetry API offers also an automated way to propagate the parent span to child spans. This works however only, if they run within the same thread.
+The OpenTelemetry API offers also an automated way to propagate the parent span to child spans. 
+This works however only, if they run within the same thread.
 
 ### Handling an error
 
@@ -574,7 +578,36 @@ If you look at the output log now, you can see the error status in the parent sp
 
 ### Adding events
 
+Normally, if some metadata is relevant for the entire duration of a span, you will add the data as attributes.
+For instance, which `http.request.method` was used for or which `client.address` has sent a request.
+However, sometimes you also want to record time-specific scenarios within your span. 
+Since attributes do not provide a timestamp, in that case you should use span events instead.
+
+Actually, you have already added a span event in the previous snippet via `span.recordException(t)`.
+Exceptions are just a special type of span event. Of course you can add events of all types.
+Additionally, events can also be enriched with their own attributes. 
+These attributes will only appear within the recorded event.
+
+Modify the `addTodo` method to add another event, whenever the path variable was validated, as shown below:
+
+```java { title="TodobackendApplication.java" }
+
+        Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+
+        boolean valid = this.isValid(todo);
+		span.addEvent("todo validated", Attributes.of(booleanKey("valid"), valid));
+        
+        //...
+```
+
+Restart the app and repeat the curl call.
+
+Take a look at the value of `totalRecordedEvents` in the output log of the span.
+
+### Semantic conventions
+
 TODO
+
 
 ### Exporting traces via OTLP
 
