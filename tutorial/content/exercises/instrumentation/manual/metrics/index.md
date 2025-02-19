@@ -156,8 +156,6 @@ def create_meter(name: str, version: str) -> metric_api.Meter:
     return meter
 ```
 
-<!-- TODO re-use resource_utils -->
-
 Finally, open `app.py` and import `create_meter`.
 Invoke the function and assign the return value to a global variable `meter`.
 

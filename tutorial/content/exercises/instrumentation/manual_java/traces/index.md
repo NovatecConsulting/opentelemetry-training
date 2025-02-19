@@ -36,14 +36,14 @@ By the end of this lab, you will be able to:
 
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
-* Initial directory: `manual-instrumentation-java/initial`
-* Solution directory: `manual-instrumentation-java/solution`
-* Java/Spring Boot backend component: `manual-instrumentation-java/initial/todobackend-springboot`
+* Initial directory: `manual-instrumentation-traces-java/initial`
+* Solution directory: `manual-instrumentation-traces-java/solution`
+* Java/Spring Boot backend component: `manual-instrumentation-traces-java/initial/todobackend-springboot`
 
 The environment consists of one component:
-1. a Spring Boot REST API service
+- Spring Boot REST API service
     - uses [Spring Boot ](https://www.spring.io) framework
-    - listens on port 8080 and serves serveral CRUD style HTTP endpoints
+    - listens on port 8080 and serves several CRUD style HTTP endpoints
     - simulates an application we want to instrument
 
 
@@ -54,7 +54,7 @@ Navigate to
 
 ```sh
 cd $EXERCISES
-cd manual-instrumentation-java/initial/todobackend-springboot
+cd manual-instrumentation-traces-java/initial/todobackend-springboot
 ```
 
 Run:
@@ -79,7 +79,7 @@ You should see a response of the following type:
 ```
 
 To keep things concise, code snippets only contain what's relevant to that step.
-If you get stuck, you can find the solution in the `exercises/manual-instrumentation-java/solution`
+If you get stuck, you can find the solution in the `exercises/manual-instrumentation-traces-java/solution`
 
 ---
 
@@ -114,7 +114,7 @@ Add the following dependencies. Do not add the dots (...). Just embed the depend
         <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
             <artifactId>opentelemetry-semconv</artifactId>
-            <version>1.26.0-alpha</version>
+            <version>1.29.0-alpha</version>
         </dependency>
         ...
 	</dependencies>
@@ -141,7 +141,8 @@ Within the same file add the following code snippet
 ```
 
 Within the folder of the main application file `TodobackendApplication.java` add a new file called `OpenTelemetryConfiguration.java`.
-We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. It is recommended to edit the file not via command line, but to use your built-in editor.
+We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-traces-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. 
+It is recommended to edit the file not via command line, but to use your built-in editor.
 
 Add the following content to this file:
 
@@ -155,7 +156,7 @@ import org.springframework.context.annotation.Configuration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.semconv.ResourceAttributes;
+import io.opentelemetry.semconv.ServiceAttributes;
 
 //Tracing and Spans
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
@@ -163,14 +164,16 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 
 import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 
-@SuppressWarnings("deprecation")
 @Configuration
 public class OpenTelemetryConfiguration {
 
     @Bean
-	public OpenTelemetry openTelemetry(){
+	public OpenTelemetry openTelemetry() {
 
-		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+		Resource resource = Resource.getDefault().toBuilder()
+                .put(ServiceAttributes.SERVICE_NAME, "todobackend")
+                .put(ServiceAttributes.SERVICE_VERSION, "0.1.0")
+                .build();
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
 			.addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
@@ -218,8 +221,11 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+
+import static io.opentelemetry.api.common.AttributeKey.booleanKey;
 
 ```
 
@@ -243,7 +249,6 @@ In this constuctor we instantiate the OpenTelemetry and Tracer object and make t
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 		this.openTelemetry = openTelemetry;
 		tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
-		
 	}
 ```
 
@@ -267,13 +272,13 @@ Locate the `addTodo` method which initially looks like this:
 
 ```java { title="TodobackendApplication.java" }
 	@PostMapping("/todos/{todo}")
-	String addTodo(@PathVariable String todo){
+	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
 		this.someInternalMethod(todo);
+        
 		logger.info("POST /todos/ "+todo.toString());
 
 		return todo;
-
 	}
 ```
 
@@ -286,7 +291,7 @@ The resulting code is supposed to look like this:
 
 ```java { title="TodobackendApplication.java" }
 	@PostMapping("/todos/{todo}")
-	String addTodo(@PathVariable String todo){
+	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
 		Span span = tracer.spanBuilder("addTodo").startSpan();
 		
@@ -296,7 +301,6 @@ The resulting code is supposed to look like this:
 		span.end();        
 
 		return todo;
-
 	}
 ```
 
@@ -372,7 +376,10 @@ The first identifier is the `traceId`, the second one is `spandId` followed by `
 So far, the contents of the span were automatically generated by the SDK.
 This information is enough to reason about the chain of events in a transaction and allows us to measure latency.
 However, it's important to understand that tracing is a much more potent tool.
-By enriching spans with additional context, traces can proivde meaningful insights about what is happening in a system.
+By enriching spans with additional context, traces can provide meaningful insights about what is happening in a system.
+
+Be aware: Once `span.end()` has been called, the span is no longer editable. Thus, you always have to enrich the span with
+context before finishing it.
 
 Let's specify the Span kind and set some resource attributes:
 
@@ -382,7 +389,7 @@ And specify two attributes:
 ```java { title="TodobackendApplication.java" }
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 		
-		span.setAttribute("http.method", "POST");
+		span.setAttribute("http.request.method", "POST");
 		span.setAttribute("http.url", "/todos/{todo}");
 ```
 
@@ -416,7 +423,7 @@ Modify the entire method to look like this:
 
 		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
 
-		span.setAttribute("http.method", request.getMethod());
+		span.setAttribute("http.request.method", request.getMethod());
 		span.setAttribute("http.url", request.getRequestURL().toString());
 		span.setAttribute("client.address", request.getRemoteAddr());
 		span.setAttribute("user.agent",request.getHeader("User-Agent"));
@@ -433,15 +440,7 @@ Modify the entire method to look like this:
 
 		return todo;
 	}
-``` 
-
-If your editor does not automatically add the import statements, you need to do this manually.
-Make sure the following import statements are in place:
-
-```java { title="TodobackendApplication.java" }
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-``` 
+```
 
 Restart the app and repeat the curl call.
 
@@ -456,21 +455,20 @@ The trace will now contain attributes from the Servlet request and also details 
 
 ### Nested spans
 
-So far the the manual instrumentation has all been taking place within the method `addTodo`. Even though this method invokes another method `someInternalMethod` nothing of that behaviour is being captured by the current isntrumentation.
+So far the manual instrumentation has all been taking place within the method `addTodo`. Even though this method invokes another method `someInternalMethod` nothing of that behaviour is being captured by the current isntrumentation.
 
-Let's change that an put 3 statements into your code, 2 for the spans and one additional log.
+Let's change that and put 3 statements into your code, 2 for the spans and one additional log.
 
 ```java { title="TodobackendApplication.java" }
 	String someInternalMethod(String todo){
 
 		Span childSpan = tracer.spanBuilder("someInternalMethod").setSpanKind(SpanKind.INTERNAL).startSpan();
 
-        ...
+        // ...
 
 		logger.info("childSpan.toString():"+childSpan.toString());
 		childSpan.end();
 		return todo;
-
 	}
 ```
 
@@ -486,28 +484,34 @@ You will now get information from two different spans in your log:
 2024-07-21T14:25:21.370Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=2551e1c45eeb37c9ab1bd7a016fa5833, spanId=c955fbcc8f45d28e, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, response.status=201, http.method=POST}, capacity=128, totalAddedValues=5}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721571921363715964, endEpochNanos=1721571921370347506}
 ```
 
-The interesting part in both spans is the followig part:
+The interesting part in both spans is the following part:
 
 ```log
 parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000
 ```
 
-The parent span will always be `null` with a new call. However here we have a relation between the two calls, so it is surprising that the child span (or let's say the one we know is the chaild span) has this setting as well. So from the perspective of OpenTelemetry these are two totally independent spans.
+The parent span will always be `null` with a new call. 
+However, here we have a relation between the two calls, so it is surprising that the child span 
+(or let's say the one we know is the child span) has this setting as well. 
+So from the perspective of OpenTelemetry these are two totally independent spans.
 
-We need to use the OpenTelemetry context scope. Embed the call to the child method `someInternalMethod` with the following block:
+We need to use the OpenTelemetry context scope. Embed the call to the child method `someInternalMethod` with 
+the following block:
 
 ```java { title="TodobackendApplication.java" }
 		try (Scope scope = span.makeCurrent()) {
-			this.someInternalMethod(todo);
+            this.someInternalMethod(todo);
+            response.setStatus(HttpServletResponse.SC_CREATED);
+			span.setAttribute("response.status", HttpServletResponse.SC_CREATED);
 		} finally {
-			span.end();
+            span.end();
 		}
-```
+        
+        logger.info("POST /todos/ "+todo.toString());
+        logger.info("Span.toString():"+span.toString());
 
-Also make sure the following import exists:
-
-```java { title="TodobackendApplication.java" }
-import io.opentelemetry.context.Scope;
+        return todo;
+	} 
 ```
 
 Build, run and curl again.
@@ -519,7 +523,7 @@ Build, run and curl again.
 2024-07-21T15:11:10.327Z  INFO 43453 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : Span.toString():SdkSpan{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c, parentSpanContext=ImmutableSpanContext{traceId=00000000000000000000000000000000, spanId=0000000000000000, traceFlags=00, traceState=ArrayBasedTraceState{entries=[]}, remote=false, valid=false}, name=addTodo, kind=SERVER, attributes=AttributesMap{data={client.address=127.0.0.1, user.agent=curl/7.81.0, http.url=http://localhost:8080/todos/NEW, http.method=POST}, capacity=128, totalAddedValues=4}, status=ImmutableStatusData{statusCode=UNSET, description=}, totalRecordedEvents=0, totalRecordedLinks=0, startEpochNanos=1721574670300677293, endEpochNanos=1721574670327453585}
 ```
 
-If you look at the `someInternalMethod`  span first and focus on the parent span context, you will see:
+If you look at the `someInternalMethod` span first and focus on the parent span context, you will see:
 
 ```log
 parentSpanContext=ImmutableSpanContext{traceId=4c561f212ee8a152663f960490dac269, spanId=c630f6e5a0cde90c
@@ -527,7 +531,8 @@ parentSpanContext=ImmutableSpanContext{traceId=4c561f212ee8a152663f960490dac269,
 
 which is exactly the trace and span id of the `addTodo` method.
 
-The OpenTelemetry API offers also an automated way to propagate the parent span to child spans. This works however only, if they run within the same thread.
+The OpenTelemetry API offers also an automated way to propagate the parent span to child spans. 
+This works however only, if they run within the same thread.
 
 ### Handling an error
 
@@ -577,6 +582,86 @@ If you look at the output log now, you can see the error status in the parent sp
 
 ### Adding events
 
+Normally, if some metadata is relevant for the entire duration of a span, you will add the data as attributes.
+For instance, which `http.request.method` was used for or which `client.address` has sent a request.
+However, sometimes you also want to record time-specific scenarios within your span. 
+Since attributes do not provide a timestamp, in that case you should use span events instead.
+
+Actually, you have already added a span event in the previous snippet via `span.recordException(t)`.
+Exceptions are just a special type of span event. Of course you can add events of all types.
+Additionally, events can also be enriched with their own attributes. 
+These attributes will only appear within the recorded event.
+
+Modify the `addTodo` method to add another event, whenever the path variable was validated, as shown below:
+
+```java { title="TodobackendApplication.java" }
+
+        Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+
+        boolean valid = this.isValid(todo);
+		span.addEvent("todo validated", Attributes.of(booleanKey("valid"), valid));
+        
+        //...
+```
+
+Restart the app and repeat the curl call.
+
+Take a look at the value of `totalRecordedEvents` in the output log of the span.
+
+### Semantic conventions
+
+> There are only two hard things in Computer Science: cache invalidation and naming things.
+> -- Phil Karlton
+
+Consistency is a hallmark of high-quality telemetry.
+Looking at the current code, nothing prevents a developer from using arbitrary keys for attributes 
+(e.g. `method` instead of `http.request.method`).
+While human intuition allows us to conclude that both refer to the same thing, machines are (luckily) not that smart.
+Inconsistencies in the definition of telemetry make it harder to analyze the data down the line.
+This is why OpenTelemetry's specification includes [semantic conventions](https://opentelemetry.io/docs/specs/semconv/).
+This standardization effort helps to improve consistency, prevents us from making typos, and avoids ambiguity due to 
+differences in spelling.
+OpenTelemetry provides a Java dependency `io.opentelemetry.semconv:opentelemetry-semconv` that we have already 
+included earlier.
+
+Let's refactor our code.
+First you have to import the following classes:
+
+```java { title="TodobackendApplication.java" }
+
+        import io.opentelemetry.semconv.ClientAttributes;
+        import io.opentelemetry.semconv.HttpAttributes;
+        import io.opentelemetry.semconv.UserAgentAttributes;
+```
+
+Then use the imported classes for the attributes keys:
+
+```java { title="TodobackendApplication.java" }
+
+        // ...
+        span.setAttribute(HttpAttributes.HTTP_REQUEST_METHOD, request.getMethod());
+        span.setAttribute(HttpAttributes.HTTP_ROUTE, request.getRequestURL().toString());
+        span.setAttribute(ClientAttributes.CLIENT_ADDRESS, request.getRemoteAddr());
+        span.setAttribute(UserAgentAttributes.USER_AGENT_ORIGINAL, request.getHeader("User-Agent"));
+        // ...
+        span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, HttpServletResponse.SC_CREATED);
+        // ...
+        span.setAttribute(HttpAttributes.HTTP_RESPONSE_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        // ...
+```
+
+Explore the [documentation](https://opentelemetry.io/docs/specs/semconv) to look for a convention that matches the 
+metadata we want to record.
+The specification defines conventions for various aspects of a telemetry system (e.g. different telemetry signals, 
+runtime environments, etc.).
+Due to the challenges of standardization and OpenTelemetry's strong commitment to long-term API stability, 
+many conventions are still marked as experimental.
+For now, we'll use [this](https://opentelemetry.io/docs/specs/semconv/http/http-spans/#http-server) as an example.
+Instead of specifying the attributes keys (and sometimes values) by typing their string by hand, we reference 
+objects provided by OpenTelemetry's `opentelemetry-semconv` dependency.
+
+
+You may restart the app and repeat the curl call to view the attribute names.
 
 
 ### Exporting traces via OTLP
@@ -606,10 +691,11 @@ Modify the beginning of the class to the code shown below:
 			.build();	
 ```
 
-Also make sure the following import exists:
+Also make sure the following imports exist:
 
 ```java { title="OpenTelemetryConfiguration.java" }
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
+import java.util.concurrent.TimeUnit;
 ```
 
 
