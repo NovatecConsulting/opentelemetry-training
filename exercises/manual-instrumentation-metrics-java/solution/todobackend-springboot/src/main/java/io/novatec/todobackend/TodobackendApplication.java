@@ -1,10 +1,14 @@
 package io.novatec.todobackend;
 
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.LongHistogram;
+import io.opentelemetry.api.metrics.ObservableDoubleGauge;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.common.Attributes;
 import org.slf4j.Logger;
@@ -39,6 +43,9 @@ public class TodobackendApplication {
 	private OpenTelemetry openTelemetry;
 	private Meter meter;
 	private LongCounter counter;
+	private LongCounter errorCounter;
+	private LongHistogram requestDuration;
+	private ObservableDoubleGauge cpuLoad;
 
 	@Value("${HOSTNAME:not_set}")
 	String hostname;
@@ -55,9 +62,25 @@ public class TodobackendApplication {
 		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
 
 		counter = meter.counterBuilder("todobackend.requests.counter")
-				.setDescription("How many times the GET call has been invoked.")
+				.setDescription("How many times the GET call has been invoked")
 				.setUnit("requests")
 				.build();
+
+		errorCounter = meter.counterBuilder("todobackend.requests.errors")
+				.setDescription("How many times an error occurred")
+				.setUnit("requests")
+				.build();
+
+		requestDuration = meter.histogramBuilder("http.server.request.duration")
+				.setDescription("How long was a request processed on server side")
+				.setUnit("ms")
+				.ofLongs()
+				.build();
+
+		cpuLoad = meter.gaugeBuilder("system.cpu.utilization")
+				.setDescription("The current system cpu utilization")
+				.setUnit("percent")
+				.buildWithCallback((measurement) -> measurement.record(this.getCpuLoad()));
 	}
 
 	private String getInstanceId() {
@@ -94,11 +117,15 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
+		long start = System.currentTimeMillis();
+
 		counter.add(1, Attributes.of(stringKey("todo"), todo));
 		this.someInternalMethod(todo);
 
 		logger.info("POST /todos/ "+todo.toString());
 
+		long duration = System.currentTimeMillis() - start;
+		requestDuration.record(duration);
 		return todo;
 	} 
 
@@ -115,6 +142,7 @@ public class TodobackendApplication {
 		} 		
 		if(todo.equals("fail")){
 
+			errorCounter.add(1);
 			System.out.println("Failing ...");
 			throw new RuntimeException();
 		} 
@@ -132,6 +160,11 @@ public class TodobackendApplication {
 		todoRepository.deleteById(todo);
 		logger.info("DELETE /todos/ " + todo.toString());
 		return "removed " + todo;
+	}
+
+	double getCpuLoad() {
+		OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+		return osBean.getCpuLoad() * 100;
 	}
 
 	public static void main(String[] args) {

@@ -210,6 +210,8 @@ Open `TodobackendApplication.java` in your editor and tart by adding the followi
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.LongHistogram;
+import io.opentelemetry.api.metrics.ObservableDoubleGauge;
 import io.opentelemetry.api.metrics.Meter;
 
 import static io.opentelemetry.api.common.AttributeKey.stringKey;
@@ -269,7 +271,7 @@ Initialize it in the constructor of the class:
         // ...
 
 		counter = meter.counterBuilder("todobackend.requests.counter")
-				.setDescription("How many times the GET call has been invoked.")
+				.setDescription("How many times an endpoint has been invoked")
 				.setUnit("requests")
 				.build();
 	}
@@ -417,7 +419,7 @@ insights from the data. Therefore, it is essential to carefully consider the dim
 to ensure that they are both informative and manageable within the constraints of the monitoring system.
 
 
-### Something
+### Instruments
 
 We've used a simple counter instrument to generate a metric. The API however is capable of more here.
 
@@ -454,25 +456,228 @@ Synchronous instruments are invoked in line with the application code, while asy
 a callback function that is invoked on demand. This allows for more efficient and flexible metric collection, 
 especially in scenarios where the metric value is expensive to compute or when the metric value changes infrequently.
 
-### Metric dimensions
 
-Add to previous chapter
+### Measure golden signals
 
-- GET Tom
-- GET Jerry
---> Different Metrics! --> Cardinality
+{{< figure src="images/resource_workload_analysis.PNG" width=600 caption="workload and resource analysis" >}}
 
-### 4 Golden signals / Instruments Practice
+Now, let's put our understanding of the metrics signal to use.
+Before we do that, we must address an important question: *What* do we measure?
+Unfortunately, the answer is anything but simple.
+Due to the vast amount of events within a system and many statistical measures to calculate, there are nearly infinite things to measure.
+A catch-all approach is cost-prohibitive from a computation and storage point, increases the noise which makes it harder to find important signals, leads to alert fatigue, and so on.
+The term metric refers to a statistic that we consciously chose to collect because we deem it to be *important*.
+Important is a deliberately vague term, because it means different things to different people.
+A system administrator typically approaches an investigation by looking at the utilization or saturation of physical system resources.
+A developer is usually more interested in how the application responds, looking at the applied workload, response times, error rates, etc.
+In contrast, a customer-centric role might look at more high-level indicators related to contractual obligations (e.g. as defined by an SLA), business outcomes, and so on.
+The details of different monitoring perspectives and methodologies (such as [USE](https://www.brendangregg.com/usemethod.html) and RED) are beyond the scope of this lab.
+However, the [four golden signals](https://sre.google/sre-book/monitoring-distributed-systems/#xref_monitoring_golden-signals) of observability often provide a good starting point:
 
-TODO
+- **Traffic**: volume of requests handled by the system
+- **Errors**: rate of failed requests
+- **Latency**: the amount of time it takes to serve a request
+- **Saturation**: how much of a resource is being consumed at a given time
 
-Erzeuge Instruments im Konstruktor
+We have already shown how to measure the total amount of traffic in the previous chapters.
+Thus, let's continue with the remaining signals.
 
-- Traffic (macht man doch schon oben)
-- Errors (POST Todo Fail)
-- Latency (Req-Duration)
-- Saturation (CPU via OperatingSystemMXBean)
+#### Error rate
 
+As a next step, let's track the error rate of creating new todos. Create a separate Counter instrument.
+Ultimately, the decision of what constitutes a failed request is up to us.
+In this example, we'll simply refer to the name of the todo.
+
+First, add another global variable to the class called:
+
+```java { title="TodobackendApplication.java" }
+	private LongCounter errorCounter;
+```
+
+Initialize it in the constructor of the class:
+
+```java { title="TodobackendApplication.java" }
+	public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+        // ...
+
+        errorCounter = meter.counterBuilder("todobackend.requests.errors")
+				.setDescription("How many times an error occurred")
+				.setUnit("requests")
+				.build();
+	}
+```
+
+Then include the `errorCounter` inside `someInternalMethod` like this:
+
+```java { title="TodobackendApplication.java" }
+	String someInternalMethod(String todo) {
+
+     //...
+  
+      if(todo.equals("fail")){
+    
+        errorCounter.add(1);
+        System.out.println("Failing ...");
+        throw new RuntimeException();
+      }
+    
+      return todo;
+}
+```
+
+Restart the app. When sending a fail request, you will see the error counter in the log output
+
+```sh
+curl -XPOST localhost:8080/todos/fail; echo
+```
+
+#### Latency
+
+The time it takes a service to process a request is a crucial indicator of potential problems.
+The tracing lab showed that spans contain timestamps that measure the duration of an operation.
+Traces allow us to analyze latency in a specific transaction.
+However, in practice, we often want to monitor the overall latency for a given service.
+While it is possible to compute this from span metadata, converting between telemetry signals is not very practical.
+For example, since capturing traces for every request is resource-intensive, we might want to use 
+sampling to reduce overhead.
+Depending on the strategy, sampling may increase the probability that outlier events are missed.
+Therefore, we typically analyze the latency via a Histogram.
+Histograms are ideal for this because they represent a frequency distribution across many requests.
+They allow us to divide a set of data points into percentage-based segments, commonly known as percentiles.
+For example, the 95th percentile latency (P95) represents the value below which 95% of response times fall.
+A significant gap between P50 and higher percentiles suggests that a small percentage of requests experience 
+longer delays.
+A major challenge is that there is no unified definition of how to measure latency.
+We could measure the time a service spends processing application code, the time it takes to get a response 
+from a remote service, and so on.
+To interpret measurements correctly, it is vital to have information on what was measured.
+
+Let's use the meter to create a Histogram instrument.
+Refer to the semantic conventions for [HTTP Metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/) for an instrument name and preferred unit of measurement.
+To measure the time it took to serve the request, we'll create a timestamp at the beginning at the method
+and calculate the difference from the timestamp at the end of the method.
+
+
+First, add a global variable:
+
+```java { title="TodobackendApplication.java" }
+    private LongHistogram requestDuration;
+```
+
+Then initialize the instrument in the constructor:
+
+```java { title="TodobackendApplication.java" }
+    public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+        // ...
+  
+        requestDuration = meter.histogramBuilder("http.server.request.duration")
+            .setDescription("How long was a request processed on server side")
+            .setUnit("ms")
+            .ofLongs()
+            .build();
+    }
+```
+
+Finally, calculate the request duration in the method `addTodo`, like this:
+
+```java { title="TodobackendApplication.java" }
+    @PostMapping("/todos/{todo}")
+    String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
+
+        long start = System.currentTimeMillis();
+        
+        // ...
+      
+        long duration = System.currentTimeMillis() - start;
+        requestDuration.record(duration);
+        return todo;
+    } 
+```
+
+Again, restart the app. Try out different paths:
+
+```sh
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/slow; echo
+curl -XPOST localhost:8080/todos/slow; echo
+```
+
+The output will include a message like this:
+
+```sh
+... data=ImmutableHistogramData{aggregationTemporality=CUMULATIVE, points=[ImmutableHistogramPointData{getStartEpochNanos=1739887391007239250, getEpochNanos=1739887611011912531, getAttributes={}, getSum=2076.0, getCount=4, hasMin=true, getMin=3.0, hasMax=true, getMax=1005.0, getBoundaries=[0.0, 5.0, 10.0, 25.0, 50.0, 75.0, 100.0, 250.0, 500.0, 750.0, 1000.0, 2500.0, 5000.0, 7500.0, 10000.0], getCounts=[0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0] ...
+```
+
+Histograms do not store their values explicitly, but implicitly through aggregations (sum, count min, max) and buckets.
+Normally, we are not interested in the exact measured values, but the boundaries within which they lie.
+Thus, we define buckets via those mentioned (upper) boundaries and count how many values are measured 
+within these buckets. The boundaries are inclusive.
+
+In the example above we can read there was one request taking between 0 and 5 ms,
+another request taking within 75 to 100 ms and two requests taking between 1000 and 2500 ms.
+
+**Note:** Since the first upper boundary is 0.0, the first bucket is reserved only for the value 0.
+Furthermore, there are actually 16 buckets for 15 upper boundaries. There is always one implicit upper boundary for values
+exceeding the last explicit boundary. In this case, values greater than 10000. 
+You could call this last bucket the Inf+ bucket.
+
+#### Saturation
+
+All the previous metrics have been request-oriented.
+For completeness, we'll also capture some resource-oriented metrics.
+According to Google's SRE book, the fourth golden signal is called "[saturation](https://sre.google/sre-book/monitoring-distributed-systems/#saturation)".
+Unfortunately, the terminology is not well-defined.
+Brendan Gregg, a renowned expert in the field, defines saturation as the amount of work that a resource is unable to service.
+In other words, saturation is a backlog of unprocessed work.
+An example of a saturation metric would be the length of a queue.
+In contrast, utilization refers to the average time that a resource was busy servicing work.
+We usually measure utilization as a percentage over time.
+For example, 100% utilization means no more work can be accepted.
+If we go strictly by definition, both terms refer to separate concepts.
+One can lead to the other, but it doesn't have to.
+It would be perfectly possible for a resource to experience high utilization without any saturation.
+However, Google's definition of saturation, confusingly, resembles utilization.
+Let's put the matter of terminology aside.
+
+Let's measure the system cpu utilization. There is already a method `getCpuLoad` prepared, 
+which allows us to record values via gauge.
+
+Add another global variable:
+
+```java { title="TodobackendApplication.java" }
+    private ObservableDoubleGauge cpuLoad;
+```
+
+Then initialize the instrument in the constructor. This time we will use a callback function to record values.
+This callback function will be called everytime, the `MetricReader` observes the gauge instrument.
+As mentioned above, we have already configured a reading interval of 10s.
+
+```java { title="TodobackendApplication.java" }
+    public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+        // ...
+
+        cpuLoad = meter.gaugeBuilder("system.cpu.utilization")
+            .setDescription("The current system cpu utilization")
+            .setUnit("percent")
+            .buildWithCallback((measurement) -> measurement.record(this.getCpuLoad()));
+    }
+```
+
+That's it! We do not have to inline the instrument into any method, because of the callback function.
+
+Restart the app once more and wait until the `MetricReader` observes the gauge instrument.
+The log output will be written automatically.
+
+Run the `ab` command to apply load on the system. Examine the metrics rendered to the terminal.
+
+```sh
+# apache bench
+ab -n 50000 -c 100 http://localhost:8080/todos
+```
 
 ### Views
 

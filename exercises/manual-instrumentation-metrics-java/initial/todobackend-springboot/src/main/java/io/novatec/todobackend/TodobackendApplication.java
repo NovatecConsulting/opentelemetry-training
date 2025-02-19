@@ -1,5 +1,7 @@
 package io.novatec.todobackend;
 
+import java.lang.management.ManagementFactory;
+import com.sun.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +113,11 @@ public class TodobackendApplication {
 		todoRepository.deleteById(todo);
 		logger.info("DELETE /todos/ " + todo.toString());
 		return "removed " + todo;
+	}
+
+	double getCpuLoad() {
+		OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+		return osBean.getCpuLoad() * 100;
 	}
 
 	public static void main(String[] args) {
