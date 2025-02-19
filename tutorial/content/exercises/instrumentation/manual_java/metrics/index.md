@@ -681,7 +681,61 @@ ab -n 50000 -c 100 http://localhost:8080/todos
 
 ### Views
 
-TODO
+So far, we have seen how to generate some metrics.  
+Views let us customize how metrics are collected and output by the SDK.
+
+A view consists of two parts. First, you have to specify on which instruments the view should be applied via 
+the `InstrumentSelector`.
+Second, you define how the view should affect the selected instruments.
+You can select multiple instruments per view. Likewise, there are multiple views allowed to be registered for one instrument.
+
+Measurements are only exported, if there is at least one view defining an aggregation for them. 
+Since we haven't defined any view yet, how have we managed to export measurements into the terminal?
+The reason for that are the **default aggregations** for each instrument.
+For instance, a counter performs a `SumAggregation`, while a gauge defaults to `LastValueAggregation`.
+
+Views are much more powerful than just changing the instrument's aggregation. For example, we can specify a condition,
+to filter for attribute keys. An operator might want to drop metric dimensions because they are deemed unimportant, 
+to reduce memory usage and storage, prevent leaking sensitive information, and so on. If we pass an always failing condition,
+the SDK will no longer report separate counter for different URL paths.
+Moreover, if we pass Aggregation.drop() into a view, the SDK will ignore all measurements from the matched instruments.
+You have now seen some basic examples of how views let us match instruments and customize the metrics stream.
+
+First you have to import some more classes:
+
+```java { title="OpenTelemetryConfiguration.java" }
+import io.opentelemetry.sdk.metrics.InstrumentSelector;
+import io.opentelemetry.sdk.metrics.View;
+import io.opentelemetry.sdk.metrics.InstrumentType;
+import io.opentelemetry.sdk.metrics.Aggregation;
+```
+
+To add some views, you have to register them before building the `MeterProvider` in `OpenTelemetryConfiguration.java`.
+
+```java { title="OpenTelemetryConfiguration.java" }
+        SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
+                // ...
+                .registerView(
+                        InstrumentSelector.builder().setName("todobackend.requests.counter").build(),
+                        View.builder().setName("test-view").build() // Rename measurements
+                )
+                .registerView(
+                        InstrumentSelector.builder().setName("todobackend.requests.counter").build(),
+                        View.builder().setAttributeFilter((attr) -> false).build() // Remove attributes
+                )
+                .registerView(
+                        InstrumentSelector.builder().setType(InstrumentType.OBSERVABLE_GAUGE).build(),
+                        View.builder().setAggregation(Aggregation.drop()).build() // Drop measurements
+                )
+                .build();
+```
+
+After restarting the application, examine the different output when sending requests.
+
+```sh
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/slow; echo
+```
 
 <!--
 

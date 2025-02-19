@@ -104,7 +104,14 @@ public class TodobackendApplication {
 	}
 
 	boolean isValid(String todo) {
+
 		return todo != null && !todo.isBlank();
+	}
+
+	double getCpuLoad() {
+
+		OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+		return osBean.getCpuLoad() * 100;
 	}
 
 	@DeleteMapping("/todos/{todo}")
@@ -113,11 +120,6 @@ public class TodobackendApplication {
 		todoRepository.deleteById(todo);
 		logger.info("DELETE /todos/ " + todo.toString());
 		return "removed " + todo;
-	}
-
-	double getCpuLoad() {
-		OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-		return osBean.getCpuLoad() * 100;
 	}
 
 	public static void main(String[] args) {

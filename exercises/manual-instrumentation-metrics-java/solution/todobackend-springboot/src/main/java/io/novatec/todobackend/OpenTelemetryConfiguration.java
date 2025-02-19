@@ -14,11 +14,16 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.semconv.ServiceAttributes;
 
+import io.opentelemetry.sdk.metrics.InstrumentSelector;
+import io.opentelemetry.sdk.metrics.View;
+import io.opentelemetry.sdk.metrics.InstrumentType;
+import io.opentelemetry.sdk.metrics.Aggregation;
+
 @Configuration
 public class OpenTelemetryConfiguration {
 
     @Bean
-    public OpenTelemetry openTelemetry(){
+    public OpenTelemetry openTelemetry() {
 
         Resource resource = Resource.getDefault().toBuilder()
                 .put(ServiceAttributes.SERVICE_NAME, "todobackend")
@@ -32,6 +37,22 @@ public class OpenTelemetryConfiguration {
                                 .setInterval(Duration.ofSeconds(10))
                                 .build())
                 .setResource(resource)
+                .registerView(
+                        InstrumentSelector.builder().setName("todobackend.requests.counter").build(),
+                        View.builder().setName("test-view").build() // Rename measurements
+                )
+                .registerView(
+                        InstrumentSelector.builder().setName("todobackend.requests.counter").build(),
+                        View.builder().setAttributeFilter((attr) -> false).build() // Remove attributes
+                )
+                .registerView(
+                        InstrumentSelector.builder().build(),
+                        View.builder().build()
+                )
+                .registerView(
+                        InstrumentSelector.builder().setType(InstrumentType.OBSERVABLE_GAUGE).build(),
+                        View.builder().setAggregation(Aggregation.drop()).build() // Drop measurements
+                )
                 .build();
 
         OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
