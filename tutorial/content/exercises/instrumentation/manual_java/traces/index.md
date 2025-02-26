@@ -7,7 +7,6 @@ weight: 2
 
 ### Introduction
 
-
 #### Overview
 {{< figure src="images/create_tracer_configure_pipeline.drawio.png" width=800 caption="Overview of OpenTelemetry's tracing signal" >}}
 Let's start with a quick recap of the components.
@@ -24,7 +23,7 @@ The purpose of the exercises is to learn about the anatomy of spans and OpenTele
 It does not provide a realistic deployment scenario.
 In this lab, we output spans to the local console to keep things simple and export it to [Jaeger](https://github.com/jaegertracing/jaeger) to show multiple ways of exporting.
 
-## Learning Objectives
+#### Learning Objectives
 By the end of this lab, you will be able to:
 - Apply manual instrumentation for tracing to a Java application 
 - Use the OpenTelemetry API and configure the SDK to generate spans

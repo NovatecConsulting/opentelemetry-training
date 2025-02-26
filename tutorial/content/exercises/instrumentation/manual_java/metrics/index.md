@@ -117,10 +117,6 @@ Add the following dependencies. Do not add the dots (...). Just embed the depend
             <artifactId>opentelemetry-exporter-logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-exporter-otlp</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
             <artifactId>opentelemetry-semconv</artifactId>
             <version>1.29.0-alpha</version>
