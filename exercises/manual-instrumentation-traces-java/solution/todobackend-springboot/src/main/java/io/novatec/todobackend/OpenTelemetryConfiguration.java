@@ -1,15 +1,14 @@
 package io.novatec.todobackend;
 
 import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-//Basic Otel API & SDK
+//Basic OTel API & SDK
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.exporter.logging.LoggingSpanExporter;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 
@@ -17,6 +16,14 @@ import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.semconv.ServiceAttributes;
+
+//Exporter
+import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
+
+//Propagation
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.propagation.ContextPropagators;
 
 @Configuration
 public class OpenTelemetryConfiguration {
@@ -41,8 +48,11 @@ public class OpenTelemetryConfiguration {
 				.setResource(resource)
 				.build();
 
+		ContextPropagators contextPropagators = ContextPropagators.create(W3CTraceContextPropagator.getInstance());
+
 		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
 				.setTracerProvider(sdkTracerProvider)
+				.setPropagators(contextPropagators)
 				.build();
 
 		return openTelemetry;

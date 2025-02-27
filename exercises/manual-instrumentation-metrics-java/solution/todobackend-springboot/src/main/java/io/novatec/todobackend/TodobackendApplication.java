@@ -40,7 +40,6 @@ public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
 
-	private OpenTelemetry openTelemetry;
 	private Meter meter;
 	private LongCounter counter;
 	private LongCounter errorCounter;
@@ -58,7 +57,6 @@ public class TodobackendApplication {
 
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 
-		this.openTelemetry = openTelemetry;
 		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
 
 		counter = meter.counterBuilder("todobackend.requests.counter")

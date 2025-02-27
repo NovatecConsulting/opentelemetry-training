@@ -221,8 +221,7 @@ Make sure the global variables at the top of the class are present:
 public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
-
-	private OpenTelemetry openTelemetry;
+    
 	private Meter meter;
 ```
 
@@ -232,7 +231,6 @@ In this constuctor we instantiate the OpenTelemetry and Meter object and make th
 ```java { title="TodobackendApplication.java" }
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
     
-		this.openTelemetry = openTelemetry;
 		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
 	}
 ```

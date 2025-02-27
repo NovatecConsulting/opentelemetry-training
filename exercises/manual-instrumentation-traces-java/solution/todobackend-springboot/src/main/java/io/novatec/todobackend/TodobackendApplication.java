@@ -3,8 +3,12 @@ package io.novatec.todobackend;
 import static io.opentelemetry.api.common.AttributeKey.booleanKey;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.context.propagation.TextMapGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +46,8 @@ public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
 
-	private OpenTelemetry openTelemetry;
 	private Tracer tracer;
+	private ContextPropagators contextPropagators;
 
 	@Value("${HOSTNAME:not_set}")
 	String hostname;
@@ -55,8 +59,9 @@ public class TodobackendApplication {
 	TodoRepository todoRepository;
 
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
-		this.openTelemetry = openTelemetry;
-		tracer = this.openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+
+		this.tracer = openTelemetry.getTracer(TodobackendApplication.class.getName(), "0.1.0");
+		this.contextPropagators = openTelemetry.getPropagators();
 	}
 
 	private String getInstanceId() {
@@ -94,7 +99,13 @@ public class TodobackendApplication {
 	@PostMapping("/todos/{todo}")
 	String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo) {
 
-		Span span = tracer.spanBuilder("addTodo").setSpanKind(SpanKind.SERVER).startSpan();
+		Context parentContext = contextPropagators.getTextMapPropagator()
+				.extract(Context.current(), request, new HttpRequestGetter());
+
+		Span span = tracer.spanBuilder("addTodo")
+				.setParent(parentContext)
+				.setSpanKind(SpanKind.SERVER)
+				.startSpan();
 
 		boolean valid = this.isValid(todo);
 		span.addEvent("todo validated", Attributes.of(booleanKey("valid"), valid));
@@ -166,6 +177,19 @@ public class TodobackendApplication {
 		SpringApplication.run(TodobackendApplication.class, args);
 	}
 
+}
+
+class HttpRequestGetter implements TextMapGetter<HttpServletRequest> {
+
+	@Override
+	public Iterable<String> keys(HttpServletRequest carrier) {
+		return Collections.list(carrier.getHeaderNames());
+	}
+
+	@Override
+	public String get(HttpServletRequest carrier, String key) {
+		return carrier.getHeader(key);
+	}
 }
 
 @Entity
