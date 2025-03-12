@@ -33,7 +33,7 @@ By the end of this lab, you will be able to:
 
 #### How to perform the exercises
 
-This lab excercise demonstrates how to collect metrics from a Java application.
+This lab exercise demonstrates how to collect metrics from a Java application.
 The purpose of the exercises is to learn about OpenTelemetry's metrics signal.
 
 In production, we typically collect, store and query metrics in a dedicated backend such as [Prometheus](https://github.com/prometheus/prometheus).
@@ -45,17 +45,14 @@ The environment consists of a Java service that we want to instrument.
 
 * This exercise is based on the following repository [repository](https://github.com/NovatecConsulting/opentelemetry-training/) 
 * All exercises are in the subdirectory `exercises`. There is also an environment variable `$EXERCISES` pointing to this directory. All directories given are relative to this one.
-* Initial directory: `manual-instrumentation-java/initial`
-* Solution directory: `manual-instrumentation-java/solution`
-* Java/Spring Boot backend component: `manual-instrumentation-java/initial/todobackend-springboot`
-
-Note: If you have just previously finished the exercises for `traces` you can continue using the same source code.
-The handling of the meter API is similar to the tracing one. So you won't have to repeat all the initial setup steps, just fill in the deltas.
+* Initial directory: `manual-instrumentation-metrics-java/initial`
+* Solution directory: `manual-instrumentation-metrics-java/solution`
+* Java/Spring Boot backend component: `manual-instrumentation-metrics-java/initial/todobackend-springboot`
 
 The environment consists of one component:
-1. a Spring Boot REST API service
+- Spring Boot REST API service
     - uses [Spring Boot ](https://www.spring.io) framework
-    - listens on port 8080 and serves serveral CRUD style HTTP endpoints
+    - listens on port 8080 and serves several CRUD style HTTP endpoints
     - simulates an application we want to instrument
 
 
@@ -66,7 +63,7 @@ Navigate to
 
 ```sh
 cd $EXERCISES
-cd manual-instrumentation-java/initial/todobackend-springboot
+cd manual-instrumentation-metrics-java/initial/todobackend-springboot
 ```
 
 Run:
@@ -91,7 +88,7 @@ You should see a response of the following type:
 ```
 
 To keep things concise, code snippets only contain what's relevant to that step.
-If you get stuck, you can find the solution in the `exercises/manual-instrumentation-java/solution`
+If you get stuck, you can find the solution in the `exercises/manual-instrumentation-metrics-java/solution`
 
 ---
 
@@ -120,13 +117,9 @@ Add the following dependencies. Do not add the dots (...). Just embed the depend
             <artifactId>opentelemetry-exporter-logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-exporter-otlp</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.opentelemetry.semconv</groupId>
             <artifactId>opentelemetry-semconv</artifactId>
-            <version>1.26.0-alpha</version>
+            <version>1.29.0-alpha</version>
         </dependency>
         ...
 	</dependencies>
@@ -153,13 +146,14 @@ Within the same file add the following code snippet
 ```
 
 Within the folder of the main application file `TodobackendApplication.java` add a new file called `OpenTelemetryConfiguration.java`.
-We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. It is recommended to edit the file not via command line, but to use your built-in editor.
+We'll use it to separate tracing-related configuration from the main application. The folder is `manual-instrumentation-metrics-java/initial/todobackend-springboot/src/main/java/io/novatec/todobackend`. It is recommended to edit the file not via command line, but to use your built-in editor.
 
 Add the following content to this file:
 
 ```java { title="OpenTelemetryConfiguration.java" }
 package io.novatec.todobackend;
 
+import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -167,17 +161,23 @@ import org.springframework.context.annotation.Configuration;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.semconv.ResourceAttributes;
+import io.opentelemetry.semconv.ServiceAttributes;
 
+//Metrics
+import io.opentelemetry.exporter.logging.LoggingMetricExporter;
+import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 
-@SuppressWarnings("deprecation")
 @Configuration
 public class OpenTelemetryConfiguration {
 
     @Bean
-	public OpenTelemetry openTelemetry(){
+	public OpenTelemetry openTelemetry() {
 
-		Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "todobackend").put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+		Resource resource = Resource.getDefault().toBuilder()
+                .put(ServiceAttributes.SERVICE_NAME, "todobackend")
+                .put(ServiceAttributes.SERVICE_VERSION, "0.1.0")
+                .build();
 
 		SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
 				.registerMetricReader(
@@ -198,30 +198,19 @@ public class OpenTelemetryConfiguration {
 }
 ```
 
-Note: If you have done the metrics lab before you can of course add the meter and tracer provider to the same `openTelemetry` object.
-Your integrated code will look like this then:
-
-
-```java { title="OpenTelemetryConfiguration.java" }
-		OpenTelemetry openTelemetry = OpenTelemetrySdk.builder()
-				.setTracerProvider(sdkTracerProvider)
-				.setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-				.setMeterProvider(sdkMeterProvider)
-				.build();
-```
-
 Let’s begin by importing OpenTelemetry’s meter API and the MeterProvider from the SDK in our main Java application as shown below. 
-Open `TodobackendApplication.java` in your editor and tart by addind the following import statements. Place them below the already existing ones:
+Open `TodobackendApplication.java` in your editor and tart by adding the following import statements. Place them below the already existing ones:
 
 ```java { title="TodobackendApplication.java" }
 
 import io.opentelemetry.api.OpenTelemetry;
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
-
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.LongHistogram;
+import io.opentelemetry.api.metrics.ObservableDoubleGauge;
 import io.opentelemetry.api.metrics.Meter;
+
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
 
 ```
 
@@ -232,8 +221,7 @@ Make sure the global variables at the top of the class are present:
 public class TodobackendApplication {
 
 	private Logger logger = LoggerFactory.getLogger(TodobackendApplication.class);
-
-	private OpenTelemetry openTelemetry;
+    
 	private Meter meter;
 ```
 
@@ -242,9 +230,8 @@ In this constuctor we instantiate the OpenTelemetry and Meter object and make th
 
 ```java { title="TodobackendApplication.java" }
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
-		this.openTelemetry = openTelemetry;
+    
 		meter = openTelemetry.getMeter(TodobackendApplication.class.getName());
-
 	}
 ```
 
@@ -275,54 +262,52 @@ Initialize it in the constructor of the class:
 ```java { title="TodobackendApplication.java" }
 	public TodobackendApplication(OpenTelemetry openTelemetry) {
 
-        ...
+        // ...
 
 		counter = meter.counterBuilder("todobackend.requests.counter")
-				.setDescription("How many times the GET call has been invoked.")
+				.setDescription("How many times an endpoint has been invoked")
 				.setUnit("requests")
 				.build();
-
 	}
 ```
 
 Now that the application is ready to generate metrics let's start focussing on the method to be instrumented.
 
-Locate the `getTodos` method which initially looks like this:
+Locate the `addTodo` method which initially looks like this:
 
 ```java { title="TodobackendApplication.java" }
-	@GetMapping("/todos/")
-	List<String> getTodos() {
+    @PostMapping("/todos/{todo}")
+    String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
+    
+        this.someInternalMethod(todo);
 
-		List<String> todos = new ArrayList<String>();
+        logger.info("POST /todos/ "+todo.toString());
 
-		todoRepository.findAll().forEach(todo -> todos.add(todo.getTodo()));
-		logger.info("GET /todos/ " + todos.toString());
-
-		return todos;
-	}
+        return todo;
+} 
 ```
 
 Add a single line here:
 
 ```java { title="TodobackendApplication.java" }
-	@GetMapping("/todos/")
-	List<String> getTodos() {
+    @PostMapping("/todos/{todo}")
+    String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
 
-		List<String> todos = new ArrayList<String>();
+        counter.add(1);
+        this.someInternalMethod(todo);
+        
+        logger.info("POST /todos/ "+todo.toString());
 
-		todoRepository.findAll().forEach(todo -> todos.add(todo.getTodo()));
-		logger.info("GET /todos/ " + todos.toString());
-		counter.add(1);
-
-		return todos;
-	}
+        return todo;
+} 
 ```
 
-So whenever the method gets invoked the counter will be incremented by one. However this applies only to this specific REST call.
+So whenever the method gets invoked the counter will be incremented by one. However, this applies only to this 
+specific REST call.
 
 Let's test the behaviour. Go back to your terminal and execute the following command.
 
-In case your application is not running any more, start it in the first terminal:
+In case your application is not running anymore, start it in the first terminal:
 
 ```sh
 mvn spring-boot:run    
@@ -331,29 +316,29 @@ mvn spring-boot:run
 In your second terminal issue the REST request again.
 
 ```sh
-curl -XGET localhost:8080/todos/; echo
+curl -XPOST localhost:8080/todos/NEW; echo
 ```
 
 Observe the logs in your main terminal, this should display something like:
 
 ```sh
-2024-07-25T12:23:47.929Z  INFO 20323 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : GET /todos/ []
+2024-07-25T12:23:47.929Z  INFO 20323 --- [springboot-backend ] [nio-8080-exec-1] i.n.todobackend.TodobackendApplication   : GET /ping/tom
 2024-07-25T12:23:54.267Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : Received a collection of 1 metrics for export.
 2024-07-25T12:23:54.267Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=io.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1721910224265851430, epochNanos=1721910234267050129, attributes={}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
 ```
 
 The second line of logs written by the `LoggingMetricExporter` contains the information we just generated: `value=1`.
 
-You will probably notice that this logging is continously repeated (every 10 seconds).
+You will probably notice that this logging is continuously repeated (every 10 seconds).
 
-This because we specified this behaviour in the configuration class:
+This happens because we specified this behaviour in the configuration class:
 
 ```java { title="OpenTelemetryConfiguration.java" }
 		SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
 				.registerMetricReader(
 					PeriodicMetricReader
 						.builder(LoggingMetricExporter.create())
-						.setInterval(Duration.ofSeconds(10))
+						.setInterval(Duration.ofSeconds(10)) // <-- reading interval
 						.build())
 				.setResource(resource)
 				.build();
@@ -365,51 +350,90 @@ The standard interval is 60 seconds. We apply 10 seconds here for demo purposes.
 Now, let's generate some more invocations in the other terminal window:
 
 ```sh
-curl -XGET localhost:8080/todos/; echo
-curl -XGET localhost:8080/todos/; echo
-curl -XGET localhost:8080/todos/; echo
-curl -XGET localhost:8080/todos/; echo
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/NEW; echo
 ```
 
 With the next log statement in the main application window you should now see the value counts up to 5 now.
+
+### Metric dimensions
 
 The API also provides the possibility to add attributes to the metric data.
 
 Change the counter statement in the following way:
 
 ```java { title="TodobackendApplication.java" }
-	@GetMapping("/todos/")
-	List<String> getTodos() {
+    import java.util.jar.Attributes;
 
-        ...
-		counter.add(1,Attributes.of(stringKey("http.method"), "GET"));
-        ...
+@PostMapping("/todos/{todo}")
+String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo) {
 
-	}
+  counter.add(1, Attributes.of(stringKey("todo"), todo));
+  // ...
+} 
 ```
 
-After generating some more traffic, you will see that the logging statement has changed to this:
+Again, let's generate some more invocations in another terminal window. This time use different paths like:
 
 ```sh
-2024-07-25T12:50:09.567Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=io.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1721911669561139043, epochNanos=1721911809567179469, attributes={http.method="GET"}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/fail; echo
 ```
-
-The attributes are now listed, too:
 
 ```sh
-..., attributes={http.method="GET"}, value=1, ...
+2024-07-25T12:50:09.567Z  INFO 20323 --- [springboot-backend ] [cMetricReader-1] i.o.e.logging.LoggingMetricExporter      : metric: ImmutableMetricData{resource=Resource{schemaUrl=null, attributes={service.name="todobackend", service.version="0.1.0", telemetry.sdk.language="java", telemetry.sdk.name="opentelemetry", telemetry.sdk.version="1.40.0"}}, instrumentationScopeInfo=InstrumentationScopeInfo{name=io.novatec.todobackend.TodobackendApplication, version=null, schemaUrl=null, attributes={}}, name=todobackend.requests.counter, description=How many times the GET call has been invoked., unit=requests, type=LONG_SUM, data=ImmutableSumData{points=[ImmutableLongPointData{startEpochNanos=1739878114992659966, epochNanos=1739878504997396355, attributes={todo="NEW"}, value=1, exemplars=[]}, ImmutableLongPointData{startEpochNanos=1739878114992659966, epochNanos=1739878504997396355, attributes={todo="fail"}, value=1, exemplars=[]}], monotonic=true, aggregationTemporality=CUMULATIVE}}
 ```
 
-The hands-on exercise completes with this step.
+The attributes are now listed, too. Do you notice something?
+
+```sh
+..., attributes={todo="NEW"}, value=1, ..., attributes={todo="fail"}, value=1, ...
+```
+
+We can conclude that the instrument reports separate counters for each unique combination of attributes.
+This can be incredibly useful.
+For example, if we pass the status code of a request as an attribute, we can track distinct counters 
+for successes and errors.
+While it is tempting to be more specific, we have to be careful with introducing new metric dimensions.
+The number of attributes and the range of values can quickly lead to many unique combinations.
+High cardinality means we have to keep track of numerous distinct time series, which leads to increased 
+storage requirements, network traffic, and processing overhead.
+Moreover, specific metrics may have less aggregative quality, which can make it harder to derive 
+meaningful insights.
+
+In conclusion, the selection of metric dimensions is a delicate balancing act. 
+Metrics with high cardinality can lead to numerous unique combinations. They result from 
+introducing many attributes or a wide range of values, like IDs or error messages. This can 
+increase storage requirements, network traffic, and processing overhead, as each unique combination 
+of attributes represents a distinct time series that must be tracked. Moreover, metrics with low 
+aggregative quality may be less useful when aggregated, making it more challenging to derive meaningful 
+insights from the data. Therefore, it is essential to carefully consider the dimensions of the metrics 
+to ensure that they are both informative and manageable within the constraints of the monitoring system.
+
+
+### Instruments
 
 We've used a simple counter instrument to generate a metric. The API however is capable of more here.
 
-So far, everything was fairly similar to the tracing lab. In contrast to tracers however, we do not use meters directly to generate metrics.
+So far, everything was fairly similar to the tracing lab. In contrast to tracers however, we do not use meters 
+directly to generate metrics.
 
 Instead, meters produce (and are associated with) a set of [`instruments`](https://opentelemetry-python.readthedocs.io/en/latest/api/metrics.html#opentelemetry.metrics.Instrument).
-An instrument reports `measurements`, which represent a data point reflecting the state of a metric at a particular point in time. So a meter can be seen as a factory for creating instruments and is associated with a specific library or module in your application. Instruments are the objects that you use to record metrics and represent specific metric types, such as counters, gauges, or histograms. Each instrument has a unique name and is associated with a specific meter. Measurements are the individual data points that instruments record, representing the current state of a metric at a specific moment in time. Data points are the aggregated values of measurements over a period of time, used to analyze the behavior of a metric over time, such as identifying trends or anomalies.
+An instrument reports `measurements`, which represent a data point reflecting the state of a metric at a particular 
+point in time. So a meter can be seen as a factory for creating instruments and is associated with a specific 
+library or module in your application. Instruments are the objects that you use to record metrics and represent 
+specific metric types, such as counters, gauges, or histograms. Each instrument has a unique name and is associated 
+with a specific meter. Measurements are the individual data points that instruments record, representing the 
+current state of a metric at a specific moment in time. Data points are the aggregated values of measurements over 
+a period of time, used to analyze the behavior of a metric over time, such as identifying trends or anomalies.
 
-To illustrate this, consider a scenario where you want to measure the number of requests to a web server. You would use a meter to create an instrument, such as a counter, which is designed to track the number of occurrences of an event. Each time a request is made to the server, the counter instrument records a measurement, which is a single data point indicating that a request has occurred. Over time, these measurements are aggregated into data points, which provide a summary of the metric's behavior, such as the total number of requests received.
+To illustrate this, consider a scenario where you want to measure the number of requests to a web server. 
+You would use a meter to create an instrument, such as a counter, which is designed to track the number of 
+occurrences of an event. Each time a request is made to the server, the counter instrument records a measurement, 
+which is a single data point indicating that a request has occurred. Over time, these measurements are aggregated 
+into data points, which provide a summary of the metric's behavior, such as the total number of requests received.
 
 {{< figure src="images/instrument_types.drawio.png" width=600 caption="overview of different instruments" >}}
 
@@ -419,10 +443,293 @@ OpenTelemetry provides different types of instruments to measure various aspects
 - `Counters` are used for monotonically increasing values, such as the total number of requests handled by a server.
 - `UpAndDownCounters` are used to track values that can both increase and decrease, like the number of active connections to a database
 - [`Gauge`](https://opentelemetry.io/docs/specs/otel/metrics/data-model/#gauge) instruments reflect the state of a value at a given time, such as the current memory usage of a process.
-- `Histogram` instruments are used to analyze the distribution of how frequently a value occurs, which can help identify trends or anomalies in the data.
+- `Histogram`(https://opentelemetry.io/docs/specs/otel/metrics/data-model/#histogram) instruments are used to analyze the distribution of how frequently a value occurs, which can help identify trends or anomalies in the data.
+  
+Each type of instrument, except for histograms, has a synchronous and asynchronous variant. 
+Synchronous instruments are invoked in line with the application code, while asynchronous instruments register 
+a callback function that is invoked on demand. This allows for more efficient and flexible metric collection, 
+especially in scenarios where the metric value is expensive to compute or when the metric value changes infrequently.
 
-Each type of instrument, except for histograms, has a synchronous and asynchronous variant. Synchronous instruments are invoked in line with the application code, while asynchronous instruments register a callback function that is invoked on demand. This allows for more efficient and flexible metric collection, especially in scenarios where the metric value is expensive to compute or when the metric value changes infrequently.
 
+### Measure golden signals
+
+{{< figure src="images/resource_workload_analysis.PNG" width=600 caption="workload and resource analysis" >}}
+
+Now, let's put our understanding of the metrics signal to use.
+Before we do that, we must address an important question: *What* do we measure?
+Unfortunately, the answer is anything but simple.
+Due to the vast amount of events within a system and many statistical measures to calculate, there are nearly infinite things to measure.
+A catch-all approach is cost-prohibitive from a computation and storage point, increases the noise which makes it harder to find important signals, leads to alert fatigue, and so on.
+The term metric refers to a statistic that we consciously chose to collect because we deem it to be *important*.
+Important is a deliberately vague term, because it means different things to different people.
+A system administrator typically approaches an investigation by looking at the utilization or saturation of physical system resources.
+A developer is usually more interested in how the application responds, looking at the applied workload, response times, error rates, etc.
+In contrast, a customer-centric role might look at more high-level indicators related to contractual obligations (e.g. as defined by an SLA), business outcomes, and so on.
+The details of different monitoring perspectives and methodologies (such as [USE](https://www.brendangregg.com/usemethod.html) and RED) are beyond the scope of this lab.
+However, the [four golden signals](https://sre.google/sre-book/monitoring-distributed-systems/#xref_monitoring_golden-signals) of observability often provide a good starting point:
+
+- **Traffic**: volume of requests handled by the system
+- **Errors**: rate of failed requests
+- **Latency**: the amount of time it takes to serve a request
+- **Saturation**: how much of a resource is being consumed at a given time
+
+We have already shown how to measure the total amount of traffic in the previous chapters.
+Thus, let's continue with the remaining signals.
+
+#### Error rate
+
+As a next step, let's track the error rate of creating new todos. Create a separate Counter instrument.
+Ultimately, the decision of what constitutes a failed request is up to us.
+In this example, we'll simply refer to the name of the todo.
+
+First, add another global variable to the class called:
+
+```java { title="TodobackendApplication.java" }
+	private LongCounter errorCounter;
+```
+
+Initialize it in the constructor of the class:
+
+```java { title="TodobackendApplication.java" }
+	public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+        // ...
+
+        errorCounter = meter.counterBuilder("todobackend.requests.errors")
+				.setDescription("How many times an error occurred")
+				.setUnit("requests")
+				.build();
+	}
+```
+
+Then include the `errorCounter` inside `someInternalMethod` like this:
+
+```java { title="TodobackendApplication.java" }
+	String someInternalMethod(String todo) {
+
+     //...
+  
+      if(todo.equals("fail")){
+    
+        errorCounter.add(1);
+        System.out.println("Failing ...");
+        throw new RuntimeException();
+      }
+    
+      return todo;
+}
+```
+
+Restart the app. When sending a fail request, you will see the error counter in the log output
+
+```sh
+curl -XPOST localhost:8080/todos/fail; echo
+```
+
+#### Latency
+
+The time it takes a service to process a request is a crucial indicator of potential problems.
+The tracing lab showed that spans contain timestamps that measure the duration of an operation.
+Traces allow us to analyze latency in a specific transaction.
+However, in practice, we often want to monitor the overall latency for a given service.
+While it is possible to compute this from span metadata, converting between telemetry signals is not very practical.
+For example, since capturing traces for every request is resource-intensive, we might want to use 
+sampling to reduce overhead.
+Depending on the strategy, sampling may increase the probability that outlier events are missed.
+Therefore, we typically analyze the latency via a Histogram.
+Histograms are ideal for this because they represent a frequency distribution across many requests.
+They allow us to divide a set of data points into percentage-based segments, commonly known as percentiles.
+For example, the 95th percentile latency (P95) represents the value below which 95% of response times fall.
+A significant gap between P50 and higher percentiles suggests that a small percentage of requests experience 
+longer delays.
+A major challenge is that there is no unified definition of how to measure latency.
+We could measure the time a service spends processing application code, the time it takes to get a response 
+from a remote service, and so on.
+To interpret measurements correctly, it is vital to have information on what was measured.
+
+Let's use the meter to create a Histogram instrument.
+Refer to the semantic conventions for [HTTP Metrics](https://opentelemetry.io/docs/specs/semconv/http/http-metrics/) for an instrument name and preferred unit of measurement.
+To measure the time it took to serve the request, we'll create a timestamp at the beginning at the method
+and calculate the difference from the timestamp at the end of the method.
+
+
+First, add a global variable:
+
+```java { title="TodobackendApplication.java" }
+    private LongHistogram requestDuration;
+```
+
+Then initialize the instrument in the constructor:
+
+```java { title="TodobackendApplication.java" }
+    public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+        // ...
+  
+        requestDuration = meter.histogramBuilder("http.server.request.duration")
+            .setDescription("How long was a request processed on server side")
+            .setUnit("ms")
+            .ofLongs()
+            .build();
+    }
+```
+
+Finally, calculate the request duration in the method `addTodo`, like this:
+
+```java { title="TodobackendApplication.java" }
+    @PostMapping("/todos/{todo}")
+    String addTodo(HttpServletRequest request, HttpServletResponse response, @PathVariable String todo){
+
+        long start = System.currentTimeMillis();
+        
+        // ...
+      
+        long duration = System.currentTimeMillis() - start;
+        requestDuration.record(duration);
+        return todo;
+    } 
+```
+
+Again, restart the app. Try out different paths:
+
+```sh
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/slow; echo
+curl -XPOST localhost:8080/todos/slow; echo
+```
+
+The output will include a message like this:
+
+```sh
+... data=ImmutableHistogramData{aggregationTemporality=CUMULATIVE, points=[ImmutableHistogramPointData{getStartEpochNanos=1739887391007239250, getEpochNanos=1739887611011912531, getAttributes={}, getSum=2076.0, getCount=4, hasMin=true, getMin=3.0, hasMax=true, getMax=1005.0, getBoundaries=[0.0, 5.0, 10.0, 25.0, 50.0, 75.0, 100.0, 250.0, 500.0, 750.0, 1000.0, 2500.0, 5000.0, 7500.0, 10000.0], getCounts=[0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0] ...
+```
+
+Histograms do not store their values explicitly, but implicitly through aggregations (sum, count min, max) and buckets.
+Normally, we are not interested in the exact measured values, but the boundaries within which they lie.
+Thus, we define buckets via those mentioned (upper) boundaries and count how many values are measured 
+within these buckets. The boundaries are inclusive.
+
+In the example above we can read there was one request taking between 0 and 5 ms,
+another request taking within 75 to 100 ms and two requests taking between 1000 and 2500 ms.
+
+**Note:** Since the first upper boundary is 0.0, the first bucket is reserved only for the value 0.
+Furthermore, there are actually 16 buckets for 15 upper boundaries. There is always one implicit upper boundary for values
+exceeding the last explicit boundary. In this case, values greater than 10000. 
+You could call this last bucket the Inf+ bucket.
+
+#### Saturation
+
+All the previous metrics have been request-oriented.
+For completeness, we'll also capture some resource-oriented metrics.
+According to Google's SRE book, the fourth golden signal is called "[saturation](https://sre.google/sre-book/monitoring-distributed-systems/#saturation)".
+Unfortunately, the terminology is not well-defined.
+Brendan Gregg, a renowned expert in the field, defines saturation as the amount of work that a resource is unable to service.
+In other words, saturation is a backlog of unprocessed work.
+An example of a saturation metric would be the length of a queue.
+In contrast, utilization refers to the average time that a resource was busy servicing work.
+We usually measure utilization as a percentage over time.
+For example, 100% utilization means no more work can be accepted.
+If we go strictly by definition, both terms refer to separate concepts.
+One can lead to the other, but it doesn't have to.
+It would be perfectly possible for a resource to experience high utilization without any saturation.
+However, Google's definition of saturation, confusingly, resembles utilization.
+Let's put the matter of terminology aside.
+
+Let's measure the system cpu utilization. There is already a method `getCpuLoad` prepared, 
+which allows us to record values via gauge.
+
+Add another global variable:
+
+```java { title="TodobackendApplication.java" }
+    private ObservableDoubleGauge cpuLoad;
+```
+
+Then initialize the instrument in the constructor. This time we will use a callback function to record values.
+This callback function will be called everytime, the `MetricReader` observes the gauge instrument.
+As mentioned above, we have already configured a reading interval of 10s.
+
+```java { title="TodobackendApplication.java" }
+    public TodobackendApplication(OpenTelemetry openTelemetry) {
+
+        // ...
+
+        cpuLoad = meter.gaugeBuilder("system.cpu.utilization")
+            .setDescription("The current system cpu utilization")
+            .setUnit("percent")
+            .buildWithCallback((measurement) -> measurement.record(this.getCpuLoad()));
+    }
+```
+
+That's it! We do not have to inline the instrument into any method, because of the callback function.
+
+Restart the app once more and wait until the `MetricReader` observes the gauge instrument.
+The log output will be written automatically.
+
+Run the `ab` command to apply load on the system. Examine the metrics rendered to the terminal.
+
+```sh
+# apache bench
+ab -n 50000 -c 100 http://localhost:8080/todos
+```
+
+### Views
+
+So far, we have seen how to generate some metrics.  
+Views let us customize how metrics are collected and output by the SDK.
+
+A view consists of two parts. First, you have to specify on which instruments the view should be applied via 
+the `InstrumentSelector`.
+Second, you define how the view should affect the selected instruments.
+You can select multiple instruments per view. Likewise, there are multiple views allowed to be registered for one instrument.
+
+Measurements are only exported, if there is at least one view defining an aggregation for them. 
+Since we haven't defined any view yet, how have we managed to export measurements into the terminal?
+The reason for that are the **default aggregations** for each instrument.
+For instance, a counter performs a `SumAggregation`, while a gauge defaults to `LastValueAggregation`.
+
+Views are much more powerful than just changing the instrument's aggregation. For example, we can specify a condition,
+to filter for attribute keys. An operator might want to drop metric dimensions because they are deemed unimportant, 
+to reduce memory usage and storage, prevent leaking sensitive information, and so on. If we pass an always failing condition,
+the SDK will no longer report separate counter for different URL paths.
+Moreover, if we pass Aggregation.drop() into a view, the SDK will ignore all measurements from the matched instruments.
+You have now seen some basic examples of how views let us match instruments and customize the metrics stream.
+
+First you have to import some more classes:
+
+```java { title="OpenTelemetryConfiguration.java" }
+import io.opentelemetry.sdk.metrics.InstrumentSelector;
+import io.opentelemetry.sdk.metrics.View;
+import io.opentelemetry.sdk.metrics.InstrumentType;
+import io.opentelemetry.sdk.metrics.Aggregation;
+```
+
+To add some views, you have to register them before building the `MeterProvider` in `OpenTelemetryConfiguration.java`.
+
+```java { title="OpenTelemetryConfiguration.java" }
+        SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
+                // ...
+                .registerView(
+                        InstrumentSelector.builder().setName("todobackend.requests.counter").build(),
+                        View.builder().setName("test-view").build() // Rename measurements
+                )
+                .registerView(
+                        InstrumentSelector.builder().setName("todobackend.requests.counter").build(),
+                        View.builder().setAttributeFilter((attr) -> false).build() // Remove attributes
+                )
+                .registerView(
+                        InstrumentSelector.builder().setType(InstrumentType.OBSERVABLE_GAUGE).build(),
+                        View.builder().setAggregation(Aggregation.drop()).build() // Drop measurements
+                )
+                .build();
+```
+
+After restarting the application, examine the different output when sending requests.
+
+```sh
+curl -XPOST localhost:8080/todos/NEW; echo
+curl -XPOST localhost:8080/todos/slow; echo
+```
 
 <!--
 
