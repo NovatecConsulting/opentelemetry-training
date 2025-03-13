@@ -2,7 +2,6 @@
 title: "Logs"
 date: 2024-01-02T09:26:24+01:00
 draft: false
-hidden: true
 weight: 4
 ---
 
@@ -13,7 +12,7 @@ weight: 4
 Logs are one of the main pillars of observability and part of the MELT acronym (Logs, Metrics, Traces and Events) 
 and is therefore incredibly important to determine the behavior and health of a system. Logs have the longest 
 legacy among all the signals. For decades simple instructions were used to print debug output to files or stdout 
-like `Sytem.out.println("Hello, World!")` in Java, `print('Hello, World!')` in Python or the 
+like `System.out.println("Hello, World!")` in Java, `print('Hello, World!')` in Python or the 
 `println!("Hello, World!")` Macro in Rust. Thereby Logs can represent any data you want. It could be structured 
 data like `JSON`
 
