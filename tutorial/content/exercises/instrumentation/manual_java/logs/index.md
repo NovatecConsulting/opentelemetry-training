@@ -251,9 +251,9 @@ After the app has started, send some request in your second terminal to call the
 After sending a request, you should see an output like this:
 
 ```ssh
-09:25:34.346 [http-nio-8080-exec-1] INFO  i.n.t.TodobackendApplication - GET /todos/ []
-2024-07-21T09:25:34.346Z INFO 'GET /todos/' : dfd9f9db58f468fa274f48462b994098 f32233cb857d7177 [scopeInfo: io.novatec.todobackend.TodobackendApplication:] {http.request.method="GET"}
-09:25:34.346 [http-nio-8080-exec-1] INFO  i.o.e.logging.LoggingSpanExporter - 'getTodos' : dfd9f9db58f468fa274f48462b994098 f32233cb857d7177 INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
+1: 09:25:34.346 [http-nio-8080-exec-1] INFO  i.n.t.TodobackendApplication - GET /todos/ []
+2: 2024-07-21T09:25:34.346Z INFO 'GET /todos/' : dfd9f9db58f468fa274f48462b994098 f32233cb857d7177 [scopeInfo: io.novatec.todobackend.TodobackendApplication:] {http.request.method="GET"}
+3: 09:25:34.346 [http-nio-8080-exec-1] INFO  i.o.e.logging.LoggingSpanExporter - 'getTodos' : dfd9f9db58f468fa274f48462b994098 f32233cb857d7177 INTERNAL [tracer: io.novatec.todobackend.TodobackendApplication:0.1.0] {}
 
 ```
 
@@ -263,9 +263,9 @@ The second line results from the emitted `LogRecord`. The output includes the ti
 the severity and the actual log message. Additionally, the `LogRecord` contains data from OpenTelemetry, like the
 current trace ID as well as span ID. That's why we have also set up the tracing SDK. If the current context does not
 contain any span while emitting the `LogRecord`, it will just show some zeros, indicating there is no current span.
-At the end the output contains the scope of the OpenTelemetry `Logger` as well as the set attributes.
+At the end, the output contains the scope of the OpenTelemetry `Logger` as well as the set attributes.
 
-The last line results from the SpanExporter of the tracing SDk and does not bother us right now. 
+The last line results from the SpanExporter of the tracing SDK and does not bother us right now. 
 
 #### Don't replace the existing log API
 
