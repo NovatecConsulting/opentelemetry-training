@@ -349,15 +349,15 @@ which can be referenced with `otel.javaagent.configuration-file`.
 Below we will explain some useful agent properties.
 
 There is a properties file in the `resources` directory, which can be used to test some configuration properties.
-Run the following command to start the application with the configuration file:
+Run the following command to start the Java application with the configuration file:
 
 ```sh
 java -javaagent:./opentelemetry-javaagent.jar \
-  -Dotel.javaagent.configuration-file=$EXERCISES/automatic-instrumentation/initial/todobackend-springboot/src/main/resources/otel-config.properties \
+  -Dotel.javaagent.configuration-file=src/main/resources/otel-config.properties \
   -jar target/todobackend-0.0.1-SNAPSHOT.jar
 ```
 
-Note, when changing the configuration file, you have to restart the application for the changes to take effect.
+Note, when changing the `otel-config.properties` file, you have to restart the application for the changes to take effect.
 
 #### Debugging
 
@@ -381,11 +381,12 @@ you can use the property `otel.instrumentation.methods.include`.
 This property expects a list of methods, which are defined like this: 
 `io.novatec.todobackend.TodobackendApplication[someInternalMethod, anotherMethod];io.another.Application[method]`
 
-Later, we will learn about the `@WithSpan` annotation, which behaves similarly, but requires direct code changes.
+Later, we will learn about the `@WithSpan` annotation, which behaves similarly.
 
 #### Capturing HTTP information
 
 You can easily include additional information from HTTP headers to your spans. 
+This allows you to extend the existing HTTP instrumentation.
 There are several properties depending on whether your application acts as a client or server and whether you
 would like to read the headers from requests or responses:
 
@@ -394,14 +395,14 @@ would like to read the headers from requests or responses:
 - `otel.instrumentation.http.server.capture-request-headers`
 - `otel.instrumentation.http.server.capture-response-headers`
 
-All properties expect a comma-separated list of header names, which should be read and written into span attributes.
+All properties expect a comma-separated list of HTTP header names, which should be read and written into span attributes.
 
 #### Agent extensions
 
 The Java agent provides an extension API, which allows you to extend its behaviour with your custom logic.
-This also allows you to extend your instrumentation without changing the application codebase.
+This also allows you to extend the instrumentation without changing the application codebase.
 For instance, you would like to collect business data with the Java agent. Since the agent itself doesn't know your
-business logic, you can include your agent extension to capture such data.
+business logic, you can include your extension to capture such data.
 
 An extension resembles an additional JAR file, which has to be referenced via `otel.javaagent.extensions`.
 
