@@ -238,7 +238,7 @@ You can see multiple statements of the `otel.javaagent` but if you take a closer
 
 This is how the auto-instrumentation works here. It uses a collection of instrumentation library to trace default components, which the Java application uses here.
 
-However it makes another problem obvious: There are many spans being collected and it is hard to read on the console with the human eye.
+However, it makes another problem obvious: There are many spans being collected and it is hard to read on the console with the human eye.
 
 If you execute another `curl` call in your other shell to add a new item, e.g.
 
@@ -339,6 +339,79 @@ You can observe the different behaviour in the Jaeger console.
 
 If you are familiar with Java you can of course also look at the code in the folder: `src/main/java/io/novatec/todobackend`
 Open the TodobackendApplication.java with your VS Code built-in editor.
+
+### Excursus - Configuration of Java agent
+
+The OpenTelemetry Java agent provides a vast amount of features out of the box and normally requires no further configuration.
+Nevertheless, it provides several configuration properties to adapt its behaviour to your needs.
+Those properties can be set via `-D` flags, environment variables (as seen above) or properties file,
+which can be referenced with `otel.javaagent.configuration-file`. 
+Below we will explain some useful agent properties.
+
+There is a properties file in the `resources` directory, which can be used to test some configuration properties.
+Run the following command to start the Java application with the configuration file:
+
+```sh
+java -javaagent:./opentelemetry-javaagent.jar \
+  -Dotel.javaagent.configuration-file=src/main/resources/otel-config.properties \
+  -jar target/todobackend-0.0.1-SNAPSHOT.jar
+```
+
+Note, when changing the `otel-config.properties` file, you have to restart the application for the changes to take effect.
+
+#### Debugging
+
+When experimenting with the Java agent, it is always helpful to get more detailed insights from the agent.
+Thus, you can enable the debug logs by setting `otel.javaagent.debug` to true.
+
+#### Limiting instrumentation
+
+The Java agent contains a large amount of instrumentation modules for different technologies.
+Sometimes we would like to include only specific modules and disable everything else, for instance to save resources.
+The agent allows us to disable the auto instrumentation completely by setting 
+`otel.instrumentation.common.default-enabled` to false. Then, you can include each module individually by setting
+`otel.instrumentation.[module-name].enabled` to true. You can find the list of all default module names in the
+[documentation](https://opentelemetry.io/docs/zero-code/java/agent/disable/#suppressing-specific-agent-instrumentation).
+
+#### Creating additional spans
+
+Each instrumentation module includes only a specific set of methods, which will be instrumented.
+If you would like to instrument additional methods to create more detailed traces of your application,
+you can use the property `otel.instrumentation.methods.include`. 
+This property expects a list of methods, which are defined like this: 
+`io.novatec.todobackend.TodobackendApplication[someInternalMethod, anotherMethod];io.another.Application[method]`
+
+Later, we will learn about the `@WithSpan` annotation, which behaves similarly.
+
+#### Capturing HTTP information
+
+You can easily include additional information from HTTP headers to your spans. 
+This allows you to extend the existing HTTP instrumentation.
+There are several properties depending on whether your application acts as a client or server and whether you
+would like to read the headers from requests or responses:
+
+- `otel.instrumentation.http.client.capture-request-headers`
+- `otel.instrumentation.http.client.capture-response-headers`
+- `otel.instrumentation.http.server.capture-request-headers`
+- `otel.instrumentation.http.server.capture-response-headers`
+
+All properties expect a comma-separated list of HTTP header names, which should be read and written into span attributes.
+
+#### Agent extensions
+
+The Java agent provides an extension API, which allows you to extend its behaviour with your custom logic.
+This also allows you to extend the instrumentation without changing the application codebase.
+For instance, you would like to collect business data with the Java agent. Since the agent itself doesn't know your
+business logic, you can include your extension to capture such data.
+
+An extension resembles an additional JAR file, which has to be referenced via `otel.javaagent.extensions`.
+
+There are some example for such extensions in [GitHub](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/examples/extension).
+
+<!-- Later, we can add another chapter to explain in detail how to write agent extensions by yourself -->
+
+Take a look at the [OpenTelemetry documentation](https://opentelemetry.io/docs/zero-code/java/agent/) 
+to learn more about the agent configuration.
 
 ### Instrumentation of the Python (Flask) component
 
