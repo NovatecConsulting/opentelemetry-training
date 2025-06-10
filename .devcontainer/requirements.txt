@@ -20,4 +20,4 @@ opentelemetry-instrumentation-urllib==0.47b0
 opentelemetry-instrumentation-wsgi==0.47b0
 opentelemetry-sdk==1.26.0
 opentelemetry-semantic-conventions==0.47b0
-requests==2.32.3
+requests==2.32.4
